@@ -1,0 +1,2742 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+
+<html lang="en">
+<head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/><title>Coal Market Dashboard — Prototype | V40.2</title><style>
+  :root {
+    --bg:#05070a; --panel:#0a0d12; --panel2:#11161d; --panel3:#0d1218; --text:#f2f4f8; --muted:#9aa3af;
+    --border:#20262e; --border2:#2b3440; --accent:#d63a2f; --accent2:#ff8a80; --green:#39d98a; --red:#ff6b6b;
+    --yellow:#ffd166; --blue:#57a6ff; --teal:#4dd6c0; --purple:#9f7aea; --glow:rgba(245,166,35,.18);
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:
+      linear-gradient(180deg,rgba(245,166,35,.07),transparent 120px),
+      linear-gradient(180deg,#030508,#05070a 25%,#080b10 100%);
+    color:var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width:1500px; margin:0 auto; padding:14px 18px 22px; }
+  .topbar {
+    display:flex; justify-content:space-between; align-items:flex-end; gap:16px; margin-bottom:12px;
+    border:1px solid rgba(255,255,255,.08); border-radius:4px; padding:14px 16px 12px;
+    background:linear-gradient(180deg,rgba(17,22,29,.98),rgba(10,13,18,.98));
+    box-shadow:0 0 0 1px rgba(255,255,255,.025) inset, 0 12px 30px rgba(0,0,0,.25);
+    position:relative;
+  }
+  .topbar::before {
+    content:""; position:absolute; left:0; top:0; right:0; height:3px;
+    background:linear-gradient(90deg,var(--accent),#b97817 58%,transparent 100%);
+  }
+  .brand h1 { margin:0; font-size:28px; letter-spacing:.08em; font-weight:900; }
+  .brand .sub { color:var(--muted); font-size:11px; margin-top:6px; text-transform:uppercase; letter-spacing:.18em; }
+  .meta { text-align:right; color:var(--muted); font-size:11px; line-height:1.7; text-transform:uppercase; letter-spacing:.08em; }
+.status-ribbon {
+  margin:10px 0 14px;
+  padding:10px 14px;
+  border:1px solid rgba(214,58,47,.18);
+  border-left:3px solid #d63a2f;
+  border-radius:4px;
+  background:linear-gradient(180deg, rgba(18,22,29,.95), rgba(10,13,18,.95));
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.55;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+.status-ribbon strong { color:var(--text); font-weight:800; }
+.status-ribbon .sep { color:rgba(214,58,47,.45); margin:0 10px; }
+.status-ribbon .published-label {
+  color:#39d98a;
+  font-weight:800;
+  letter-spacing:.12em;
+}
+
+
+  .terminal-bar {
+    display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; align-items:center; margin-bottom:14px;
+    background:linear-gradient(180deg,rgba(14,18,24,.96),rgba(8,11,15,.96));
+    border:1px solid var(--border); border-radius:4px; padding:9px 12px;
+    box-shadow:0 0 0 1px rgba(255,255,255,.02) inset;
+  }
+  .terminal-left,.terminal-right,.rangepack,.togglepack,.chipgroup { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .terminal-pill {
+    border:1px solid rgba(245,166,35,.35); background:rgba(245,166,35,.1); color:#ffe2ae;
+    padding:6px 9px; font-size:11px; letter-spacing:.12em; text-transform:uppercase; border-radius:3px;
+  }
+  .toolbar-label { color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.14em; margin-right:4px; }
+  .btn {
+    border:1px solid #313946; background:linear-gradient(180deg,#11161d,#0b0f15); color:#d7dde6; padding:7px 11px; border-radius:3px; cursor:pointer;
+    font-size:12px; letter-spacing:.03em; text-transform:uppercase;
+  }
+  .btn:hover { border-color:#667285; box-shadow:0 0 0 1px rgba(255,255,255,.02) inset; }
+  .btn.active { background:linear-gradient(180deg,rgba(245,166,35,.22),rgba(245,166,35,.12)); border-color:rgba(245,166,35,.7); color:#fff1d1; box-shadow:0 0 14px var(--glow); }
+  .btn.muted { color:#aeb7c2; }
+  .switch { display:inline-flex; align-items:center; gap:8px; color:#dbe2ea; font-size:12px; }
+  .switch input { accent-color:var(--accent); }
+  .strip { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:14px; }
+  .pill {
+    background:linear-gradient(180deg,#10151b,#090c11); border:1px solid var(--border); border-left:3px solid var(--accent); box-shadow: inset 0 0 0 1px rgba(214,58,47,.05);
+    border-radius:4px; padding:10px 12px; min-height:78px;
+  }
+  .pill .h { color:var(--muted); font-size:10px; letter-spacing:.11em; text-transform:uppercase; margin-bottom:4px; }
+  .pill .v { font-size:21px; font-weight:800; }
+  .pill .s { color:var(--muted); font-size:12px; margin-top:4px; }
+  .grid-kpi { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px; margin-bottom:14px; }
+  .card {
+    background:linear-gradient(180deg,rgba(15,20,26,.98),rgba(8,11,15,.98)); border:1px solid var(--border); border-radius:4px;
+    box-shadow:0 0 0 1px rgba(255,255,255,.025) inset, 0 18px 34px rgba(0,0,0,.22);
+    overflow:hidden;
+  }
+  .kpi { padding:12px; }
+  .kpi .k-head { display:flex; justify-content:space-between; gap:8px; margin-bottom:6px; align-items:flex-start; }
+  .kpi .series { font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--accent2); }
+  .kpi .date { font-size:11px; color:var(--muted); white-space:nowrap; }
+  .kpi .price { font-size:28px; font-weight:800; line-height:1; margin:3px 0 8px; font-variant-numeric:tabular-nums; }
+  .kpi .delta { font-size:12px; margin-bottom:9px; }
+  .up { color:var(--green); } .down { color:var(--red); } .flat { color:var(--muted); }
+  .mini { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; }
+  .mini div { background:rgba(255,255,255,.025); border:1px solid rgba(255,255,255,.06); border-radius:4px; padding:7px 6px; }
+  .mini .m-l { display:block; color:var(--muted); font-size:10px; text-transform:uppercase; letter-spacing:.08em; }
+  .mini .m-v { display:block; margin-top:3px; font-size:12px; font-weight:700; }
+  .main { display:grid; grid-template-columns:minmax(0,1fr) 360px; grid-template-areas:"ici commentary" "newc commentary"; gap:14px; margin-bottom:14px; align-items:start; }
+  .row-2 { display:block; margin-bottom:14px; }
+  .stack { display:grid; gap:14px; }
+  .ici-card { grid-area:ici; }
+  .newc-card { grid-area:newc; }
+  .commentary-card { grid-area:commentary; }
+  .chart-tall { height:360px; }
+  .commentary-tall { height:auto; min-height:0; }
+  .panel-head {
+    display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:12px 14px 10px;
+    border-bottom:1px solid rgba(255,255,255,.05);
+    background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));
+  }
+  .panel-head h2 { margin:0; font-size:15px; letter-spacing:.09em; text-transform:uppercase; }
+  .panel-sub { color:var(--muted); font-size:11px; margin-top:5px; text-transform:uppercase; letter-spacing:.08em; }
+  .panel-body { padding:12px 14px 14px; }
+  .panel-controls { display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:flex-end; }
+  .control-block { display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding-left:10px; margin-left:2px; border-left:1px solid rgba(255,255,255,.06); }
+  .select-control {
+    border:1px solid #313946; background:linear-gradient(180deg,#11161d,#0b0f15); color:#d7dde6;
+    padding:7px 11px; border-radius:3px; cursor:pointer; font-size:12px; letter-spacing:.03em;
+    text-transform:uppercase;
+  }
+  .select-control:focus { outline:none; border-color:#667285; }
+  #seasonalitySingleWrap.hidden { display:none; }
+
+  .ici-toggle-group { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .ici-grade-btn { min-width:58px; }
+  svg { width:100%; height:100%; display:block; }
+  .legend { display:flex; flex-wrap:wrap; gap:12px; margin-top:10px; }
+  .legend .item { display:inline-flex; align-items:center; gap:7px; color:#d8e0e8; font-size:12px; }
+  .sw { width:12px; height:12px; border-radius:2px; display:inline-block; }
+  .subgrid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+  .commentary { display:grid; gap:10px; }
+  .note {
+    padding:13px 14px; border:1px solid rgba(255,255,255,.07); background:rgba(255,255,255,.025); border-radius:4px; line-height:1.52;
+    color:#e2e8f0;
+  }
+  .note .t { display:block; color:var(--accent2); font-size:11px; text-transform:uppercase; letter-spacing:.1em; margin-bottom:7px; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  th,td { padding:8px 7px; text-align:right; border-bottom:1px solid rgba(255,255,255,.06); font-variant-numeric:tabular-nums; }
+  th:first-child, td:first-child { text-align:left; }
+  th { color:var(--accent2); font-size:11px; text-transform:uppercase; letter-spacing:.08em; }
+  .foot { color:var(--muted); font-size:12px; margin-top:10px; line-height:1.5; }
+  @media (max-width:1200px) {
+    .grid-kpi { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    #benchmark-grid-layout { grid-template-columns:1fr; grid-template-areas:"ici-controls" "ici-panel" "commentary" "newc-controls" "newc-panel"; }
+    .commentary-tall { min-height:auto; }
+    .subgrid-2 { grid-template-columns:1fr; }
+    .strip { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+  @media (max-width:760px) {
+    .grid-kpi { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .strip { grid-template-columns:1fr; }
+    .topbar { flex-direction:column; align-items:flex-start; }
+    .meta { text-align:left; }
+    .panel-head { flex-direction:column; align-items:flex-start; }
+    .panel-controls { justify-content:flex-start; }
+    .control-block { border-left:none; padding-left:0; margin-left:0; }
+  }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.logo-img {
+  height: 32px;
+}
+
+.logo-sub {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  margin-top: 2px;
+  color: #d63a2f;
+  opacity: 0.9;
+}
+
+.title-block h1 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+}
+
+.title-block .sub {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+
+.note .t { color:#ff8a80; }
+th { color:#ff8a80; }
+.series { color:#ff8a80 !important; }
+.pill .h { color:#b7a0a0; }
+.pill .v { color:#fff3f2; text-shadow:0 0 12px rgba(214,58,47,.08); }
+.panel-head h2 { color:#f5f7fb; }
+.toolbar-label { color:#b69b9b; }
+.legend .item { color:#e7d7d6; }
+.sw { box-shadow:0 0 0 1px rgba(255,255,255,.06); }
+
+
+/* Typography pass */
+body {
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.brand h1,
+.title-block h1 {
+  font-size: 24px !important;
+  font-weight: 800;
+  letter-spacing: 0.06em !important;
+  line-height: 1.05;
+}
+
+.brand .sub,
+.title-block .sub {
+  font-size: 10px !important;
+  letter-spacing: 0.16em !important;
+  color: #8e98a6 !important;
+}
+
+.logo-sub {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  line-height: 1.2;
+  margin-top: 3px !important;
+}
+
+.status-ribbon {
+  font-size: 10.5px !important;
+  letter-spacing: 0.13em !important;
+  line-height: 1.45 !important;
+}
+
+.toolbar-label {
+  font-size: 10px !important;
+  font-weight: 700;
+  letter-spacing: 0.14em !important;
+}
+
+.btn,
+.grade-btn,
+.grade-chip {
+  font-size: 11px !important;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.switch {
+  font-size: 11px !important;
+  letter-spacing: 0.03em;
+}
+
+.pill {
+  padding: 11px 12px !important;
+}
+
+.pill .h {
+  font-size: 9px !important;
+  font-weight: 700;
+  letter-spacing: 0.14em !important;
+  margin-bottom: 5px !important;
+}
+
+.pill .v {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  line-height: 1.02 !important;
+}
+
+.pill .s {
+  font-size: 11px !important;
+  line-height: 1.35;
+  color: #919aa7 !important;
+}
+
+.kpi {
+  padding: 13px !important;
+}
+
+.kpi .series {
+  font-size: 10px !important;
+  font-weight: 800;
+  letter-spacing: 0.14em !important;
+}
+
+.kpi .date {
+  font-size: 10px !important;
+  letter-spacing: 0.05em;
+  color: #8d96a4 !important;
+}
+
+.kpi .price {
+  font-size: 30px !important;
+  font-weight: 800 !important;
+  line-height: 0.96 !important;
+  letter-spacing: -0.02em;
+}
+
+.kpi .delta {
+  font-size: 11px !important;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  margin-bottom: 10px !important;
+}
+
+.mini .m-l {
+  font-size: 9px !important;
+  font-weight: 700;
+  letter-spacing: 0.11em !important;
+}
+
+.mini .m-v {
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 1.15;
+}
+
+.panel-head {
+  padding: 13px 15px 0 !important;
+}
+
+.panel-head h2 {
+  font-size: 13px !important;
+  font-weight: 800;
+  letter-spacing: 0.11em !important;
+  line-height: 1.15;
+}
+
+.panel-sub {
+  font-size: 11px !important;
+  color: #8e98a6 !important;
+  line-height: 1.35;
+  margin-top: 5px !important;
+  letter-spacing: 0.03em;
+}
+
+.panel-body {
+  padding: 10px 15px 15px !important;
+}
+
+.legend .item {
+  font-size: 11px !important;
+  letter-spacing: 0.02em;
+}
+
+.note {
+  padding: 12px 14px !important;
+  line-height: 1.58 !important;
+  font-size: 12.5px !important;
+  color: #dfe5ef !important;
+}
+
+.note .t {
+  font-size: 10px !important;
+  font-weight: 800;
+  letter-spacing: 0.14em !important;
+  margin-bottom: 8px !important;
+}
+
+table {
+  font-size: 11.5px !important;
+}
+
+th {
+  font-size: 10px !important;
+  font-weight: 800;
+  letter-spacing: 0.1em !important;
+}
+
+td {
+  font-size: 11.5px !important;
+  line-height: 1.3;
+}
+
+.foot {
+  font-size: 11px !important;
+  line-height: 1.45 !important;
+  color: #9099a6 !important;
+}
+
+.meta {
+  font-size: 10px !important;
+  letter-spacing: 0.12em !important;
+}
+
+@media (max-width: 760px) {
+  .brand h1,
+  .title-block h1 {
+    font-size: 20px !important;
+  }
+  .kpi .price,
+  .pill .v {
+    font-size: 24px !important;
+  }
+  .note {
+    font-size: 12px !important;
+  }
+}
+
+
+.commentary {
+  gap: 9px !important;
+}
+.commentary .note strong {
+  font-weight: 800;
+  color: #f3f6fb;
+}
+
+
+/* KPI refinement */
+.kpi {
+  position: relative;
+  padding: 14px !important;
+  border-left: 3px solid rgba(214,58,47,.65);
+}
+
+.kpi .price {
+  font-size: 32px !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.02em;
+}
+
+.kpi .delta {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px !important;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.kpi .delta.up {
+  background: rgba(57,217,138,.12);
+  color: #39d98a;
+}
+
+.kpi .delta.down {
+  background: rgba(255,107,107,.12);
+  color: #ff6b6b;
+}
+
+.kpi .delta.flat {
+  background: rgba(255,255,255,.08);
+  color: #9aa3af;
+}
+
+.kpi .series {
+  color: #ff8a80 !important;
+}
+
+.kpi .mini {
+  margin-top: 6px;
+}
+
+.kpi .mini div {
+  padding: 6px 6px;
+}
+
+.kpi-highlight {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,.5);
+}
+
+
+
+/* Commentary intelligence pass */
+.note.signal-bullish { border-left: 3px solid #39d98a !important; }
+.note.signal-bearish { border-left: 3px solid #ff6b6b !important; }
+.note.signal-neutral { border-left: 3px solid #d63a2f !important; }
+
+.signal-chip {
+  display:inline-block;
+  padding:2px 7px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.1em;
+  margin-left:8px;
+  vertical-align:middle;
+}
+
+.signal-chip.bullish { background:rgba(57,217,138,.12); color:#39d98a; }
+.signal-chip.bearish { background:rgba(255,107,107,.12); color:#ff6b6b; }
+.signal-chip.neutral { background:rgba(214,58,47,.12); color:#ff8a80; }
+
+.watch-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+.watch-item {
+  border:1px solid rgba(255,255,255,.06);
+  background:rgba(255,255,255,.025);
+  border-radius:4px;
+  padding:9px 10px;
+}
+.watch-item .wl {
+  display:block;
+  color:#8e98a6;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-bottom:4px;
+}
+.watch-item .wv {
+  display:block;
+  color:#f4f7fb;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.2;
+  font-variant-numeric:tabular-nums;
+}
+
+.analyst-line {
+  margin-top:6px;
+  color:#dbe3ed;
+}
+.analyst-line strong {
+  color:#f7fbff;
+  font-weight:800;
+}
+
+@media (max-width: 900px) {
+  .watch-grid { grid-template-columns:1fr; }
+}
+
+
+/* Stability pass for commentary */
+.note {
+  min-height: auto !important;
+}
+.watch-grid {
+  align-items: stretch;
+}
+.watch-item {
+  min-height: 78px;
+}
+.analyst-line {
+  min-height: 62px;
+}
+
+
+.seasonality-section {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.seasonality-mode-group { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.seasonality-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+.seasonality-compare { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.seasonality-box {
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.02);
+  border-radius:4px;
+  padding:10px 12px;
+}
+.seasonality-box h3 {
+  margin:0 0 8px;
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--accent2);
+}
+.seasonality-box .seasonality-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.seasonality-message {
+  padding:12px 14px;
+  border:1px dashed rgba(255,255,255,.12);
+  background:rgba(255,255,255,.02);
+  border-radius:4px;
+  color:#dbe3ed;
+  line-height:1.5;
+}
+.seasonality-table { width:100%; border-collapse:collapse; }
+.seasonality-table th, .seasonality-table td { padding:8px 7px; border-bottom:1px solid rgba(255,255,255,.06); text-align:left; }
+.seasonality-table th { color:var(--accent2); font-size:10px; text-transform:uppercase; letter-spacing:.1em; }
+@media (max-width:900px) {
+  .seasonality-grid, .seasonality-compare { grid-template-columns:1fr; }
+  .seasonality-box .seasonality-grid { grid-template-columns:1fr; }
+}
+
+
+.data-quality-section {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.data-quality-grid {
+  opacity: .92;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-top:10px;
+}
+.data-quality-card {
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.025);
+  border-radius:4px;
+  padding:10px 12px;
+}
+.data-quality-card .dq-title {
+  color:var(--accent2);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  margin-bottom:8px;
+  font-weight:800;
+}
+.data-quality-card .dq-row {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:4px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  font-size:12px;
+}
+.data-quality-card .dq-row:last-child { border-bottom:none; }
+.data-quality-card .dq-key { color:var(--muted); }
+.data-quality-card .dq-val { color:var(--text); font-weight:700; text-align:right; }
+.data-quality-summary {
+  margin-top:10px;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.data-quality-pill {
+  border:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.02);
+  border-radius:4px;
+  padding:8px 10px;
+}
+.data-quality-pill .dq-key {
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  margin-bottom:4px;
+}
+.data-quality-pill .dq-val { font-size:13px; font-weight:800; }
+@media (max-width:900px) {
+  .data-quality-grid, .data-quality-summary { grid-template-columns:1fr; }
+}
+
+</style><style>
+  /* ----- PHASE 1.2 Visual Hierarchy ----- */
+  .group-header{
+    margin: 18px 0 8px 0;
+    padding: 8px 12px;
+    background: linear-gradient(90deg, rgba(255,140,0,0.12), rgba(0,0,0,0));
+    border-left: 4px solid #ff8c00;
+    color: #ffb26b;
+    font-weight: 700;
+    letter-spacing: .06em;
+  }
+  .group-sub{
+    margin: 0 0 12px 16px;
+    color: #9aa3af;
+    font-size: 12px;
+  }
+  /* De-emphasise Validation section visuals */
+  .validation-soft {
+    opacity: .85;
+  }
+  /* Increase section separation without resizing charts */
+  section{ margin-bottom: 22px; }
+  /* Make section titles clearer */
+  section h2, section h3{
+    letter-spacing: .04em;
+  }
+</style><style>
+  .pf-controls{display:flex;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+  .pf-group{display:flex;gap:6px}
+  .pf-btn{padding:4px 8px;font-size:11px;border:1px solid #333;background:#0b0f15;color:#9aa3af;cursor:pointer}
+  .pf-btn.active{color:#ffb300;border-color:#ffb300}
+  .peak-wrap{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-top:10px}
+  .peak-bar{display:flex;flex-direction:column;justify-content:flex-end;height:80px;background:#0b0f15;border:1px solid rgba(255,255,255,.05)}
+  .peak-bar span{background:#ffb300;display:block;width:100%}
+  .peak-label{font-size:10px;text-align:center;color:#9aa3af;margin-top:4px}
+</style>
+<style>
+  #dashboard-root { display:block; }
+  .dashboard-section { margin-bottom: 22px; }
+  #section-summary-strip > .status-ribbon { margin-top: 0; }
+  #section-risk-timing .group-header { margin-top: 0; }
+
+  /* Layout-only containers restore alignment while keeping controls and panels isolated */
+  .layout-stack {
+    display:grid;
+    grid-template-rows:auto;
+    gap:10px;
+    width:100%;
+    align-content:start;
+  }
+
+  #benchmark-grid-layout{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 360px;
+    grid-template-areas:"benchmark commentary";
+    gap:14px;
+    align-items:start;
+  }
+  #layout-benchmark-stack{ grid-area:benchmark; }
+  #panel-commentary{ grid-area:commentary; align-self:start; }
+
+  #section-risk-timing-content{
+    display:grid;
+    gap:14px;
+    align-items:start;
+  }
+  .commentary-card { align-self:start; }
+  .commentary { align-content:start; }
+
+  @media (max-width:1200px) {
+    #benchmark-grid-layout{
+      grid-template-columns:1fr;
+      grid-template-areas:
+        "benchmark"
+        "commentary";
+    }
+  }
+
+  .panel-controls-shell {
+    border:1px solid var(--border);
+    border-radius:4px;
+    background:linear-gradient(180deg,rgba(15,20,26,.98),rgba(8,11,15,.98));
+    box-shadow:0 0 0 1px rgba(255,255,255,.025) inset;
+    padding:12px 14px;
+  }
+  .panel-controls-shell .panel-controls { justify-content:flex-start; }
+  .panel-visual-only .panel-head { padding-bottom:10px !important; }
+  .chart-medium { height:250px; }
+  .commentary-body {
+    display:grid;
+    grid-auto-rows:min-content;
+    gap:14px;
+    align-content:start;
+  }
+  .seasonality-panel-head {
+    padding:0 0 10px !important;
+    border-bottom:none !important;
+    background:none !important;
+  }
+  .seasonality-controls-shell {
+    margin:0 15px 12px;
+  }
+  .seasonality-detail-stack {
+    margin-top:12px;
+  }
+</style>
+<style>
+  /* V37.1 commentary alignment cleanup */
+  #panel-commentary {
+    display: flex;
+    flex-direction: column;
+  }
+  #panel-head-commentary {
+    padding: 13px 15px 12px !important;
+  }
+  #panel-head-commentary .panel-sub {
+    margin-top: 6px !important;
+  }
+  #commentary {
+    display: grid !important;
+    grid-auto-rows: min-content;
+    gap: 12px !important;
+    padding: 12px 15px 15px !important;
+    align-content: start;
+  }
+  #commentary .note,
+  #physicalMarketCommentary .note {
+    padding: 12px 15px !important;
+    background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
+  }
+  #commentary .t,
+  #physicalMarketCommentary .t {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  #commentary .signal-chip {
+    margin-left: 0;
+    flex: 0 0 auto;
+  }
+  #commentary .analyst-line {
+    margin-top: 4px;
+    min-height: 0;
+  }
+  #commentary .watch-grid {
+    margin-top: 12px;
+    gap: 8px;
+  }
+  #commentary .watch-item {
+    min-height: 72px;
+    padding: 8px 10px;
+  }
+  @media (max-width: 1200px) {
+    #panel-commentary {
+      min-height: auto;
+    }
+    #commentary {
+      min-height: auto;
+    }
+  }
+  #commentary .commentary-section-label,
+  #physicalMarketCommentary .commentary-section-label {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:0 2px;
+    color:#f3f6fb;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+  #commentary .commentary-section-label::after,
+  #physicalMarketCommentary .commentary-section-label::after {
+    content:"";
+    flex:1 1 auto;
+    height:1px;
+    background:linear-gradient(90deg, rgba(255,138,128,.38), rgba(255,255,255,.06));
+  }
+  #physicalMarketCommentary .external-market-note {
+    border-left:3px solid rgba(255,138,128,.75) !important;
+    background:linear-gradient(180deg, rgba(214,58,47,.08), rgba(255,255,255,.02)) !important;
+  }
+  #physicalMarketCommentary .source-line {
+    margin-top:8px;
+    color:#b7c0cc;
+    font-size:11px;
+    line-height:1.45;
+  }
+  #physicalMarketCommentary .source-line strong {
+    color:#f3f6fb;
+  }
+</style>
+
+
+<style>
+  /* V39 Phase 2 alignment patch */
+  #benchmark-grid-layout {
+    align-items: stretch;
+  }
+  #panel-commentary {
+    height: 100%;
+  }
+  .chart-panel {
+    display: flex;
+    flex-direction: column;
+  }
+</style>
+
+</head>
+<body>
+<div class="wrap" id="dashboard-root"><div class="topbar">
+<div class="brand">
+</div>
+<div class="title-block">
+<h1>Coal Market Dashboard — Prototype</h1>
+<div class="sub">Data-driven interpretation of ICI &amp; NEWC dynamics</div>
+</div>
+</div>
+</div><div class="terminal-bar">
+<div class="terminal-left">
+<span class="terminal-pill">Thermal Coal Monitor</span>
+<span class="toolbar-label">Layout note</span>
+<span style="color:var(--muted);font-size:12px;letter-spacing:.03em;">Layout-only stacks restore benchmark alignment while keeping controls and panels isolated.</span>
+</div>
+<div class="terminal-right">
+<div class="togglepack">
+<span class="toolbar-label">Display</span>
+<label class="switch"><input id="normalizeToggle" type="checkbox"/> Normalize to 100</label>
+</div>
+<div class="togglepack" style="margin-left:10px;">
+<span class="toolbar-label">Data</span>
+<button class="btn" id="reloadSidecarBtn" type="button">Reload CSV</button>
+<button class="btn" id="loadIciCsvBtn" type="button">Load ICI CSV</button>
+<button class="btn" id="loadNewcCsvBtn" type="button">Load NEWC CSV</button>
+<input accept=".csv,text/csv" id="iciCsvInput" style="display:none" type="file"/>
+<input accept=".csv,text/csv" id="newcCsvInput" style="display:none" type="file"/>
+</div>
+</div>
+</div><section class="dashboard-section" id="section-summary-strip"><div class="status-ribbon" id="metaStamp"></div><div class="strip" id="summaryStrip"></div></section><section class="dashboard-section" id="section-kpi"><div class="grid-kpi" id="kpiGrid"></div></section><section class="dashboard-section" id="section-benchmark-grid"><div class="group-header" id="section-price-trend-header">PRICE &amp; TREND</div><div class="group-sub" id="section-price-trend-sub">Level, momentum and benchmark context</div><div class="main" id="benchmark-grid-layout">
+<div class="layout-stack" id="layout-benchmark-stack">
+<div class="panel-controls-shell" id="controls-ici-benchmark">
+<div class="panel-controls" id="controls-ici-benchmark-inner">
+<div class="control-block" id="controls-ici-grades">
+<span class="toolbar-label">Grades</span>
+<div class="ici-toggle-group" id="controls-ici-grade-buttons">
+<button class="btn ici-grade-btn active" data-grade="ICI 1" id="grade-ici-1">ICI 1</button>
+<button class="btn ici-grade-btn active" data-grade="ICI 2" id="grade-ici-2">ICI 2</button>
+<button class="btn ici-grade-btn" data-grade="ICI 3" id="grade-ici-3">ICI 3</button>
+<button class="btn ici-grade-btn" data-grade="ICI 4" id="grade-ici-4">ICI 4</button>
+<button class="btn ici-grade-btn" data-grade="ICI 5" id="grade-ici-5">ICI 5</button>
+<button class="btn muted" id="allGradesBtn">All</button>
+<button class="btn active" id="focusBtn">Default</button>
+</div>
+</div>
+<div class="control-block" id="controls-ici-window">
+<span class="toolbar-label">Window</span>
+<div class="rangepack" id="controls-ici-window-buttons">
+<button class="btn range-btn" data-range="1M" id="window-ici-1m">1M</button>
+<button class="btn range-btn" data-range="3M" id="window-ici-3m">3M</button>
+<button class="btn range-btn" data-range="6M" id="window-ici-6m">6M</button>
+<button class="btn range-btn active" data-range="1Y" id="window-ici-1y">1Y</button>
+<button class="btn range-btn" data-range="3Y" id="window-ici-3y">3Y</button>
+<button class="btn range-btn" data-range="5Y" id="window-ici-5y">5Y</button>
+<button class="btn range-btn" data-range="ALL" id="window-ici-all">ALL</button>
+</div>
+</div>
+</div>
+</div>
+<div class="card panel-visual-only" id="panel-ici-benchmark">
+<div class="panel-head" id="panel-head-ici-benchmark">
+<div>
+<h2>ICI Benchmarks</h2>
+<div class="panel-sub" id="iciSub"></div>
+</div>
+</div>
+<div class="panel-body" id="panel-body-ici-benchmark">
+<div class="chart-tall" id="wrap-ici-chart"><svg id="iciChart"></svg></div>
+<div class="legend" id="iciLegend"></div>
+</div>
+</div>
+<div class="panel-controls-shell" id="controls-newc-benchmark">
+<div class="panel-controls" id="controls-newc-benchmark-inner">
+<div class="control-block" id="controls-newc-window">
+<span class="toolbar-label">Window</span>
+<div class="rangepack" id="controls-newc-window-buttons">
+<button class="btn newc-range-btn" data-range="1M" id="window-newc-1m">1M</button>
+<button class="btn newc-range-btn" data-range="3M" id="window-newc-3m">3M</button>
+<button class="btn newc-range-btn" data-range="6M" id="window-newc-6m">6M</button>
+<button class="btn newc-range-btn active" data-range="1Y" id="window-newc-1y">1Y</button>
+<button class="btn newc-range-btn" data-range="3Y" id="window-newc-3y">3Y</button>
+<button class="btn newc-range-btn" data-range="ALL" id="window-newc-all">ALL</button>
+</div>
+</div>
+</div>
+</div>
+<div class="card panel-visual-only" id="panel-newc-benchmark">
+<div class="panel-head" id="panel-head-newc-benchmark">
+<div>
+<h2>NEWC Benchmark</h2>
+<div class="panel-sub" id="newcSub"></div>
+</div>
+</div>
+<div class="panel-body" id="panel-body-newc-benchmark">
+<div class="chart-tall" id="wrap-newc-chart"><svg id="newcChart"></svg></div>
+</div>
+</div>
+</div>
+<div class="card commentary-card panel-visual-only" id="panel-commentary">
+<div class="panel-head" id="panel-head-commentary">
+<div>
+<h2>Commentary</h2>
+<div class="panel-sub">Interpretation based on current selection and recent 3-month behaviour</div>
+</div>
+</div>
+<div class="panel-body commentary commentary-body">
+<div id="commentary"></div>
+<div id="physicalMarketCommentary"></div>
+</div>
+</div>
+</div></section>
+<section class="dashboard-section" id="section-secondary-analytics"><div class="subgrid-2">
+<div class="card panel-visual-only chart-panel" id="panel-selected-ici-spread">
+<div class="panel-head" id="panel-head-selected-ici-spread">
+<div>
+<h2>Selected ICI Spread</h2>
+<div class="panel-sub" id="spreadSub"></div>
+</div>
+</div>
+<div class="panel-body">
+<div class="chart-medium" id="wrap-spread-chart"><svg id="spreadChart"></svg></div>
+</div>
+</div>
+<div class="card panel-visual-only chart-panel" id="panel-drawdown-monitor">
+<div class="panel-head" id="panel-head-drawdown-monitor">
+<div>
+<h2>Drawdown Monitor</h2>
+<div class="panel-sub">Selected grades vs their rolling peak in current window</div>
+</div>
+</div>
+<div class="panel-body">
+<div class="chart-medium" id="wrap-drawdown-chart"><svg id="drawdownChart"></svg></div>
+</div>
+</div>
+</div></section>
+<section class="dashboard-section" id="section-risk-timing"><div class="group-header" id="section-risk-timing-header">RISK &amp; TIMING</div><div class="group-sub" id="section-risk-timing-sub">Drawdown, seasonal behaviour and peak occurrence</div><div class="row-2" id="section-risk-timing-content">
+<div class="layout-stack" id="layout-analytics-stack">
+<div class="card panel-visual-only" id="panel-analytics-snapshot">
+<div class="panel-head" id="panel-head-analytics-snapshot">
+<div>
+<div class="group-header" id="header-analytics-summary">ANALYTICS SUMMARY</div>
+<div class="group-sub" id="sub-analytics-summary">Normalised views and comparative diagnostics</div>
+<h2>Analytics Snapshot</h2>
+<div class="panel-sub">Latest date included on each line for recency context</div>
+</div>
+</div>
+<div class="panel-body" id="panel-body-analytics-snapshot">
+<table id="analyticsTable"></table>
+<div class="foot" id="coverageNote"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="layout-stack" id="layout-seasonality-stack">
+<div class="card panel-visual-only seasonality-section" id="panel-seasonality-analysis">
+<div class="panel-head seasonality-panel-head" id="panel-head-seasonality-analysis">
+<div>
+<h2>Seasonality Analysis</h2>
+<div class="panel-sub" id="seasonalitySub">Historical seasonality across the full dataset</div>
+</div>
+</div>
+<div class="panel-controls-shell seasonality-controls-shell" id="controls-seasonality-analysis">
+<div class="panel-controls" id="controls-seasonality-analysis-inner">
+<div class="seasonality-mode-group" id="controls-seasonality-mode-group">
+<button class="btn seasonality-mode-btn" data-mode="bygrade" id="seasonality-mode-bygrade">By Grade</button>
+<button class="btn seasonality-mode-btn" data-mode="compare" id="seasonality-mode-compare">ICI1 vs NEWC</button>
+</div>
+<div class="control-block" id="seasonalityHistoryWrap">
+<span class="toolbar-label">History</span>
+<select class="select-control" id="seasonalityHistorySelect"></select>
+</div>
+<div class="control-block" id="seasonalitySingleWrap">
+<span class="toolbar-label">Grade Selector</span>
+<select class="select-control" id="seasonalitySingleSelect">
+<option value="ICI 1">ICI 1</option>
+<option value="ICI 2">ICI 2</option>
+<option value="ICI 3">ICI 3</option>
+<option value="ICI 4">ICI 4</option>
+<option value="ICI 5">ICI 5</option>
+<option value="NEWC">NEWC</option>
+</select>
+</div>
+</div>
+</div>
+<div class="panel-body" id="panel-body-seasonality-analysis">
+<div id="seasonalityContent"></div>
+<div class="foot" id="seasonalityFoot"></div>
+</div>
+</div>
+</div>
+<div class="layout-stack" id="layout-peak-frequency-stack">
+<div class="panel-controls-shell" id="controls-peak-frequency">
+<div class="pf-controls" id="controls-peak-frequency-inner">
+<div class="pf-group" id="pfGrades">
+<button class="pf-btn active" data-g="NEWC" id="peak-grade-newc">NEWC</button>
+<button class="pf-btn" data-g="ICI 1" id="peak-grade-ici-1">ICI 1</button>
+<button class="pf-btn" data-g="ICI 2" id="peak-grade-ici-2">ICI 2</button>
+<button class="pf-btn" data-g="ICI 3" id="peak-grade-ici-3">ICI 3</button>
+<button class="pf-btn" data-g="ICI 4" id="peak-grade-ici-4">ICI 4</button>
+<button class="pf-btn" data-g="ICI 5" id="peak-grade-ici-5">ICI 5</button>
+</div>
+<div class="pf-group" id="pfModes">
+<button class="pf-btn active" data-m="FULL" id="peak-mode-full">Full</button>
+<button class="pf-btn" data-m="5Y" id="peak-mode-5y">5Y</button>
+<button class="pf-btn" data-m="3Y" id="peak-mode-3y">3Y</button>
+</div>
+</div>
+</div>
+<div class="card panel-visual-only" id="panel-peak-frequency">
+<div class="panel-head" id="panel-head-peak-frequency"><div>
+<h2 id="pfTitle">Peak Frequency (NEWC · Full)</h2>
+<div class="panel-sub">Months most frequently marking annual price highs</div>
+</div></div>
+<div class="panel-body" id="panel-body-peak-frequency">
+<div class="peak-wrap" id="peakChart"></div>
+</div>
+</div>
+</div></section><section class="dashboard-section" id="section-validation">
+<div class="group-header" id="section-validation-header">VALIDATION</div>
+<div class="group-sub" id="section-validation-sub">Data coverage and load integrity checks</div>
+<div class="row-2" id="section-validation-content">
+<div class="data-quality-section" id="panel-data-quality">
+<div class="panel-head" id="panel-head-data-quality" style="padding:0 0 10px !important; border-bottom:none; background:none;">
+<div>
+<h2>
+<div class="group-header" id="header-validation">VALIDATION</div>
+<div class="group-sub" id="sub-validation">Fact‑check and data coverage confirmation</div>
+<div class="validation-soft" id="label-data-quality">Data Quality / Coverage</div></h2>
+<div class="panel-sub">Load validation for the current ICI and NEWC datasets</div>
+</div>
+</div>
+<div id="dataQualityContent"></div>
+<div class="foot" id="dataQualityFoot"></div>
+</div>
+</section><script>
+let iciRaw = [["2012-01-06",114.24,94.32,75.2,47.13,36.15],["2012-01-13",115.39,94.29,74.89,46.77,36.19],["2012-01-20",115.38,94.07,74.27,46.72,36.29],["2012-01-27",117.54,94.64,75.14,46.68,36.19],["2012-02-03",117.46,94.72,75.27,46.63,36.27],["2012-02-10",116.31,95.72,75.63,47.2,36.78],["2012-02-17",116.36,94.51,74.23,46.84,35.78],["2012-02-24",116.07,93.67,73.29,46.59,35.79],["2012-03-02",114.23,92.76,73.01,46.11,35.54],["2012-03-09",111.65,91.6,72.21,45.46,35.17],["2012-03-16",109.76,91.19,71.6,44.13,34.99],["2012-03-23",109.78,90.5,71.59,44.6,34.73],["2012-03-30",109.63,90.82,71.7,44.9,34.71],["2012-04-05",110.43,91.22,71.81,48.87,34.81],["2012-04-13",107.21,91.45,72.39,49.15,35.28],["2012-04-20",104.43,91.2,72.44,50.22,35.56],["2012-04-27",102.97,90.91,72.14,50.49,35.39],["2012-05-04",101.4,89.24,72.1,49.98,35.21],["2012-05-11",101.35,87.82,71.23,49.0,35.06],["2012-05-18",99.1,87.56,70.63,49.23,34.84],["2012-05-25",94.82,85.04,68.21,48.4,34.64],["2012-06-01",92.51,83.81,65.72,47.46,34.28],["2012-06-08",91.89,82.21,65.04,46.55,33.99],["2012-06-15",89.25,78.62,63.66,44.81,33.39],["2012-06-22",86.7,75.92,61.46,42.97,32.94],["2012-06-29",87.7,73.65,60.34,42.35,32.74],["2012-07-06",89.17,73.29,60.16,41.3,32.38],["2012-07-13",86.99,72.28,59.59,40.67,31.64],["2012-07-20",85.55,70.84,56.51,39.58,30.37],["2012-07-27",84.09,70.3,57.37,39.58,30.06],["2012-08-03",86.31,70.34,56.73,40.22,29.79],["2012-08-10",87.45,70.27,56.3,39.76,29.42],["2012-08-17",88.77,72.41,57.04,39.34,29.22],["2012-08-24",89.84,73.29,57.54,39.55,29.55],["2012-08-31",89.41,72.05,56.33,38.89,29.2],["2012-09-07",90.43,71.77,56.07,38.79,29.17],["2012-09-14",90.18,71.32,56.84,38.28,28.25],["2012-09-21",89.91,71.94,56.28,39.14,28.54],["2012-09-28",89.54,72.36,55.74,39.38,28.42],["2012-10-05",87.55,72.16,56.08,39.13,28.52],["2012-10-12",85.65,72.76,56.07,38.85,28.84],["2012-10-19",84.03,72.07,55.31,39.57,28.38],["2012-10-25",83.52,72.31,55.85,39.36,28.21],["2012-11-02",83.02,72.51,55.85,39.24,28.78],["2012-11-09",82.52,72.12,56.23,39.37,28.59],["2012-11-16",83.61,71.89,56.25,39.48,28.5],["2012-11-23",85.17,71.93,56.16,39.03,28.93],["2012-11-30",87.4,73.4,56.8,40.03,28.86],["2012-12-07",89.34,73.01,57.03,40.39,28.63],["2012-12-14",89.57,73.27,57.6,39.8,29.07],["2012-12-21",89.86,73.82,57.52,39.17,29.03],["2012-12-28",89.99,74.1,57.45,38.64,29.01],["2013-01-04",90.83,74.28,57.95,39.27,29.26],["2013-01-11",91.06,74.45,58.1,40.45,29.77],["2013-01-18",91.31,74.3,58.53,40.32,29.93],["2013-01-25",92.59,74.48,57.99,40.3,29.53],["2013-02-01",92.81,75.48,58.44,40.34,29.47],["2013-02-08",93.72,75.69,60.01,40.76,29.74],["2013-02-15",93.9,75.96,59.71,41.06,29.51],["2013-02-22",94.22,76.26,61.05,41.37,30.11],["2013-03-01",94.26,76.45,60.59,41.81,30.39],["2013-03-08",93.77,76.57,60.59,41.71,30.41],["2013-03-15",93.2,76.1,60.61,41.6,30.13],["2013-03-22",92.15,76.38,60.22,41.71,30.27],["2013-03-28",90.96,74.8,59.91,41.84,30.52],["2013-04-05",89.77,74.59,59.8,41.28,30.11],["2013-04-12",89.58,74.99,60.0,41.46,30.34],["2013-04-19",89.18,73.07,59.86,41.73,30.53],["2013-04-26",89.51,73.76,59.87,42.02,30.6],["2013-05-03",89.19,74.53,60.15,42.18,30.95],["2013-05-10",89.18,73.56,60.1,42.38,30.58],["2013-05-17",88.63,73.69,60.3,42.51,30.36],["2013-05-24",89.46,74.66,60.12,42.62,30.81],["2013-05-31",88.93,74.68,60.42,42.41,30.86],["2013-06-07",88.48,74.05,59.96,42.22,30.37],["2013-06-14",84.64,72.99,60.08,42.47,30.39],["2013-06-21",83.65,72.93,59.65,42.4,30.51],["2013-06-28",80.7,71.96,59.3,42.24,30.27],["2013-07-05",79.76,70.81,59.49,42.55,30.45],["2013-07-12",79.28,70.84,59.05,42.44,30.5],["2013-07-19",78.95,69.88,58.44,42.2,30.11],["2013-07-26",79.02,69.72,58.03,41.82,31.02],["2013-08-02",79.06,69.17,58.41,41.84,30.69],["2013-08-07",79.03,69.81,58.38,41.86,30.57],["2013-08-16",78.8,69.31,58.29,41.63,30.15],["2013-08-23",79.2,68.91,59.2,41.59,30.09],["2013-08-30",79.08,69.89,58.58,41.38,30.07],["2013-09-06",79.04,68.76,58.17,41.6,30.46],["2013-09-13",78.35,68.16,57.96,41.18,30.17],["2013-09-20",78.55,68.09,56.88,40.56,29.31],["2013-09-27",79.5,67.81,56.71,40.4,29.13],["2013-10-04",79.73,67.86,57.35,39.58,29.27],["2013-10-11",80.51,67.69,55.85,39.34,28.64],["2013-10-18",80.86,67.8,55.72,39.21,28.65],["2013-10-25",81.07,67.31,55.89,38.89,28.41],["2013-11-01",81.61,66.88,55.36,38.77,28.36],["2013-11-08",82.36,67.88,55.97,39.31,28.52],["2013-11-15",81.82,67.98,56.08,38.77,28.53],["2013-11-22",82.2,68.58,56.99,39.26,28.69],["2013-11-29",83.89,70.09,57.84,39.65,28.72],["2013-12-06",83.26,69.85,57.69,39.05,27.7],["2013-12-13",83.62,70.72,57.55,39.37,27.8],["2013-12-20",83.82,70.74,57.53,39.64,28.0],["2013-12-27",84.11,70.69,58.26,39.25,27.32],["2014-01-03",84.47,71.12,58.44,39.05,27.72],["2014-01-10",84.04,70.52,57.58,38.72,27.21],["2014-01-17",83.22,71.01,57.07,38.6,27.65],["2014-01-24",82.5,71.71,57.2,38.68,27.32],["2014-01-30",81.89,70.87,57.39,38.68,27.27],["2014-02-07",81.9,70.74,57.64,39.19,27.12],["2014-02-14",80.53,70.44,56.98,38.76,26.58],["2014-02-21",79.27,69.75,56.88,38.72,26.41],["2014-02-28",79.92,69.58,56.96,38.65,25.91],["2014-03-07",79.03,69.23,56.7,38.61,25.69],["2014-03-14",78.61,68.73,56.43,38.43,25.56],["2014-03-21",78.2,68.93,55.99,38.38,25.68],["2014-03-28",77.45,66.74,56.07,37.33,25.6],["2014-04-04",77.14,67.28,55.89,37.33,25.35],["2014-04-11",77.47,67.64,55.52,37.34,25.28],["2014-04-17",77.68,68.32,55.43,37.39,25.17],["2014-04-25",77.48,68.55,55.83,37.6,25.38],["2014-05-02",77.04,68.53,56.17,37.64,25.17],["2014-05-09",76.94,69.98,56.33,37.91,25.31],["2014-05-16",77.58,69.1,56.05,37.8,25.27],["2014-05-23",76.98,67.6,55.86,37.29,25.43],["2014-05-30",76.91,67.52,55.78,37.33,25.2],["2014-06-06",76.54,67.15,55.38,37.4,25.23],["2014-06-13",76.41,67.09,55.11,37.39,24.99],["2014-06-20",76.14,66.35,54.35,37.42,24.96],["2014-06-27",76.08,66.08,54.81,37.75,24.84],["2014-07-04",75.64,65.8,54.51,37.05,24.82],["2014-07-11",75.4,65.13,53.94,36.94,24.39],["2014-07-18",74.47,63.73,51.92,36.79,23.79],["2014-07-25",74.23,63.7,51.51,36.72,23.45],["2014-08-01",73.96,63.14,51.33,36.82,23.51],["2014-08-08",73.09,63.57,51.47,36.92,23.29],["2014-08-15",73.38,63.41,51.12,37.2,23.48],["2014-08-22",73.15,62.88,50.94,36.95,23.45],["2014-08-29",73.31,63.42,50.79,37.02,23.22],["2014-09-05",71.2,61.93,50.28,36.5,23.26],["2014-09-12",70.35,62.04,50.46,36.52,23.2],["2014-09-19",70.27,61.8,50.74,36.45,23.08],["2014-09-26",69.84,60.84,50.73,36.31,23.18],["2014-10-03",69.91,61.2,50.34,36.86,23.13],["2014-10-10",69.68,60.7,49.74,36.23,22.63],["2014-10-17",69.22,59.87,49.42,36.23,22.36],["2014-10-24",69.0,61.05,48.8,36.44,22.3],["2014-10-31",68.49,60.64,49.31,36.59,22.31],["2014-11-07",68.62,60.65,49.09,36.45,22.37],["2014-11-14",68.6,61.05,48.75,36.68,22.87],["2014-11-21",67.97,60.84,48.85,36.46,22.5],["2014-11-28",67.85,60.36,48.97,35.79,22.37],["2014-12-05",67.54,60.14,48.74,35.96,22.35],["2014-12-12",67.44,59.27,47.73,36.11,22.53],["2014-12-19",67.13,58.54,48.07,35.95,22.19],["2014-12-24",67.01,58.23,48.46,35.74,22.25],["2015-01-02",66.75,58.27,48.12,35.81,22.06],["2015-01-09",66.22,58.44,48.43,35.57,22.66],["2015-01-16",64.62,58.31,48.13,35.58,22.57],["2015-01-23",64.88,59.01,48.75,35.55,22.94],["2015-01-30",64.91,58.87,48.47,35.65,22.65],["2015-02-06",67.25,60.05,48.31,35.1,22.64],["2015-02-13",68.1,60.91,48.97,34.91,22.83],["2015-02-20",68.45,60.73,48.93,34.94,23.05],["2015-02-27",68.7,60.62,48.82,34.87,23.05],["2015-03-06",68.64,60.32,48.62,34.75,23.18],["2015-03-13",68.46,60.24,48.62,34.65,23.21],["2015-03-20",68.1,60.17,48.36,34.59,23.19],["2015-03-27",66.18,59.49,48.12,34.35,23.06],["2015-04-03",65.26,59.05,48.03,33.74,22.97],["2015-04-10",64.53,58.0,47.54,33.98,22.91],["2015-04-17",63.62,57.47,47.21,33.8,22.71],["2015-04-24",63.62,57.21,47.02,33.41,22.8],["2015-05-01",63.83,57.57,46.82,33.24,22.08],["2015-05-08",63.25,57.19,46.7,32.88,21.78],["2015-05-15",63.12,56.68,46.23,32.43,21.64],["2015-05-22",62.74,56.28,44.76,32.1,21.49],["2015-05-29",62.69,56.27,43.96,31.74,21.55],["2015-06-05",62.38,55.63,44.03,31.41,21.58],["2015-06-12",62.38,55.62,43.46,31.19,21.2],["2015-06-19",61.92,55.25,42.91,30.41,20.59],["2015-06-26",61.86,55.01,42.93,30.3,20.97],["2015-07-03",61.68,54.48,42.57,29.93,20.83],["2015-07-10",61.32,53.76,41.95,29.48,20.44],["2015-07-17",61.32,53.44,41.66,29.41,20.61],["2015-07-24",61.1,52.92,41.46,29.23,20.15],["2015-07-31",60.89,53.0,41.41,29.11,19.98],["2015-08-07",60.77,53.11,41.4,29.0,19.87],["2015-08-14",60.7,52.76,41.35,28.66,19.73],["2015-08-21",60.43,52.38,41.05,28.36,19.71],["2015-08-28",60.47,52.33,40.98,28.25,19.73],["2015-09-04",60.97,51.95,40.97,28.12,19.62],["2015-09-11",61.03,51.92,40.98,27.99,19.67],["2015-09-18",60.81,51.84,40.88,27.96,19.64],["2015-09-25",60.8,51.58,40.84,27.82,19.91],["2015-10-02",60.78,51.62,40.47,26.99,19.77],["2015-10-09",60.35,50.35,39.76,26.78,19.56],["2015-10-16",60.26,49.65,39.2,26.48,19.37],["2015-10-23",60.0,49.16,38.8,26.57,19.29],["2015-10-30",59.5,48.55,38.37,26.53,19.15],["2015-11-06",59.28,48.87,38.38,26.89,19.1],["2015-11-13",59.43,48.56,38.36,27.0,19.25],["2015-11-20",59.2,48.48,38.25,26.84,19.58],["2015-11-27",58.97,48.41,38.32,26.84,19.62],["2015-12-04",58.95,48.36,38.44,26.84,19.64],["2015-12-11",58.64,47.99,38.25,26.78,19.68],["2015-12-18",58.65,48.0,38.28,26.84,19.65],["2015-12-25",58.56,48.02,38.37,26.74,19.56],["2015-12-31",58.55,47.65,38.15,26.65,19.58],["2016-01-08",58.2,47.62,37.99,26.69,19.48],["2016-01-15",57.83,47.47,37.83,26.63,19.51],["2016-01-22",57.74,47.18,37.47,26.43,19.46],["2016-01-29",57.46,46.87,37.49,26.52,19.37],["2016-02-05",57.42,46.91,37.36,26.41,19.37],["2016-02-12",57.46,46.69,37.59,26.35,19.38],["2016-02-19",57.22,46.66,37.79,26.37,19.35],["2016-02-26",57.19,46.46,37.7,26.57,19.42],["2016-03-04",57.19,46.71,37.99,26.65,19.47],["2016-03-11",57.12,46.79,38.07,26.61,19.58],["2016-03-18",57.26,46.92,38.07,26.59,19.51],["2016-03-25",57.28,46.65,37.86,26.72,19.39],["2016-04-01",57.32,46.36,37.92,26.63,19.28],["2016-04-08",56.57,46.26,37.89,26.54,19.38],["2016-04-15",56.41,46.62,38.03,26.62,19.26],["2016-04-22",56.86,46.71,38.14,26.73,19.42],["2016-05-06",56.79,46.8,38.42,26.86,19.54],["2016-05-13",56.78,46.97,38.26,26.89,19.15],["2016-05-20",56.82,47.19,38.45,27.21,19.13],["2016-05-27",57.08,47.37,38.71,27.48,19.18],["2016-06-03",57.0,47.87,39.0,27.51,18.78],["2016-06-10",57.15,48.12,39.04,27.86,19.11],["2016-06-17",57.39,47.93,39.37,28.07,19.37],["2016-06-24",57.38,47.99,39.6,28.38,19.54],["2016-07-01",57.9,45.18,39.9,28.68,19.78],["2016-07-08",58.18,48.47,40.38,28.85,20.28],["2016-07-15",58.67,48.92,41.38,29.13,20.35],["2016-07-22",58.87,49.69,42.14,29.58,20.37],["2016-07-29",59.64,50.33,42.92,30.14,20.51],["2016-08-05",60.89,51.02,43.36,30.71,20.58],["2016-08-12",61.39,52.77,44.27,31.44,20.67],["2016-08-19",61.98,53.5,46.16,32.2,20.74],["2016-08-26",63.2,54.34,47.84,32.77,21.35],["2016-09-02",63.79,55.24,49.09,33.59,21.65],["2016-09-09",64.32,55.9,49.84,34.56,21.99],["2016-09-16",66.6,57.77,50.61,35.25,22.26],["2016-09-23",69.18,58.76,51.66,36.27,23.03],["2016-09-30",70.79,59.77,53.01,36.89,23.35],["2016-10-07",72.08,61.85,54.5,37.46,23.7],["2016-10-14",73.94,63.34,56.25,38.43,24.34],["2016-10-21",76.87,65.23,59.33,39.86,26.02],["2016-10-28",96.37,84.34,67.55,43.82,28.8],["2016-11-04",105.77,89.67,72.78,47.2,32.01],["2016-11-11",110.23,93.93,75.84,49.66,35.03],["2016-11-18",102.04,87.71,73.3,48.62,33.2],["2016-11-25",96.8,85.92,68.54,44.19,29.87],["2016-12-02",94.5,83.43,63.17,42.4,29.61],["2016-12-09",89.05,73.3,59.35,40.04,29.05],["2016-12-16",87.35,72.5,58.88,39.12,28.54],["2016-12-23",87.51,72.0,56.88,37.55,26.82],["2016-12-30",87.83,72.85,56.28,37.03,27.83],["2017-01-06",88.66,72.4,56.16,37.25,28.19],["2017-01-13",88.29,72.07,56.4,37.45,28.29],["2017-01-20",88.79,73.92,58.75,39.13,28.82],["2017-01-27",89.22,73.7,59.71,41.0,29.69],["2017-02-03",89.59,74.02,60.28,42.69,30.5],["2017-02-10",89.33,73.94,60.64,43.31,31.29],["2017-02-17",88.72,73.33,60.99,43.86,31.73],["2017-02-24",88.73,73.72,61.38,43.97,32.1],["2017-03-03",89.29,74.41,61.78,44.6,32.29],["2017-03-10",88.74,74.1,61.89,45.11,32.67],["2017-03-17",88.83,74.4,62.43,45.56,33.06],["2017-03-24",88.87,74.54,62.41,45.72,33.29],["2017-03-31",88.45,74.74,63.12,46.01,32.62],["2017-04-07",89.34,75.64,63.3,45.47,32.94],["2017-04-13",89.2,74.56,63.21,44.69,32.68],["2017-04-21",87.74,73.87,62.14,42.19,30.97],["2017-04-28",84.68,72.2,60.66,39.28,30.2],["2017-05-05",82.91,71.3,59.05,38.11,29.34],["2017-05-12",80.82,70.25,58.01,37.2,28.76],["2017-05-19",77.84,68.01,55.51,36.2,26.94],["2017-05-26",76.8,67.52,54.42,36.7,26.69],["2017-06-02",76.41,67.21,53.26,37.3,26.66],["2017-06-09",79.33,68.62,53.86,39.11,27.9],["2017-06-16",81.76,70.67,56.72,41.59,29.08],["2017-06-23",82.4,72.05,57.85,42.04,29.48],["2017-06-30",81.65,71.73,57.33,41.65,29.21],["2017-07-07",80.96,71.34,55.89,40.91,28.55],["2017-07-14",82.71,71.92,57.05,40.8,29.2],["2017-07-21",88.68,74.0,58.43,41.85,28.66],["2017-07-28",88.61,74.37,59.51,42.28,28.17],["2017-08-04",91.58,75.2,60.24,42.55,27.92],["2017-08-11",92.5,75.16,60.85,42.52,26.55],["2017-08-18",93.01,76.27,60.84,42.41,26.34],["2017-08-25",94.71,76.24,62.41,42.75,25.64],["2017-08-31",96.38,76.62,62.41,43.02,25.75],["2017-09-08",96.12,76.92,63.18,43.85,25.69],["2017-09-15",97.7,77.31,64.2,44.75,26.32],["2017-09-22",97.6,78.77,66.23,46.03,26.85],["2017-09-29",97.51,79.28,67.26,46.35,27.42],["2017-10-06",98.06,79.19,67.26,46.37,27.72],["2017-10-13",96.93,79.0,67.33,46.41,27.68],["2017-10-20",97.63,79.41,67.74,46.8,27.73],["2017-10-27",97.38,79.19,67.73,46.44,27.54],["2017-11-03",92.27,78.87,67.05,46.09,27.31],["2017-11-10",96.26,78.47,66.56,44.88,26.88],["2017-11-17",95.16,77.71,65.67,44.16,26.63],["2017-11-24",94.52,77.25,65.05,43.99,26.57],["2017-12-01",94.66,77.84,65.23,44.2,26.62],["2017-12-08",94.82,78.09,65.66,45.38,26.74],["2017-12-15",97.51,79.5,66.33,46.09,26.94],["2017-12-22",97.35,79.63,66.7,46.34,27.12],["2017-12-29",97.95,79.79,67.06,46.81,27.49],["2018-01-05",98.64,79.99,67.78,47.31,27.94],["2018-01-12",99.3,81.25,68.3,48.02,28.2],["2018-01-19",99.79,82.0,68.97,48.59,28.49],["2018-01-26",101.57,84.6,70.37,48.84,29.3],["2018-02-02",102.5,84.69,71.89,49.58,29.87],["2018-02-09",102.7,86.15,72.13,50.16,30.33],["2018-02-16",102.72,86.05,72.37,50.32,30.31],["2018-02-23",105.32,87.35,73.12,51.04,31.0],["2018-03-02",102.13,86.29,72.92,49.98,30.67],["2018-03-09",100.29,84.56,71.0,48.45,29.43],["2018-03-16",98.32,81.96,69.13,46.12,28.58],["2018-03-23",93.95,79.73,66.65,43.55,27.47],["2018-03-30",92.58,77.31,64.42,42.19,26.32],["2018-04-06",91.16,75.77,63.49,41.48,26.21],["2018-04-13",90.96,74.55,62.37,41.08,25.68],["2018-04-20",90.35,73.98,61.64,41.13,25.69],["2018-04-27",91.26,74.52,61.88,41.85,25.85],["2018-05-04",93.6,75.38,62.78,42.79,26.18],["2018-05-11",94.89,76.27,63.35,44.02,26.89],["2018-05-18",98.37,77.99,64.88,45.55,27.55],["2018-05-25",98.86,78.53,65.26,45.85,27.72],["2018-06-01",98.92,79.14,65.68,46.82,28.08],["2018-06-08",101.32,80.13,66.66,47.74,28.57],["2018-06-15",102.99,80.5,66.83,48.08,28.64],["2018-06-22",102.79,81.11,67.68,48.71,29.5],["2018-06-29",102.17,81.14,67.15,47.82,29.03],["2018-07-06",102.18,81.14,66.76,47.63,28.69],["2018-07-13",103.92,81.17,67.23,47.64,28.42],["2018-07-20",105.78,80.46,65.65,47.48,28.31],["2018-07-27",105.17,79.78,63.35,45.06,27.48],["2018-08-03",104.26,76.65,61.02,42.0,26.72],["2018-08-10",102.55,75.16,59.98,40.48,26.25],["2018-08-17",100.73,73.62,58.18,39.74,25.84],["2018-08-24",99.78,71.96,55.88,38.09,25.09],["2018-08-31",98.35,71.33,54.69,37.72,24.36],["2018-09-07",97.14,70.68,54.35,38.01,24.34],["2018-09-14",97.37,70.35,54.05,38.39,24.21],["2018-09-21",99.41,70.67,53.59,38.72,23.54],["2018-09-28",98.98,70.36,53.39,38.71,24.14],["2018-10-05",98.2,70.29,53.61,38.88,24.12],["2018-10-12",97.92,70.25,53.46,38.43,23.78],["2018-10-19",97.69,70.34,52.52,38.13,23.52],["2018-10-26",97.43,70.07,51.76,37.31,23.2],["2018-11-02",96.01,69.54,50.63,36.07,22.71],["2018-11-09",96.08,67.73,49.88,34.64,22.23],["2018-11-16",94.59,66.9,48.64,32.29,21.59],["2018-11-23",92.39,65.04,47.33,29.87,19.73],["2018-11-30",92.32,64.86,46.62,28.85,19.12],["2018-12-07",92.78,64.73,46.59,29.56,19.04],["2018-12-14",93.25,65.74,46.61,30.43,19.01],["2018-12-21",95.63,65.98,46.92,30.54,19.23],["2018-12-28",95.46,65.55,46.66,30.29,19.0],["2019-01-04",95.64,65.56,47.09,30.26,19.1],["2019-01-11",96.22,65.86,47.83,31.0,19.44],["2019-01-18",98.07,66.74,50.08,32.3,20.1],["2019-01-25",98.26,68.29,51.04,33.51,20.44],["2019-02-01",98.53,68.64,52.44,34.37,21.21],["2019-02-08",98.43,68.84,53.19,34.45,21.09],["2019-02-15",95.41,69.68,54.66,35.4,21.38],["2019-02-22",95.12,70.06,56.05,37.01,21.88],["2019-03-01",95.51,70.22,56.68,38.48,22.21],["2019-03-08",95.99,71.01,57.35,40.32,22.84],["2019-03-15",95.05,70.98,56.66,39.76,23.0],["2019-03-22",94.01,69.35,55.21,37.8,21.88],["2019-03-29",93.69,68.49,54.48,36.75,21.71],["2019-04-05",85.16,67.18,53.39,37.3,21.63],["2019-04-12",87.1,67.64,53.2,37.59,21.82],["2019-04-19",86.43,67.23,52.75,38.23,22.93],["2019-04-26",83.0,67.29,52.57,38.44,22.38],["2019-05-03",85.02,67.95,53.11,39.0,22.9],["2019-05-10",85.25,67.96,53.29,39.15,23.34],["2019-05-17",83.51,67.32,52.84,38.78,23.0],["2019-05-24",82.43,66.58,52.36,38.0,22.47],["2019-05-31",80.73,65.32,51.43,37.36,22.15],["2019-06-07",78.56,64.93,50.56,36.66,21.98],["2019-06-14",75.98,64.08,49.54,35.84,21.57],["2019-06-21",74.52,63.8,49.21,36.06,21.92],["2019-06-28",73.86,63.55,49.17,35.81,21.73],["2019-07-05",73.84,63.43,49.17,35.99,21.71],["2019-07-12",74.6,63.69,49.32,35.89,21.49],["2019-07-19",74.36,63.16,48.76,34.71,21.19],["2019-07-26",73.94,63.0,48.73,33.7,20.78],["2019-08-02",71.22,62.09,48.66,33.32,20.45],["2019-08-09",71.05,61.45,47.63,32.34,20.04],["2019-08-16",69.0,60.32,46.95,31.45,19.45],["2019-08-23",68.36,59.59,46.29,30.96,19.13],["2019-08-30",66.7,58.45,45.93,31.22,19.2],["2019-09-06",66.74,58.35,46.02,31.57,19.51],["2019-09-13",66.76,58.55,46.91,32.17,19.91],["2019-09-20",68.02,58.79,47.23,32.69,20.16],["2019-09-27",68.51,58.77,47.73,33.1,20.48],["2019-10-04",68.77,58.75,47.86,33.19,20.58],["2019-10-11",69.3,59.08,48.15,33.65,21.08],["2019-10-18",69.91,59.74,48.67,34.36,21.34],["2019-10-25",70.19,60.06,49.44,35.1,21.75],["2019-11-01",70.04,60.43,49.57,35.06,22.42],["2019-11-08",69.8,59.97,49.74,34.51,21.89],["2019-11-15",69.2,59.36,49.19,33.88,21.62],["2019-11-22",69.32,59.12,48.98,33.52,21.32],["2019-11-29",69.54,59.25,49.02,33.71,21.46],["2019-12-06",69.31,59.41,49.46,34.43,21.67],["2019-12-13",69.28,59.32,49.57,34.52,21.61],["2019-12-20",69.05,59.22,49.43,34.16,21.48],["2019-12-27",68.89,59.17,49.17,33.83,21.43],["2020-01-03",68.42,58.8,49.01,33.77,21.25],["2020-01-10",68.78,59.48,49.39,34.27,21.27],["2020-01-17",69.25,59.94,49.58,35.08,21.77],["2020-01-24",69.76,60.4,50.23,35.44,21.91],["2020-01-31",68.98,59.84,50.18,35.48,21.84],["2020-02-07",69.56,60.84,51.45,36.4,22.16],["2020-02-14",69.77,61.05,51.68,36.67,22.46],["2020-02-21",69.88,61.13,51.27,35.92,22.39],["2020-02-28",69.19,60.95,50.7,34.82,22.28],["2020-03-06",68.75,60.44,49.15,33.79,21.92],["2020-03-13",68.13,59.51,47.8,32.77,21.56],["2020-03-20",67.4,58.53,46.61,31.84,21.31],["2020-03-27",66.73,57.65,45.42,31.5,21.07],["2020-04-03",66.52,56.51,44.49,30.83,20.78],["2020-04-10",65.41,56.04,43.68,30.34,20.46],["2020-04-17",62.71,53.55,41.87,28.23,19.52],["2020-04-24",59.16,51.07,39.59,26.03,18.27],["2020-05-01",56.98,49.97,37.98,24.24,17.32],["2020-05-08",55.17,48.61,37.09,24.15,17.31],["2020-05-15",55.33,48.7,37.94,25.71,17.61],["2020-05-22",56.37,51.17,39.67,27.98,17.82],["2020-05-29",56.54,51.11,40.4,29.37,18.26],["2020-06-05",56.42,49.85,40.22,27.66,18.24],["2020-06-12",55.48,48.03,38.61,25.38,18.06],["2020-06-19",54.36,46.91,37.64,24.34,17.9],["2020-06-26",53.63,45.35,36.74,23.89,17.7],["2020-07-03",53.23,44.17,35.93,23.56,17.48],["2020-07-10",53.01,45.13,36.1,23.39,17.23],["2020-07-17",53.8,45.05,36.5,24.24,17.73],["2020-07-24",54.16,45.57,36.93,25.36,18.0],["2020-07-31",53.68,45.56,37.22,25.48,18.15],["2020-08-07",53.46,45.45,37.39,25.12,18.1],["2020-08-14",53.05,44.92,36.83,24.05,17.97],["2020-08-21",52.88,44.24,36.05,23.57,17.78],["2020-08-28",52.33,43.97,36.01,22.86,17.61],["2020-09-04",51.91,44.21,35.76,22.63,17.01],["2020-09-11",51.97,43.99,35.65,22.65,16.94],["2020-09-18",53.63,44.77,36.62,23.57,17.37],["2020-09-25",55.33,45.77,37.58,25.13,17.82],["2020-10-02",55.82,46.68,38.56,26.03,18.36],["2020-10-09",56.53,47.07,39.13,27.02,18.74],["2020-10-16",57.25,48.17,40.94,29.13,19.18],["2020-10-23",57.81,48.94,41.6,29.47,19.56],["2020-10-30",58.02,48.86,41.21,28.91,19.38],["2020-11-06",58.11,49.6,41.15,28.93,19.19],["2020-11-13",58.67,49.34,41.36,28.94,19.16],["2020-11-20",51.52,51.59,42.4,29.88,19.57],["2020-11-27",62.68,54.09,45.26,31.78,19.59],["2020-12-04",67.05,57.2,47.99,33.47,21.06],["2020-12-11",72.12,61.7,53.18,36.11,21.82],["2020-12-18",80.35,66.58,62.02,41.11,23.31],["2020-12-25",85.1,71.65,66.85,44.8,24.54],["2020-12-31",83.69,72.34,66.01,44.9,24.94],["2021-01-08",84.67,78.16,68.34,45.56,25.23],["2021-01-15",88.34,82.95,72.37,47.78,26.55],["2021-01-22",90.22,85.98,76.48,49.95,27.51],["2021-01-29",89.08,81.86,72.37,46.69,26.59],["2021-02-05",86.22,77.95,67.54,39.51,25.21],["2021-02-12",86.4,74.16,65.56,38.41,24.6],["2021-02-19",85.88,74.13,65.58,39.57,24.96],["2021-02-26",84.35,72.06,63.6,39.4,24.53],["2021-03-05",84.66,70.83,61.77,38.67,24.09],["2021-03-12",84.79,70.24,59.88,37.45,23.77],["2021-03-19",85.53,69.34,59.34,36.81,23.32],["2021-03-26",88.02,71.32,61.85,39.2,23.41],["2021-04-02",90.12,75.05,66.3,43.9,24.71],["2021-04-09",89.75,76.38,67.63,45.44,25.58],["2021-04-16",89.83,77.66,69.96,47.71,25.7],["2021-04-23",90.58,81.2,72.93,50.35,26.58],["2021-04-30",91.0,83.25,74.11,52.19,27.03],["2021-05-07",91.45,84.34,75.43,53.64,27.92],["2021-05-14",95.08,85.95,79.64,55.98,28.66],["2021-05-21",96.23,87.78,79.42,55.64,28.64],["2021-05-28",97.7,88.41,77.28,53.62,28.56],["2021-06-04",99.71,90.61,79.64,55.04,30.42],["2021-06-11",103.99,93.4,83.8,58.44,31.08],["2021-06-18",106.09,95.24,85.62,61.75,32.55],["2021-06-25",109.95,100.26,88.87,64.57,33.89],["2021-07-02",112.07,102.34,89.5,63.98,34.55],["2021-07-09",113.44,102.23,90.13,63.59,35.36],["2021-07-16",116.11,105.59,93.73,64.92,37.05],["2021-07-23",119.26,107.35,96.75,67.9,38.49],["2021-07-30",122.43,113.86,98.91,69.32,39.46],["2021-08-06",125.15,115.55,100.3,69.53,40.21],["2021-08-13",126.81,118.53,105.72,71.45,41.36],["2021-08-20",129.66,123.54,106.18,71.62,42.02],["2021-08-27",131.97,124.12,107.56,73.04,43.42],["2021-09-03",137.5,125.9,108.85,74.98,44.35],["2021-09-10",139.68,127.97,110.12,76.68,45.72],["2021-09-17",148.07,135.13,117.24,81.4,47.67],["2021-09-24",160.5,150.72,132.66,91.28,50.2],["2021-10-01",179.44,166.11,150.5,107.96,55.71],["2021-10-08",193.06,188.64,160.87,122.08,64.38],["2021-10-15",219.24,201.98,197.04,143.14,72.69],["2021-10-22",224.11,216.6,210.36,154.61,79.13],["2021-10-29",216.23,202.37,185.44,135.4,69.93],["2021-11-05",171.07,149.5,128.5,89.89,57.36],["2021-11-12",154.91,136.9,118.46,82.74,51.06],["2021-11-19",147.55,126.86,106.15,70.7,45.73],["2021-11-26",154.66,130.63,108.57,74.04,47.5],["2021-12-03",149.76,129.44,103.93,70.58,45.88],["2021-12-10",149.54,126.66,100.32,65.94,45.31],["2021-12-17",150.98,123.84,98.2,65.77,43.89],["2021-12-24",153.43,124.49,95.73,64.7,43.7],["2021-12-31",151.06,121.91,93.72,60.6,41.76],["2022-01-07",154.92,122.71,93.01,60.97,42.43],["2022-01-14",155.91,123.42,93.37,58.15,43.36],["2022-01-21",158.21,125.77,95.32,60.72,43.8],["2022-01-28",165.89,132.43,103.0,67.34,45.94],["2022-02-04",168.07,136.27,111.3,71.97,47.55],["2022-02-11",170.86,140.51,116.14,76.59,49.31],["2022-02-18",172.12,141.11,117.05,76.57,49.53],["2022-02-25",183.35,146.03,118.26,79.54,52.68],["2022-03-04",240.81,180.13,136.45,95.46,61.64],["2022-03-11",308.31,220.7,170.32,120.86,72.44],["2022-03-18",274.33,206.01,160.98,110.69,67.48],["2022-03-25",255.35,197.47,161.16,108.87,65.73],["2022-04-01",245.49,172.41,148.19,98.29,61.19],["2022-04-08",244.58,174.35,145.8,94.95,58.76],["2022-04-15",261.57,183.87,146.59,87.71,57.33],["2022-04-22",265.76,190.87,142.01,88.49,54.99],["2022-04-29",266.92,192.52,143.02,88.95,55.04],["2022-05-06",270.0,194.58,141.89,89.68,55.01],["2022-05-13",276.51,195.94,144.54,89.62,55.37],["2022-05-20",280.0,197.44,144.02,89.21,55.79],["2022-05-27",283.42,195.28,142.97,87.88,53.98],["2022-06-03",278.91,189.7,138.46,85.55,52.6],["2022-06-10",277.19,189.28,137.66,85.84,51.3],["2022-06-17",272.45,189.13,138.32,86.61,53.21],["2022-06-24",272.03,192.3,139.49,86.71,53.22],["2022-07-01",266.27,188.59,137.53,85.31,53.01],["2022-07-08",268.2,187.9,132.49,84.99,53.0],["2022-07-15",265.55,183.89,129.68,84.43,52.56],["2022-07-22",262.37,176.9,124.99,82.67,52.64],["2022-07-29",259.13,173.42,116.91,80.75,51.78],["2022-08-05",255.02,170.31,110.55,77.83,50.58],["2022-08-12",250.39,165.8,103.36,73.03,49.29],["2022-08-19",248.37,164.5,103.11,73.46,49.41],["2022-08-26",251.06,164.91,109.54,75.66,50.53],["2022-09-02",254.46,167.98,114.49,79.07,51.66],["2022-09-09",258.68,170.84,119.37,82.58,53.02],["2022-09-16",261.19,173.66,125.78,87.53,54.21],["2022-09-23",263.07,177.86,134.32,91.39,55.38],["2022-09-30",264.18,178.77,135.49,92.1,56.24],["2022-10-07",260.37,175.4,132.24,89.75,53.06],["2022-10-14",258.26,174.0,132.38,91.58,54.63],["2022-10-21",256.77,172.24,131.99,92.42,55.83],["2022-10-28",255.15,171.24,131.64,92.79,55.76],["2022-11-04",252.64,170.32,130.85,91.82,54.94],["2022-11-11",247.75,165.98,127.38,87.76,53.54],["2022-11-18",242.16,162.73,124.49,86.94,53.52],["2022-11-25",240.48,160.5,121.25,87.12,52.56],["2022-12-02",238.69,159.09,119.68,88.07,52.92],["2022-12-09",238.4,159.04,119.28,91.02,53.31],["2022-12-16",238.5,158.17,120.25,93.13,53.88],["2022-12-23",237.73,156.6,119.29,94.28,54.42],["2022-12-30",235.57,154.45,116.66,90.45,52.97],["2023-01-06",230.66,150.18,113.38,87.55,51.79],["2023-01-13",228.41,145.85,111.89,85.34,51.32],["2023-01-20",226.01,142.39,108.89,82.65,51.0],["2023-01-27",222.55,139.34,106.13,80.39,50.34],["2023-02-03",210.12,134.1,101.46,77.99,49.61],["2023-02-10",196.99,125.65,94.78,71.69,48.25],["2023-02-17",189.8,120.72,90.52,68.18,46.81],["2023-02-24",190.5,123.12,94.27,73.42,49.9],["2023-03-03",190.1,122.36,94.6,72.43,48.26],["2023-03-10",187.93,120.31,95.39,73.84,48.3],["2023-03-17",183.6,119.78,96.24,74.24,49.94],["2023-03-24",179.84,118.98,96.5,74.55,49.73],["2023-03-31",178.77,118.18,97.2,73.53,49.39],["2023-04-07",175.57,117.94,95.82,72.48,48.72],["2023-04-14",173.78,116.21,94.48,71.01,47.33],["2023-04-21",173.47,115.76,94.58,71.3,46.91],["2023-04-28",171.19,115.46,94.48,71.31,47.27],["2023-05-05",166.99,114.96,95.65,71.39,47.55],["2023-05-12",163.59,113.56,93.81,71.04,46.66],["2023-05-19",152.44,111.82,92.3,68.99,46.27],["2023-05-26",148.59,106.21,86.93,65.28,44.82],["2023-06-02",137.35,101.21,81.36,61.34,42.7],["2023-06-09",132.53,92.67,76.65,56.6,37.55],["2023-06-16",127.59,88.45,70.07,52.4,33.46],["2023-06-23",124.02,87.71,67.67,51.67,32.24],["2023-06-30",123.17,86.6,67.42,51.32,30.88],["2023-07-07",122.75,86.56,69.99,52.88,31.19],["2023-07-14",119.79,87.12,71.9,52.47,31.71],["2023-07-21",118.55,87.03,72.7,52.53,31.99],["2023-07-28",117.4,86.8,72.69,51.88,31.38],["2023-08-04",114.96,86.09,71.43,51.53,31.68],["2023-08-11",114.89,87.02,71.53,51.09,31.27],["2023-08-18",114.61,86.53,70.08,50.39,30.98],["2023-08-25",113.8,86.03,70.02,50.38,30.65],["2023-09-01",113.42,86.25,70.52,50.66,31.29],["2023-09-08",113.59,87.31,71.37,51.03,31.44],["2023-09-15",115.79,87.79,72.49,52.23,32.25],["2023-09-22",119.17,89.56,75.4,54.06,33.37],["2023-09-29",120.52,91.61,77.02,55.82,34.85],["2023-10-06",121.23,93.28,78.95,57.64,36.72],["2023-10-13",121.83,95.35,80.39,60.25,38.58],["2023-10-20",122.02,96.96,82.64,61.7,40.16],["2023-10-27",121.73,96.5,81.64,60.69,39.92],["2023-11-03",119.41,93.43,80.33,58.46,38.82],["2023-11-10",119.24,92.25,79.74,57.78,38.52],["2023-11-17",118.39,92.79,78.96,58.2,38.43],["2023-11-24",117.94,93.08,79.79,58.94,37.76],["2023-12-01",117.45,92.51,79.88,58.45,37.89],["2023-12-08",117.82,92.78,79.78,58.4,38.42],["2023-12-15",117.84,93.16,79.38,58.05,37.96],["2023-12-22",119.62,93.03,79.83,58.5,38.01],["2023-12-29",119.67,93.01,79.35,58.01,37.7],["2024-01-05",120.21,93.08,79.35,57.82,37.24],["2024-01-12",120.05,93.03,79.48,57.71,37.11],["2024-01-19",120.08,92.93,79.42,57.56,37.4],["2024-01-26",119.31,92.84,79.33,57.07,37.31],["2024-02-02",118.56,92.41,79.14,57.01,37.06],["2024-02-09",118.01,93.09,78.54,56.53,36.62],["2024-02-16",117.88,93.37,78.67,56.86,36.59],["2024-02-23",118.41,94.26,79.43,57.41,36.92],["2024-03-01",120.12,95.14,79.73,58.01,37.23],["2024-03-08",121.55,96.17,79.98,58.17,37.37],["2024-03-15",122.98,96.41,78.92,57.67,36.9],["2024-03-22",122.21,95.08,77.03,56.43,35.86],["2024-03-29",121.57,94.02,75.45,55.7,35.31],["2024-04-05",121.54,92.92,74.28,54.83,34.87],["2024-04-12",117.61,89.8,71.56,53.81,34.39],["2024-04-19",118.91,91.16,72.12,54.76,34.39],["2024-04-26",119.93,91.95,72.05,54.63,34.56],["2024-05-03",121.09,92.88,72.24,54.95,34.77],["2024-05-10",124.09,94.58,73.37,56.04,35.13],["2024-05-17",126.43,96.09,73.94,56.25,35.47],["2024-05-24",127.12,96.67,74.4,56.43,35.61],["2024-05-31",128.12,96.87,73.86,55.99,35.35],["2024-06-07",128.03,96.21,73.45,55.31,34.9],["2024-06-14",126.65,96.01,72.99,54.55,34.44],["2024-06-21",125.62,94.66,72.49,54.27,34.03],["2024-06-28",124.39,93.69,72.0,53.58,33.57],["2024-07-05",124.26,92.33,71.41,53.0,33.14],["2024-07-12",123.24,92.16,71.42,52.7,33.11],["2024-07-19",123.18,92.22,71.64,52.72,32.83],["2024-07-26",123.59,92.45,71.7,52.44,32.59],["2024-08-02",125.32,92.68,71.9,52.16,32.49],["2024-08-09",126.69,92.98,72.05,51.83,32.13],["2024-08-16",127.72,92.87,72.24,51.18,31.78],["2024-08-23",128.33,92.73,72.1,50.64,31.36],["2024-08-30",128.17,92.42,71.96,50.08,31.03],["2024-09-06",129.53,92.21,71.8,50.38,31.03],["2024-09-13",129.46,92.42,72.03,50.91,31.16],["2024-09-20",127.58,93.14,72.51,51.49,31.35],["2024-09-27",127.5,93.19,73.05,51.75,31.55],["2024-10-04",128.47,93.6,73.09,52.07,31.91],["2024-10-11",129.45,93.51,73.19,52.34,32.2],["2024-10-18",130.32,93.75,73.25,52.22,32.14],["2024-10-25",130.38,93.8,73.45,52.31,32.29],["2024-11-01",130.98,93.85,73.25,52.22,32.28],["2024-11-08",131.58,93.93,73.28,52.32,32.37],["2024-11-15",131.64,93.91,73.4,52.34,32.43],["2024-11-22",132.31,93.85,73.31,52.19,32.37],["2024-11-29",131.35,94.01,73.35,52.11,32.25],["2024-12-06",130.66,94.33,72.99,51.84,31.93],["2024-12-13",128.78,93.3,72.8,51.29,31.57],["2024-12-20",126.05,91.65,72.29,50.61,31.2],["2024-12-27",124.22,90.75,71.74,50.03,30.93],["2025-01-03",122.82,89.52,71.36,49.97,30.75],["2025-01-10",120.46,88.76,70.92,49.67,30.43],["2025-01-17",118.16,87.99,70.09,49.11,30.07],["2025-01-24",117.56,87.31,69.45,48.76,29.82],["2025-01-31",116.31,86.83,69.14,48.56,29.7],["2025-02-07",115.17,86.42,68.78,48.48,29.5],["2025-02-14",113.02,86.1,67.72,48.7,30.06],["2025-02-21",111.68,85.74,69.12,49.13,30.82],["2025-02-28",110.42,84.75,69.22,49.4,31.59],["2025-03-07",110.31,85.23,69.97,49.86,32.03],["2025-03-14",110.89,85.37,69.58,49.92,32.28],["2025-03-21",111.03,85.13,69.35,49.68,32.36],["2025-03-28",109.42,84.13,67.96,49.66,32.83],["2025-04-04",109.04,82.91,67.15,49.86,33.04],["2025-04-11",108.14,82.52,65.45,49.89,33.09],["2025-04-18",106.88,81.59,64.62,49.62,33.15],["2025-04-25",105.7,80.83,63.15,48.99,33.73],["2025-05-02",104.3,80.31,62.47,48.42,33.3],["2025-05-09",103.59,79.92,62.51,48.23,33.42],["2025-05-16",103.31,77.92,61.99,48.64,33.85],["2025-05-23",102.68,77.19,60.99,47.46,33.41],["2025-05-30",101.23,75.93,59.15,46.2,32.66],["2025-06-06",100.43,75.2,57.9,44.21,32.2],["2025-06-13",99.33,74.19,56.5,42.0,31.43],["2025-06-20",98.71,72.98,55.4,40.64,30.22],["2025-06-27",97.89,73.03,55.14,40.67,29.91],["2025-07-04",97.89,72.68,55.05,40.45,29.48],["2025-07-11",97.93,72.92,55.03,40.6,29.43],["2025-07-18",97.69,73.17,55.61,40.74,29.42],["2025-07-25",98.15,73.55,55.91,40.92,29.6],["2025-08-01",98.94,74.22,56.18,41.2,29.77],["2025-08-08",99.84,74.71,57.12,41.92,30.37],["2025-08-15",100.15,75.45,58.31,43.06,30.81],["2025-08-22",100.55,76.15,58.57,43.33,31.09],["2025-08-29",100.31,76.51,58.7,43.15,31.05],["2025-09-05",100.04,76.12,58.04,42.5,30.81],["2025-09-12",99.82,76.0,58.01,42.62,30.53],["2025-09-19",99.38,76.24,58.9,43.08,30.74],["2025-09-26",99.69,76.43,59.23,43.79,30.82],["2025-10-03",99.98,76.73,59.43,43.78,31.0],["2025-10-10",100.0,76.89,60.12,43.93,31.27],["2025-10-17",100.76,77.76,60.76,44.8,31.56],["2025-10-24",100.9,78.0,61.5,45.26,31.86],["2025-10-31",100.84,78.67,61.88,45.59,31.98],["2025-11-07",101.77,79.6,63.13,47.09,32.42],["2025-11-14",102.32,80.52,64.02,48.52,32.58],["2025-11-21",102.79,81.7,64.75,49.19,32.8],["2025-11-28",103.1,81.65,65.42,48.75,32.47],["2025-12-05",103.36,81.34,64.3,47.84,32.13],["2025-12-12",103.17,80.88,63.16,46.73,32.06],["2025-12-19",102.47,80.33,61.81,45.87,31.44],["2025-12-26",102.1,80.17,61.28,45.45,31.11],["2026-01-02",102.15,80.15,60.91,45.46,30.97],["2026-01-09",102.35,80.55,61.54,46.23,31.11],["2026-01-16",102.76,80.96,61.84,46.8,31.42],["2026-01-23",103.21,81.39,61.96,47.31,31.74],["2026-01-30",104.12,81.88,63.26,47.7,32.07],["2026-02-06",104.96,82.93,65.8,49.27,32.8],["2026-02-13",106.03,84.04,67.02,51.59,33.76],["2026-02-20",107.3,85.16,67.86,52.64,34.33],["2026-02-27",108.3,86.66,70.35,55.39,35.15],["2026-03-06",111.11,87.71,72.63,58.21,35.84],["2026-03-13",114.02,88.92,73.62,59.97,36.03],["2026-03-20",115.36,88.96,74.21,60.03,36.13],["2026-03-27",116.94,89.75,74.89,60.31,36.41]];
+let newcRaw = [["2020-01-01",64.73],["2020-01-02",64.73],["2020-01-03",64.8],["2020-01-06",66.01],["2020-01-07",66.17],["2020-01-08",66.83],["2020-01-09",67.59],["2020-01-10",68.67],["2020-01-13",75.07],["2020-01-14",74.73],["2020-01-15",74.52],["2020-01-16",74.22],["2020-01-17",73.78],["2020-01-20",70.33],["2020-01-21",69.89],["2020-01-22",69.61],["2020-01-23",68.46],["2020-01-24",68.45],["2020-01-27",67.23],["2020-01-28",67.24],["2020-01-29",67.08],["2020-01-30",66.97],["2020-01-31",66.83],["2020-02-03",65.71],["2020-02-04",65.96],["2020-02-05",65.61],["2020-02-06",66.66],["2020-02-07",66.86],["2020-02-10",68.43],["2020-02-11",68.58],["2020-02-12",68.67],["2020-02-13",69.2],["2020-02-14",69.32],["2020-02-17",69.5],["2020-02-18",69.35],["2020-02-19",68.47],["2020-02-20",68.36],["2020-02-21",68.21],["2020-02-24",66.91],["2020-02-25",66.55],["2020-02-26",66.22],["2020-02-27",66.54],["2020-02-28",66.77],["2020-03-02",66.18],["2020-03-03",65.89],["2020-03-04",65.99],["2020-03-05",65.99],["2020-03-06",65.99],["2020-03-09",65.5],["2020-03-10",65.43],["2020-03-11",65.39],["2020-03-12",65.29],["2020-03-13",65.42],["2020-03-16",66.0],["2020-03-17",66.07],["2020-03-18",66.29],["2020-03-19",66.49],["2020-03-20",66.57],["2020-03-23",66.55],["2020-03-24",66.0],["2020-03-25",66.58],["2020-03-26",67.81],["2020-03-27",68.37],["2020-03-30",69.48],["2020-03-31",69.41],["2020-04-01",69.19],["2020-04-02",68.71],["2020-04-03",68.33],["2020-04-06",64.61],["2020-04-07",64.36],["2020-04-08",64.09],["2020-04-09",63.54],["2020-04-10",63.54],["2020-04-13",63.54],["2020-04-14",61.13],["2020-04-15",59.89],["2020-04-16",59.05],["2020-04-17",58.59],["2020-04-20",56.68],["2020-04-21",55.99],["2020-04-22",55.08],["2020-04-23",54.11],["2020-04-24",53.74],["2020-04-27",49.38],["2020-04-28",49.26],["2020-04-29",49.46],["2020-04-30",50.43],["2020-05-01",50.76],["2020-05-04",51.06],["2020-05-05",50.71],["2020-05-06",50.73],["2020-05-07",51.03],["2020-05-08",51.71],["2020-05-11",51.75],["2020-05-12",51.87],["2020-05-13",51.79],["2020-05-14",50.39],["2020-05-15",50.83],["2020-05-18",52.63],["2020-05-19",52.38],["2020-05-20",52.68],["2020-05-21",53.24],["2020-05-22",53.98],["2020-05-25",54.5],["2020-05-26",54.82],["2020-05-27",54.91],["2020-05-28",54.93],["2020-05-29",54.9],["2020-06-01",54.91],["2020-06-02",55.22],["2020-06-03",55.54],["2020-06-04",55.43],["2020-06-05",55.25],["2020-06-08",53.78],["2020-06-09",53.52],["2020-06-10",53.18],["2020-06-11",52.81],["2020-06-12",52.75],["2020-06-15",50.84],["2020-06-16",51.38],["2020-06-17",50.62],["2020-06-18",50.5],["2020-06-19",50.48],["2020-06-22",51.28],["2020-06-23",51.34],["2020-06-24",51.09],["2020-06-25",51.02],["2020-06-26",51.17],["2020-06-29",50.25],["2020-06-30",50.19],["2020-07-01",50.81],["2020-07-02",51.53],["2020-07-03",51.58],["2020-07-06",52.32],["2020-07-07",52.79],["2020-07-08",52.65],["2020-07-09",52.83],["2020-07-10",52.72],["2020-07-13",51.5],["2020-07-14",52.38],["2020-07-15",52.58],["2020-07-16",52.45],["2020-07-17",52.48],["2020-07-20",51.78],["2020-07-21",51.77],["2020-07-22",51.76],["2020-07-23",51.78],["2020-07-24",51.72],["2020-07-27",50.63],["2020-07-28",50.76],["2020-07-29",50.67],["2020-07-30",50.6],["2020-07-31",50.73],["2020-08-03",53.13],["2020-08-04",52.82],["2020-08-05",52.13],["2020-08-06",51.68],["2020-08-07",51.42],["2020-08-10",48.75],["2020-08-11",49.12],["2020-08-12",49.16],["2020-08-13",49.37],["2020-08-14",49.52],["2020-08-17",50.97],["2020-08-18",50.71],["2020-08-19",50.57],["2020-08-20",50.46],["2020-08-21",50.19],["2020-08-24",48.49],["2020-08-25",47.87],["2020-08-26",47.62],["2020-08-27",47.53],["2020-08-28",47.99],["2020-08-31",49.38],["2020-09-01",50.26],["2020-09-02",50.15],["2020-09-03",48.66],["2020-09-04",48.17],["2020-09-07",48.38],["2020-09-08",48.51],["2020-09-09",49.16],["2020-09-10",49.47],["2020-09-11",49.85],["2020-09-14",52.67],["2020-09-15",52.7],["2020-09-16",52.76],["2020-09-17",53.21],["2020-09-18",53.66],["2020-09-21",59.27],["2020-09-22",59.42],["2020-09-23",59.53],["2020-09-24",59.84],["2020-09-25",59.97],["2020-09-28",58.08],["2020-09-29",57.95],["2020-09-30",57.81],["2020-10-01",58.11],["2020-10-02",58.21],["2020-10-05",57.83],["2020-10-06",57.98],["2020-10-07",57.95],["2020-10-08",57.99],["2020-10-09",57.73],["2020-10-12",55.75],["2020-10-13",53.46],["2020-10-14",53.1],["2020-10-15",53.44],["2020-10-16",54.42],["2020-10-19",59.63],["2020-10-20",59.94],["2020-10-21",60.04],["2020-10-22",60.03],["2020-10-23",60.09],["2020-10-26",60.38],["2020-10-27",60.44],["2020-10-28",60.42],["2020-10-29",60.35],["2020-10-30",60.35],["2020-11-02",61.25],["2020-11-03",61.31],["2020-11-04",61.23],["2020-11-05",62.19],["2020-11-06",62.45],["2020-11-09",63.34],["2020-11-10",62.79],["2020-11-11",62.59],["2020-11-12",62.52],["2020-11-13",62.53],["2020-11-16",61.74],["2020-11-17",61.97],["2020-11-18",62.15],["2020-11-19",62.45],["2020-11-20",62.82],["2020-11-23",64.94],["2020-11-24",65.82],["2020-11-25",67.08],["2020-11-26",67.81],["2020-11-27",68.22],["2020-11-30",70.75],["2020-12-01",70.17],["2020-12-02",70.09],["2020-12-03",71.08],["2020-12-04",72.31],["2020-12-07",76.54],["2020-12-08",76.66],["2020-12-09",76.93],["2020-12-10",77.29],["2020-12-11",77.91],["2020-12-14",82.89],["2020-12-15",83.83],["2020-12-16",84.14],["2020-12-17",84.06],["2020-12-18",83.96],["2020-12-21",84.94],["2020-12-22",84.63],["2020-12-23",84.66],["2020-12-24",85.31],["2020-12-25",85.31],["2020-12-28",87.75],["2020-12-29",85.95],["2020-12-30",84.55],["2020-12-31",83.72],["2021-01-01",83.72],["2021-01-04",82.19],["2021-01-05",81.78],["2021-01-06",80.87],["2021-01-07",80.16],["2021-01-08",80.78],["2021-01-11",85.47],["2021-01-12",85.59],["2021-01-13",87.37],["2021-01-14",87.65],["2021-01-15",87.98],["2021-01-18",90.59],["2021-01-19",89.11],["2021-01-20",87.93],["2021-01-21",87.9],["2021-01-22",87.92],["2021-01-25",89.06],["2021-01-26",89.28],["2021-01-27",89.85],["2021-01-28",90.12],["2021-01-29",90.46],["2021-02-01",89.56],["2021-02-02",87.53],["2021-02-03",85.99],["2021-02-04",85.7],["2021-02-05",85.65],["2021-02-08",88.39],["2021-02-09",87.95],["2021-02-10",88.56],["2021-02-11",88.53],["2021-02-12",88.4],["2021-02-15",88.0],["2021-02-16",87.19],["2021-02-17",86.67],["2021-02-18",86.09],["2021-02-19",85.79],["2021-02-22",81.02],["2021-02-23",80.91],["2021-02-24",80.72],["2021-02-25",81.46],["2021-02-26",82.16],["2021-03-01",89.8],["2021-03-02",90.33],["2021-03-03",90.72],["2021-03-04",90.93],["2021-03-05",90.84],["2021-03-08",88.94],["2021-03-09",88.84],["2021-03-10",89.26],["2021-03-11",89.64],["2021-03-12",90.3],["2021-03-15",92.92],["2021-03-16",93.29],["2021-03-17",91.71],["2021-03-18",92.01],["2021-03-19",92.54],["2021-03-22",104.57],["2021-03-23",104.21],["2021-03-24",103.98],["2021-03-25",104.05],["2021-03-26",103.95],["2021-03-29",98.38],["2021-03-30",99.76],["2021-03-31",100.59],["2021-04-01",99.38],["2021-04-06",95.5],["2021-04-07",94.54],["2021-04-08",93.19],["2021-04-09",92.7],["2021-04-12",88.0],["2021-04-13",89.72],["2021-04-14",90.58],["2021-04-15",91.38],["2021-04-16",91.75],["2021-04-19",93.0],["2021-04-20",92.88],["2021-04-21",91.97],["2021-04-22",91.64],["2021-04-23",90.89],["2021-04-26",88.5],["2021-04-27",88.94],["2021-04-28",89.46],["2021-04-29",89.85],["2021-04-30",91.71],["2021-05-03",96.25],["2021-05-04",95.53],["2021-05-05",94.78],["2021-05-06",95.16],["2021-05-07",95.28],["2021-05-10",98.46],["2021-05-11",98.63],["2021-05-12",99.37],["2021-05-13",100.22],["2021-05-14",100.43],["2021-05-17",101.46],["2021-05-18",100.56],["2021-05-19",101.09],["2021-05-20",101.63],["2021-05-21",104.5],["2021-05-24",116.0],["2021-05-25",119.13],["2021-05-26",120.9],["2021-05-27",123.87],["2021-05-28",123.88],["2021-05-31",123.75],["2021-06-01",123.58],["2021-06-02",123.22],["2021-06-03",123.23],["2021-06-04",122.4],["2021-06-07",122.82],["2021-06-08",124.63],["2021-06-09",125.29],["2021-06-10",125.44],["2021-06-11",125.4],["2021-06-14",128.81],["2021-06-15",129.32],["2021-06-16",129.53],["2021-06-17",130.02],["2021-06-18",130.5],["2021-06-21",131.86],["2021-06-22",131.59],["2021-06-23",131.48],["2021-06-24",131.47],["2021-06-25",132.42],["2021-06-28",136.38],["2021-06-29",136.57],["2021-06-30",136.96],["2021-07-01",138.94],["2021-07-02",140.08],["2021-07-05",146.75],["2021-07-06",147.33],["2021-07-07",145.5],["2021-07-08",144.38],["2021-07-09",144.09],["2021-07-12",140.63],["2021-07-13",141.16],["2021-07-14",142.93],["2021-07-15",143.95],["2021-07-16",146.22],["2021-07-19",163.0],["2021-07-20",164.75],["2021-07-21",162.83],["2021-07-22",162.11],["2021-07-23",161.16],["2021-07-26",157.5],["2021-07-27",158.5],["2021-07-28",159.17],["2021-07-29",158.2],["2021-07-30",158.38],["2021-08-02",157.5],["2021-08-03",157.41],["2021-08-04",158.05],["2021-08-05",158.91],["2021-08-06",159.68],["2021-08-09",170.0],["2021-08-10",172.13],["2021-08-11",173.92],["2021-08-12",175.34],["2021-08-13",175.76],["2021-08-16",177.5],["2021-08-17",177.5],["2021-08-18",177.5],["2021-08-19",175.97],["2021-08-20",174.74],["2021-08-23",170.0],["2021-08-24",172.75],["2021-08-25",174.33],["2021-08-26",175.75],["2021-08-27",175.58],["2021-08-30",172.9],["2021-08-31",173.06],["2021-09-01",173.25],["2021-09-02",174.62],["2021-09-03",175.47],["2021-09-06",177.5],["2021-09-07",176.56],["2021-09-08",177.33],["2021-09-09",177.48],["2021-09-10",177.7],["2021-09-13",181.0],["2021-09-14",181.75],["2021-09-15",182.5],["2021-09-16",182.88],["2021-09-17",182.6],["2021-09-20",188.5],["2021-09-21",188.75],["2021-09-22",188.42],["2021-09-23",187.56],["2021-09-24",188.72],["2021-09-27",195.75],["2021-09-28",200.56],["2021-09-29",201.81],["2021-09-30",203.2],["2021-10-01",206.31],["2021-10-04",229.63],["2021-10-05",233.57],["2021-10-06",247.53],["2021-10-07",245.0],["2021-10-08",244.11],["2021-10-11",235.0],["2021-10-12",245.76],["2021-10-13",247.99],["2021-10-14",250.11],["2021-10-15",253.55],["2021-10-18",246.07],["2021-10-19",243.35],["2021-10-20",238.64],["2021-10-21",231.65],["2021-10-22",221.79],["2021-10-25",187.34],["2021-10-26",194.07],["2021-10-27",195.17],["2021-10-28",190.0],["2021-10-29",186.0],["2021-11-01",152.96],["2021-11-02",149.55],["2021-11-03",148.18],["2021-11-04",151.64],["2021-11-05",152.78],["2021-11-08",159.09],["2021-11-09",162.74],["2021-11-10",162.75],["2021-11-11",159.02],["2021-11-12",156.28],["2021-11-15",143.13],["2021-11-16",145.13],["2021-11-17",148.69],["2021-11-18",152.52],["2021-11-19",154.42],["2021-11-22",161.79],["2021-11-23",166.4],["2021-11-24",169.0],["2021-11-25",172.34],["2021-11-26",173.23],["2021-11-29",170.32],["2021-11-30",164.28],["2021-12-01",161.62],["2021-12-02",160.3],["2021-12-03",159.76],["2021-12-06",153.39],["2021-12-07",153.62],["2021-12-08",154.5],["2021-12-09",156.46],["2021-12-10",157.65],["2021-12-13",169.13],["2021-12-14",171.93],["2021-12-15",176.51],["2021-12-16",178.13],["2021-12-17",181.63],["2021-12-20",186.43],["2021-12-21",187.64],["2021-12-22",187.56],["2021-12-23",187.37],["2021-12-24",186.24],["2021-12-27",176.67],["2021-12-28",175.76],["2021-12-29",176.08],["2021-12-30",170.59],["2021-12-31",165.86],["2022-01-03",175.0],["2022-01-04",179.68],["2022-01-05",183.57],["2022-01-06",187.48],["2022-01-07",201.54],["2022-01-10",218.9],["2022-01-11",216.27],["2022-01-12",215.43],["2022-01-13",216.64],["2022-01-14",217.71],["2022-01-17",236.0],["2022-01-18",229.35],["2022-01-19",228.93],["2022-01-20",227.21],["2022-01-21",234.46],["2022-01-24",252.5],["2022-01-25",255.25],["2022-01-26",263.0],["2022-01-27",262.63],["2022-01-28",248.64],["2022-01-31",227.0],["2022-02-01",221.14],["2022-02-02",221.59],["2022-02-03",221.65],["2022-02-04",229.84],["2022-02-07",240.88],["2022-02-08",243.94],["2022-02-09",246.46],["2022-02-10",247.22],["2022-02-11",244.67],["2022-02-14",240.0],["2022-02-15",236.18],["2022-02-16",235.33],["2022-02-17",233.69],["2022-02-18",226.39],["2022-02-21",236.38],["2022-02-22",240.44],["2022-02-23",244.29],["2022-02-24",248.35],["2022-02-25",256.18],["2022-02-28",257.38],["2022-03-01",265.94],["2022-03-02",317.25],["2022-03-03",342.21],["2022-03-04",347.9],["2022-03-07",427.5],["2022-03-08",414.88],["2022-03-09",422.13],["2022-03-10",414.26],["2022-03-11",395.59],["2022-03-14",357.69],["2022-03-15",351.69],["2022-03-16",336.71],["2022-03-17",319.86],["2022-03-18",309.02],["2022-03-21",240.86],["2022-03-22",230.65],["2022-03-23",238.21],["2022-03-24",249.82],["2022-03-25",253.02],["2022-03-28",271.5],["2022-03-29",272.25],["2022-03-30",271.42],["2022-03-31",271.06],["2022-04-01",271.05],["2022-04-04",272.0],["2022-04-05",274.5],["2022-04-06",288.92],["2022-04-07",294.63],["2022-04-08",297.4],["2022-04-11",325.0],["2022-04-12",328.75],["2022-04-13",333.75],["2022-04-14",336.63],["2022-04-15",336.63],["2022-04-18",336.63],["2022-04-19",347.75],["2022-04-20",357.63],["2022-04-21",368.17],["2022-04-22",370.0],["2022-04-25",372.5],["2022-04-26",370.0],["2022-04-27",362.21],["2022-04-28",359.16],["2022-04-29",356.03],["2022-05-02",343.0],["2022-05-03",342.0],["2022-05-04",351.58],["2022-05-05",365.84],["2022-05-06",376.59],["2022-05-09",393.98],["2022-05-10",391.74],["2022-05-11",392.49],["2022-05-12",395.62],["2022-05-13",397.8],["2022-05-16",416.25],["2022-05-17",421.13],["2022-05-18",428.5],["2022-05-19",431.47],["2022-05-20",436.07],["2022-05-23",463.0],["2022-05-24",452.75],["2022-05-25",434.33],["2022-05-26",421.38],["2022-05-27",415.6],["2022-05-30",397.0],["2022-05-31",404.25],["2022-06-01",412.85],["2022-06-02",412.04],["2022-06-03",411.63],["2022-06-06",412.5],["2022-06-07",405.71],["2022-06-08",402.07],["2022-06-09",399.71],["2022-06-10",398.0],["2022-06-13",387.0],["2022-06-14",376.71],["2022-06-15",375.43],["2022-06-16",376.61],["2022-06-17",377.44],["2022-06-20",388.75],["2022-06-21",394.46],["2022-06-22",396.97],["2022-06-23",400.27],["2022-06-24",403.44],["2022-06-27",415.75],["2022-06-28",407.88],["2022-06-29",398.0],["2022-06-30",390.68],["2022-07-01",390.36],["2022-07-04",391.36],["2022-07-05",395.57],["2022-07-06",396.27],["2022-07-07",400.23],["2022-07-08",404.56],["2022-07-11",433.5],["2022-07-12",442.75],["2022-07-13",445.17],["2022-07-14",440.75],["2022-07-15",433.9],["2022-07-18",390.75],["2022-07-19",387.88],["2022-07-20",404.75],["2022-07-21",403.38],["2022-07-22",404.43],["2022-07-25",408.5],["2022-07-26",417.84],["2022-07-27",417.39],["2022-07-28",419.13],["2022-07-29",420.88],["2022-08-01",417.63],["2022-08-02",414.51],["2022-08-03",406.09],["2022-08-04",399.42],["2022-08-05",392.84],["2022-08-08",363.0],["2022-08-09",369.13],["2022-08-10",387.06],["2022-08-11",393.54],["2022-08-12",396.21],["2022-08-15",413.25],["2022-08-16",423.88],["2022-08-17",428.92],["2022-08-18",434.86],["2022-08-19",436.99],["2022-08-22",460.36],["2022-08-23",457.85],["2022-08-24",451.5],["2022-08-25",447.93],["2022-08-26",443.51],["2022-08-29",438.0],["2022-08-30",436.11],["2022-08-31",435.72],["2022-09-01",436.76],["2022-09-02",439.67],["2022-09-05",463.25],["2022-09-06",465.81],["2022-09-07",461.18],["2022-09-08",455.73],["2022-09-09",452.81],["2022-09-12",438.25],["2022-09-13",430.17],["2022-09-14",433.24],["2022-09-15",432.31],["2022-09-16",433.44],["2022-09-19",432.38],["2022-09-20",431.94],["2022-09-21",435.81],["2022-09-22",435.78],["2022-09-23",429.39],["2022-09-26",417.5],["2022-09-27",420.44],["2022-09-28",419.67],["2022-09-29",417.88],["2022-09-30",414.8],["2022-10-03",405.5],["2022-10-04",402.0],["2022-10-05",401.45],["2022-10-06",402.28],["2022-10-07",399.44],["2022-10-10",373.75],["2022-10-11",375.13],["2022-10-12",377.75],["2022-10-13",382.85],["2022-10-14",382.23],["2022-10-17",388.5],["2022-10-18",388.0],["2022-10-19",387.67],["2022-10-20",388.25],["2022-10-21",388.7],["2022-10-24",382.0],["2022-10-25",379.75],["2022-10-26",379.33],["2022-10-27",377.13],["2022-10-28",376.6],["2022-10-31",373.21],["2022-11-01",366.47],["2022-11-02",365.65],["2022-11-03",363.81],["2022-11-04",362.14],["2022-11-07",351.79],["2022-11-08",345.25],["2022-11-09",332.5],["2022-11-10",326.28],["2022-11-11",324.26],["2022-11-14",320.38],["2022-11-15",328.13],["2022-11-16",333.06],["2022-11-17",336.53],["2022-11-18",339.67],["2022-11-21",357.0],["2022-11-22",359.5],["2022-11-23",360.17],["2022-11-24",361.94],["2022-11-25",364.54],["2022-11-28",380.0],["2022-11-29",389.86],["2022-11-30",393.29],["2022-12-01",394.25],["2022-12-02",397.54],["2022-12-05",409.43],["2022-12-06",414.2],["2022-12-07",419.66],["2022-12-08",418.58],["2022-12-09",416.02],["2022-12-12",403.0],["2022-12-13",404.93],["2022-12-14",407.5],["2022-12-15",407.0],["2022-12-16",406.3],["2022-12-19",403.75],["2022-12-20",403.38],["2022-12-21",402.67],["2022-12-22",401.85],["2022-12-23",401.97],["2022-12-26",401.97],["2022-12-27",401.97],["2022-12-28",392.5],["2022-12-29",394.75],["2022-12-30",398.5],["2023-01-02",398.5],["2023-01-03",412.0],["2023-01-04",404.68],["2023-01-05",397.23],["2023-01-06",397.3],["2023-01-09",399.73],["2023-01-10",403.25],["2023-01-11",398.81],["2023-01-12",394.28],["2023-01-13",392.37],["2023-01-16",354.71],["2023-01-17",351.71],["2023-01-18",350.86],["2023-01-19",350.21],["2023-01-20",347.34],["2023-01-23",342.5],["2023-01-24",326.0],["2023-01-25",315.0],["2023-01-26",301.0],["2023-01-27",294.0],["2023-01-30",262.0],["2023-01-31",256.75],["2023-02-01",251.96],["2023-02-02",249.41],["2023-02-03",245.43],["2023-02-06",227.01],["2023-02-07",235.59],["2023-02-08",237.51],["2023-02-09",233.68],["2023-02-10",227.86],["2023-02-13",202.5],["2023-02-14",195.0],["2023-02-15",192.75],["2023-02-16",190.81],["2023-02-17",187.27],["2023-02-20",167.5],["2023-02-21",165.99],["2023-02-22",169.91],["2023-02-23",172.62],["2023-02-24",173.89],["2023-02-27",186.0],["2023-02-28",185.19],["2023-03-01",184.09],["2023-03-02",185.07],["2023-03-03",184.55],["2023-03-06",182.13],["2023-03-07",177.32],["2023-03-08",177.09],["2023-03-09",176.07],["2023-03-10",175.25],["2023-03-13",173.88],["2023-03-14",172.69],["2023-03-15",170.13],["2023-03-16",169.5],["2023-03-17",170.8],["2023-03-20",175.0],["2023-03-21",174.75],["2023-03-22",174.83],["2023-03-23",176.19],["2023-03-24",176.25],["2023-03-27",182.63],["2023-03-28",178.82],["2023-03-29",177.54],["2023-03-30",177.53],["2023-03-31",178.53],["2023-04-03",198.57],["2023-04-04",197.18],["2023-04-05",199.44],["2023-04-06",199.58],["2023-04-07",199.58],["2023-04-10",199.58],["2023-04-11",193.0],["2023-04-12",191.25],["2023-04-13",190.33],["2023-04-14",188.75],["2023-04-17",176.5],["2023-04-18",176.5],["2023-04-19",178.71],["2023-04-20",182.29],["2023-04-21",184.26],["2023-04-24",189.0],["2023-04-25",188.25],["2023-04-26",187.86],["2023-04-27",186.9],["2023-04-28",186.31],["2023-05-01",177.5],["2023-05-02",183.25],["2023-05-03",183.0],["2023-05-04",180.75],["2023-05-05",178.0],["2023-05-08",170.5],["2023-05-09",171.7],["2023-05-10",170.6],["2023-05-11",169.17],["2023-05-12",168.06],["2023-05-15",164.5],["2023-05-16",161.64],["2023-05-17",160.43],["2023-05-18",158.86],["2023-05-19",158.17],["2023-05-22",154.5],["2023-05-23",155.5],["2023-05-24",154.0],["2023-05-25",150.86],["2023-05-26",148.97],["2023-05-29",135.5],["2023-05-30",134.5],["2023-05-31",132.57],["2023-06-01",130.97],["2023-06-02",130.77],["2023-06-05",130.5],["2023-06-06",132.25],["2023-06-07",131.79],["2023-06-08",131.69],["2023-06-09",132.21],["2023-06-12",129.25],["2023-06-13",128.38],["2023-06-14",126.92],["2023-06-15",125.56],["2023-06-16",124.65],["2023-06-19",118.0],["2023-06-20",117.75],["2023-06-21",117.14],["2023-06-22",118.68],["2023-06-23",120.23],["2023-06-26",134.25],["2023-06-27",135.03],["2023-06-28",135.6],["2023-06-29",136.3],["2023-06-30",137.94],["2023-07-03",146.5],["2023-07-04",141.13],["2023-07-05",141.56],["2023-07-06",140.6],["2023-07-07",140.18],["2023-07-10",134.0],["2023-07-11",133.07],["2023-07-12",130.0],["2023-07-13",128.47],["2023-07-14",127.33],["2023-07-17",122.0],["2023-07-18",124.25],["2023-07-19",127.67],["2023-07-20",129.69],["2023-07-21",130.98],["2023-07-24",137.0],["2023-07-25",137.75],["2023-07-26",138.46],["2023-07-27",139.78],["2023-07-28",140.33],["2023-07-31",140.42],["2023-08-01",138.91],["2023-08-02",139.15],["2023-08-03",139.22],["2023-08-04",139.06],["2023-08-07",143.0],["2023-08-08",144.35],["2023-08-09",145.36],["2023-08-10",145.25],["2023-08-11",145.77],["2023-08-14",155.63],["2023-08-15",154.69],["2023-08-16",154.0],["2023-08-17",154.03],["2023-08-18",154.71],["2023-08-21",156.57],["2023-08-22",159.55],["2023-08-23",159.6],["2023-08-24",158.5],["2023-08-25",158.11],["2023-08-28",154.0],["2023-08-29",155.13],["2023-08-30",156.18],["2023-08-31",156.13],["2023-09-01",156.18],["2023-09-04",154.79],["2023-09-05",158.24],["2023-09-06",159.36],["2023-09-07",159.6],["2023-09-08",159.55],["2023-09-11",160.5],["2023-09-12",164.21],["2023-09-13",162.5],["2023-09-14",161.64],["2023-09-15",159.79],["2023-09-18",166.75],["2023-09-19",166.62],["2023-09-20",166.41],["2023-09-21",164.19],["2023-09-22",163.21],["2023-09-25",159.5],["2023-09-26",157.75],["2023-09-27",158.52],["2023-09-28",158.9],["2023-09-29",157.91],["2023-10-02",158.5],["2023-10-03",156.0],["2023-10-04",151.5],["2023-10-05",144.25],["2023-10-06",141.57],["2023-10-09",137.5],["2023-10-10",135.0],["2023-10-11",135.5],["2023-10-12",137.0],["2023-10-13",136.9],["2023-10-16",147.5],["2023-10-17",144.5],["2023-10-18",140.0],["2023-10-19",138.0],["2023-10-20",136.95],["2023-10-23",131.5],["2023-10-24",128.25],["2023-10-25",127.5],["2023-10-26",127.5],["2023-10-27",126.25],["2023-10-30",125.0],["2023-10-31",122.88],["2023-11-01",121.0],["2023-11-02",120.57],["2023-11-03",120.53],["2023-11-06",119.86],["2023-11-07",119.21],["2023-11-08",119.28],["2023-11-09",120.83],["2023-11-10",121.6],["2023-11-13",122.13],["2023-11-14",123.63],["2023-11-15",125.13],["2023-11-16",125.38],["2023-11-17",125.0],["2023-11-20",119.5],["2023-11-21",119.75],["2023-11-22",119.43],["2023-11-23",120.4],["2023-11-24",121.49],["2023-11-27",127.5],["2023-11-28",127.75],["2023-11-29",128.0],["2023-11-30",129.03],["2023-12-01",129.73],["2023-12-04",135.75],["2023-12-05",135.38],["2023-12-06",137.75],["2023-12-07",143.94],["2023-12-08",149.36],["2023-12-11",166.44],["2023-12-12",155.79],["2023-12-13",159.26],["2023-12-14",160.72],["2023-12-15",157.01],["2023-12-18",142.26],["2023-12-19",144.95],["2023-12-20",146.71],["2023-12-21",148.1],["2023-12-22",149.13],["2023-12-25",149.13],["2023-12-26",149.13],["2023-12-27",149.75],["2023-12-28",149.19],["2023-12-29",148.96],["2024-01-01",148.96],["2024-01-02",133.13],["2024-01-03",132.53],["2024-01-04",132.29],["2024-01-05",131.99],["2024-01-08",133.14],["2024-01-09",133.72],["2024-01-10",134.02],["2024-01-11",133.08],["2024-01-12",132.06],["2024-01-15",129.25],["2024-01-16",128.16],["2024-01-17",128.43],["2024-01-18",127.75],["2024-01-19",126.77],["2024-01-22",123.38],["2024-01-23",123.84],["2024-01-24",123.52],["2024-01-25",122.83],["2024-01-26",122.09],["2024-01-29",115.13],["2024-01-30",115.21],["2024-01-31",115.66],["2024-02-01",115.92],["2024-02-02",116.08],["2024-02-05",119.42],["2024-02-06",120.06],["2024-02-07",119.68],["2024-02-08",119.64],["2024-02-09",120.06],["2024-02-12",122.57],["2024-02-13",122.32],["2024-02-14",121.97],["2024-02-15",121.71],["2024-02-16",120.94],["2024-02-19",122.25],["2024-02-20",121.49],["2024-02-21",121.82],["2024-02-22",121.99],["2024-02-23",122.29],["2024-02-26",124.19],["2024-02-27",125.33],["2024-02-28",125.6],["2024-02-29",125.87],["2024-03-01",126.01],["2024-03-04",131.5],["2024-03-05",133.58],["2024-03-06",135.05],["2024-03-07",135.61],["2024-03-08",135.69],["2024-03-11",135.01],["2024-03-12",133.07],["2024-03-13",132.32],["2024-03-14",131.65],["2024-03-15",131.53],["2024-03-18",126.64],["2024-03-19",125.36],["2024-03-20",125.01],["2024-03-21",125.0],["2024-03-22",125.05],["2024-03-25",126.02],["2024-03-26",126.45],["2024-03-27",126.91],["2024-03-28",127.77],["2024-03-29",127.77],["2024-04-01",127.77],["2024-04-02",128.38],["2024-04-03",129.6],["2024-04-04",129.65],["2024-04-05",129.27],["2024-04-08",127.5],["2024-04-09",127.09],["2024-04-10",126.59],["2024-04-11",126.06],["2024-04-12",125.54],["2024-04-15",125.86],["2024-04-16",126.26],["2024-04-17",126.95],["2024-04-18",128.44],["2024-04-19",130.07],["2024-04-22",134.6],["2024-04-23",134.8],["2024-04-24",134.98],["2024-04-25",134.82],["2024-04-26",134.92],["2024-04-29",138.44],["2024-04-30",139.03],["2024-05-01",140.53],["2024-05-02",145.07],["2024-05-03",145.74],["2024-05-06",148.15],["2024-05-07",148.45],["2024-05-08",148.26],["2024-05-09",147.44],["2024-05-10",146.77],["2024-05-13",144.63],["2024-05-14",142.49],["2024-05-15",141.59],["2024-05-16",141.24],["2024-05-17",141.27],["2024-05-20",140.32],["2024-05-21",139.97],["2024-05-22",140.43],["2024-05-23",140.28],["2024-05-24",140.41],["2024-05-27",139.2],["2024-05-28",139.23],["2024-05-29",138.99],["2024-05-30",138.95],["2024-05-31",139.4],["2024-06-03",139.38],["2024-06-04",139.17],["2024-06-05",138.37],["2024-06-06",137.7],["2024-06-07",137.01],["2024-06-10",131.04],["2024-06-11",131.41],["2024-06-12",131.71],["2024-06-13",132.46],["2024-06-14",132.84],["2024-06-17",135.08],["2024-06-18",134.12],["2024-06-19",134.28],["2024-06-20",134.39],["2024-06-21",134.22],["2024-06-24",131.5],["2024-06-25",131.58],["2024-06-26",132.08],["2024-06-27",131.67],["2024-06-28",132.03],["2024-07-01",132.54],["2024-07-02",132.66],["2024-07-03",133.28],["2024-07-04",133.45],["2024-07-05",133.85],["2024-07-08",134.66],["2024-07-09",134.81],["2024-07-10",133.5],["2024-07-11",133.01],["2024-07-12",132.81],["2024-07-15",134.32],["2024-07-16",134.29],["2024-07-17",135.3],["2024-07-18",135.91],["2024-07-19",136.53],["2024-07-22",137.34],["2024-07-23",137.43],["2024-07-24",137.33],["2024-07-25",137.18],["2024-07-26",137.16],["2024-07-29",140.44],["2024-07-30",140.05],["2024-07-31",140.0],["2024-08-01",140.3],["2024-08-02",140.82],["2024-08-05",144.36],["2024-08-06",145.11],["2024-08-07",145.61],["2024-08-08",145.97],["2024-08-09",146.46],["2024-08-12",150.0],["2024-08-13",150.44],["2024-08-14",150.21],["2024-08-15",149.72],["2024-08-16",150.05],["2024-08-19",152.75],["2024-08-20",151.0],["2024-08-21",150.67],["2024-08-22",149.06],["2024-08-23",148.05],["2024-08-26",143.63],["2024-08-27",145.82],["2024-08-28",146.71],["2024-08-29",146.63],["2024-08-30",146.5],["2024-09-02",147.38],["2024-09-03",145.44],["2024-09-04",144.42],["2024-09-05",143.87],["2024-09-06",143.64],["2024-09-09",139.25],["2024-09-10",139.0],["2024-09-11",138.33],["2024-09-12",137.68],["2024-09-13",137.49],["2024-09-16",135.43],["2024-09-17",135.21],["2024-09-18",135.86],["2024-09-19",136.31],["2024-09-20",136.48],["2024-09-23",139.0],["2024-09-24",139.19],["2024-09-25",139.66],["2024-09-26",140.1],["2024-09-27",140.56],["2024-09-30",144.5],["2024-10-01",143.29],["2024-10-02",142.07],["2024-10-03",140.76],["2024-10-04",141.44],["2024-10-07",148.5],["2024-10-08",149.97],["2024-10-09",149.54],["2024-10-10",148.89],["2024-10-11",148.79],["2024-10-14",148.38],["2024-10-15",148.69],["2024-10-16",147.89],["2024-10-17",147.46],["2024-10-18",146.86],["2024-10-21",143.5],["2024-10-22",142.49],["2024-10-23",142.75],["2024-10-24",142.56],["2024-10-25",143.04],["2024-10-28",145.83],["2024-10-29",145.18],["2024-10-30",145.22],["2024-10-31",145.19],["2024-11-01",144.95],["2024-11-04",145.88],["2024-11-05",143.96],["2024-11-06",144.02],["2024-11-07",143.09],["2024-11-08",143.32],["2024-11-11",141.75],["2024-11-12",141.99],["2024-11-13",141.75],["2024-11-14",141.31],["2024-11-15",140.97],["2024-11-18",138.0],["2024-11-19",138.13],["2024-11-20",140.04],["2024-11-21",139.41],["2024-11-22",139.45],["2024-11-25",138.5],["2024-11-26",140.83],["2024-11-27",139.1],["2024-11-28",138.81],["2024-11-29",138.83],["2024-12-02",134.75],["2024-12-03",134.2],["2024-12-04",133.68],["2024-12-05",133.25],["2024-12-06",133.07],["2024-12-09",131.9],["2024-12-10",131.19],["2024-12-11",130.37],["2024-12-12",129.98],["2024-12-13",128.35],["2024-12-16",124.0],["2024-12-17",123.88],["2024-12-18",123.75],["2024-12-19",122.55],["2024-12-20",122.84],["2024-12-23",123.5],["2024-12-24",122.75],["2024-12-25",122.75],["2024-12-26",122.75],["2024-12-27",122.25],["2024-12-30",120.5],["2024-12-31",119.75],["2025-01-01",119.75],["2025-01-02",120.67],["2025-01-03",120.97],["2025-01-06",121.5],["2025-01-07",118.63],["2025-01-08",117.54],["2025-01-09",116.7],["2025-01-10",115.51],["2025-01-13",108.07],["2025-01-14",109.52],["2025-01-15",110.13],["2025-01-16",110.22],["2025-01-17",110.54],["2025-01-20",115.0],["2025-01-21",115.43],["2025-01-22",117.51],["2025-01-23",115.78],["2025-01-24",115.54],["2025-01-27",115.25],["2025-01-28",113.88],["2025-01-29",113.75],["2025-01-30",114.06],["2025-01-31",113.34],["2025-02-03",113.01],["2025-02-04",111.76],["2025-02-05",110.15],["2025-02-06",107.7],["2025-02-07",105.39],["2025-02-10",102.47],["2025-02-11",102.73],["2025-02-12",102.25],["2025-02-13",102.29],["2025-02-14",101.8],["2025-02-17",103.42],["2025-02-18",102.93],["2025-02-19",103.04],["2025-02-20",102.94],["2025-02-21",101.9],["2025-02-24",100.9],["2025-02-25",100.41],["2025-02-26",99.69],["2025-02-27",99.23],["2025-02-28",98.46],["2025-03-03",95.55],["2025-03-04",95.77],["2025-03-05",95.91],["2025-03-06",96.23],["2025-03-07",96.41],["2025-03-10",102.62],["2025-03-11",103.91],["2025-03-12",102.33],["2025-03-13",101.36],["2025-03-14",101.09],["2025-03-17",96.0],["2025-03-18",92.14],["2025-03-19",93.02],["2025-03-20",93.58],["2025-03-21",93.93],["2025-03-24",98.02],["2025-03-25",96.23],["2025-03-26",94.42],["2025-03-27",94.66],["2025-03-28",94.98],["2025-03-31",97.0],["2025-04-01",98.69],["2025-04-02",98.54],["2025-04-03",98.31],["2025-04-04",97.84],["2025-04-07",92.88],["2025-04-08",92.89],["2025-04-09",92.44],["2025-04-10",94.21],["2025-04-11",94.44],["2025-04-14",92.19],["2025-04-15",91.55],["2025-04-16",92.21],["2025-04-17",92.19],["2025-04-18",92.19],["2025-04-21",92.19],["2025-04-22",92.86],["2025-04-23",92.17],["2025-04-24",91.83],["2025-04-25",91.69],["2025-04-28",93.76],["2025-04-29",94.42],["2025-04-30",94.61],["2025-05-01",94.88],["2025-05-02",95.13],["2025-05-05",98.0],["2025-05-06",97.75],["2025-05-07",98.11],["2025-05-08",99.03],["2025-05-09",99.58],["2025-05-12",103.25],["2025-05-13",103.27],["2025-05-14",102.86],["2025-05-15",102.32],["2025-05-16",102.14],["2025-05-19",100.65],["2025-05-20",101.58],["2025-05-21",102.38],["2025-05-22",101.79],["2025-05-23",102.03],["2025-05-26",105.0],["2025-05-27",106.0],["2025-05-28",105.92],["2025-05-29",105.81],["2025-05-30",105.25],["2025-06-02",102.25],["2025-06-03",102.63],["2025-06-04",102.83],["2025-06-05",103.13],["2025-06-06",103.43],["2025-06-09",105.25],["2025-06-10",104.73],["2025-06-11",104.73],["2025-06-12",104.58],["2025-06-13",104.38],["2025-06-16",108.0],["2025-06-17",108.19],["2025-06-18",108.57],["2025-06-19",109.09],["2025-06-20",109.41],["2025-06-23",112.75],["2025-06-24",111.22],["2025-06-25",110.27],["2025-06-26",109.63],["2025-06-27",108.87],["2025-06-30",107.6],["2025-07-01",108.69],["2025-07-02",109.34],["2025-07-03",109.67],["2025-07-04",109.85],["2025-07-07",108.25],["2025-07-08",108.23],["2025-07-09",108.91],["2025-07-10",109.62],["2025-07-11",110.03],["2025-07-14",113.5],["2025-07-15",112.63],["2025-07-16",111.67],["2025-07-17",111.19],["2025-07-18",110.8],["2025-07-21",108.53],["2025-07-22",108.58],["2025-07-23",109.3],["2025-07-24",109.78],["2025-07-25",110.21],["2025-07-28",112.5],["2025-07-29",113.13],["2025-07-30",113.38],["2025-07-31",113.57],["2025-08-01",113.85],["2025-08-04",115.76],["2025-08-05",115.8],["2025-08-06",115.44],["2025-08-07",114.93],["2025-08-08",114.16],["2025-08-11",110.61],["2025-08-12",110.77],["2025-08-13",110.77],["2025-08-14",110.33],["2025-08-15",110.18],["2025-08-18",109.15],["2025-08-19",109.33],["2025-08-20",109.59],["2025-08-21",110.08],["2025-08-22",110.17],["2025-08-25",109.25],["2025-08-26",109.5],["2025-08-27",109.92],["2025-08-28",109.35],["2025-08-29",109.3],["2025-09-01",109.0],["2025-09-02",108.44],["2025-09-03",108.21],["2025-09-04",107.97],["2025-09-05",107.78],["2025-09-08",105.0],["2025-09-09",103.75],["2025-09-10",102.41],["2025-09-11",101.71],["2025-09-12",101.11],["2025-09-15",99.63],["2025-09-16",100.09],["2025-09-17",100.74],["2025-09-18",101.28],["2025-09-19",102.03],["2025-09-22",105.88],["2025-09-23",105.23],["2025-09-24",104.78],["2025-09-25",104.43],["2025-09-26",104.47],["2025-09-29",104.16],["2025-09-30",104.3],["2025-10-01",104.42],["2025-10-02",104.53],["2025-10-03",104.63],["2025-10-06",105.0],["2025-10-07",104.63],["2025-10-08",104.47],["2025-10-09",104.32],["2025-10-10",104.26],["2025-10-13",104.14],["2025-10-14",103.1],["2025-10-15",103.02],["2025-10-16",102.99],["2025-10-17",103.15],["2025-10-20",103.63],["2025-10-21",103.23],["2025-10-22",103.4],["2025-10-23",103.55],["2025-10-24",103.74],["2025-10-27",104.88],["2025-10-28",105.19],["2025-10-29",105.34],["2025-10-30",105.69],["2025-10-31",106.23],["2025-11-03",108.11],["2025-11-04",108.22],["2025-11-05",108.33],["2025-11-06",108.51],["2025-11-07",108.81],["2025-11-10",109.03],["2025-11-11",108.27],["2025-11-12",107.72],["2025-11-13",108.57],["2025-11-14",109.05],["2025-11-17",112.75],["2025-11-18",114.0],["2025-11-19",114.38],["2025-11-20",114.07],["2025-11-21",113.75],["2025-11-24",113.25],["2025-11-25",113.32],["2025-11-26",113.13],["2025-11-27",113.1],["2025-11-28",112.9],["2025-12-01",108.25],["2025-12-02",108.09],["2025-12-03",107.97],["2025-12-04",108.18],["2025-12-05",108.52],["2025-12-08",110.66],["2025-12-09",110.68],["2025-12-10",110.34],["2025-12-11",109.82],["2025-12-12",109.64],["2025-12-15",109.04],["2025-12-16",108.97],["2025-12-17",108.55],["2025-12-18",108.32],["2025-12-19",107.96],["2025-12-22",106.93],["2025-12-23",107.25],["2025-12-24",106.95],["2025-12-25",106.95],["2025-12-26",106.95],["2025-12-29",107.57],["2025-12-30",107.85],["2025-12-31",107.59],["2026-01-01",107.59],["2026-01-02",107.53],["2026-01-05",106.63],["2026-01-06",106.41],["2026-01-07",106.88],["2026-01-08",106.97],["2026-01-09",107.05],["2026-01-12",107.26],["2026-01-13",107.4],["2026-01-14",108.57],["2026-01-15",109.18],["2026-01-16",109.43],["2026-01-19",112.25],["2026-01-20",111.88],["2026-01-21",112.01],["2026-01-22",112.1],["2026-01-23",111.26],["2026-01-26",110.63],["2026-01-27",110.26],["2026-01-28",109.88],["2026-01-29",109.85],["2026-01-30",110.48],["2026-02-02",115.44],["2026-02-03",114.85],["2026-02-04",114.54],["2026-02-05",114.44],["2026-02-06",114.53],["2026-02-09",114.38],["2026-02-10",114.44],["2026-02-11",114.54],["2026-02-12",114.44],["2026-02-13",114.94],["2026-02-16",117.5],["2026-02-17",117.13],["2026-02-18",116.92],["2026-02-19",117.31],["2026-02-20",117.4],["2026-02-23",116.25],["2026-02-24",116.13],["2026-02-25",115.84],["2026-02-26",115.7],["2026-02-27",115.71],["2026-03-02",121.13],["2026-03-03",126.06]];
+
+const iciSeries = [
+  { key:"ICI 1", idx:1, color:"#ffd166", label:"ICI 1 (6500 GAR)" },
+  { key:"ICI 2", idx:2, color:"#57a6ff", label:"ICI 2 (5800 GAR)" },
+  { key:"ICI 3", idx:3, color:"#4dd6c0", label:"ICI 3 (5000 GAR)" },
+  { key:"ICI 4", idx:4, color:"#ff8a5b", label:"ICI 4 (4200 GAR)" },
+  { key:"ICI 5", idx:5, color:"#c084fc", label:"ICI 5 (3400 GAR)" }
+];
+const newcSeries = [{ key:"NEWC", idx:1, color:"#f5a623", label:"NEWC (FOB Newcastle)" }];
+
+let ici = iciRaw.map(r => ({ date:new Date(r[0]+"T00:00:00"), values:r.slice(1) }));
+let newc = newcRaw.map(r => ({ date:new Date(r[0]+"T00:00:00"), values:[r[1]] }));
+
+let currentRange = "1Y";
+let currentNewcRange = "1Y";
+let selectedIci = new Set(["ICI 1","ICI 2"]);
+let seasonalityMode = "single";
+let seasonalitySingleSeries = "ICI 1";
+let seasonalityHistory = "FULL";
+
+function fmtDate(d) {
+  return d ? d.toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" }) : "–";
+}
+function fmtNum(x) { return x == null || Number.isNaN(x) ? "–" : Number(x).toFixed(2); }
+function fmtPct(x) {
+  if (x == null || Number.isNaN(x)) return "–";
+  const s = x > 0 ? "+" : "";
+  return s + x.toFixed(1) + "%";
+}
+function signClass(x) { return x > 0 ? "up" : x < 0 ? "down" : "flat"; }
+function pct(a,b) { return (a == null || b == null || b === 0) ? null : (a/b - 1) * 100; }
+function stddev(arr) {
+  const vals = arr.filter(v => v != null && !Number.isNaN(v));
+  if (vals.length < 2) return null;
+  const mean = vals.reduce((a,b)=>a+b,0) / vals.length;
+  const variance = vals.reduce((a,b)=>a + Math.pow(b-mean,2),0) / (vals.length-1);
+  return Math.sqrt(variance);
+}
+function average(arr) {
+  const vals = arr.filter(v => v != null && !Number.isNaN(v));
+  return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null;
+}
+function lastValid(rows, idx) {
+  for (let i = rows.length - 1; i >= 0; i--) {
+    const v = rows[i].values[idx-1];
+    if (v != null && !Number.isNaN(v)) return { i, date:rows[i].date, value:v };
+  }
+  return null;
+}
+function previousValid(rows, idx, startIdx) {
+  for (let i = startIdx - 1; i >= 0; i--) {
+    const v = rows[i].values[idx-1];
+    if (v != null && !Number.isNaN(v)) return { i, date:rows[i].date, value:v };
+  }
+  return null;
+}
+function nearestOnOrBefore(rows, idx, targetDate) {
+  for (let i = rows.length - 1; i >= 0; i--) {
+    if (rows[i].date <= targetDate) {
+      const v = rows[i].values[idx-1];
+      if (v != null && !Number.isNaN(v)) return { i, date:rows[i].date, value:v };
+    }
+  }
+  return null;
+}
+function startOfYearValue(rows, idx) {
+  const last = lastValid(rows, idx);
+  if (!last) return null;
+  const y = last.date.getFullYear();
+  for (let i = 0; i < rows.length; i++) {
+    if (rows[i].date.getFullYear() === y) {
+      const v = rows[i].values[idx-1];
+      if (v != null && !Number.isNaN(v)) return { i, date:rows[i].date, value:v };
+    }
+  }
+  return null;
+}
+function lookbackPct(rows, idx, months) {
+  const last = lastValid(rows, idx);
+  if (!last) return null;
+  const tgt = new Date(last.date);
+  tgt.setMonth(tgt.getMonth() - months);
+  const prev = nearestOnOrBefore(rows, idx, tgt);
+  return prev ? pct(last.value, prev.value) : null;
+}
+function ytdPct(rows, idx) {
+  const last = lastValid(rows, idx);
+  const start = startOfYearValue(rows, idx);
+  return last && start ? pct(last.value, start.value) : null;
+}
+const MONTH_LABELS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function getSeasonalityAvailableYears() {
+  const years = new Set();
+  [...ici, ...newc].forEach(r => {
+    if (r?.date instanceof Date && !Number.isNaN(r.date)) years.add(r.date.getFullYear());
+  });
+  return Array.from(years).sort((a,b) => b - a);
+}
+function getSeasonalityHistoryOptions() {
+  const years = getSeasonalityAvailableYears().slice(0, 5);
+  return [
+    { value:'FULL', label:'Full' },
+    { value:'5Y', label:'Last 5Y' },
+    { value:'3Y', label:'Last 3Y' },
+    ...years.map(y => ({ value:`Y${y}`, label:String(y) }))
+  ];
+}
+function ensureValidSeasonalityHistory() {
+  const valid = new Set(getSeasonalityHistoryOptions().map(x => x.value));
+  if (!valid.has(seasonalityHistory)) seasonalityHistory = 'FULL';
+}
+function populateSeasonalityHistorySelect() {
+  const sel = document.getElementById('seasonalityHistorySelect');
+  if (!sel) return;
+  const opts = getSeasonalityHistoryOptions();
+  ensureValidSeasonalityHistory();
+  sel.innerHTML = opts.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
+  sel.value = seasonalityHistory;
+}
+function filterRowsBySeasonalityHistory(rows, history) {
+  if (!rows || !rows.length || history === 'FULL') return rows;
+  const validRows = rows.filter(r => r?.date instanceof Date && !Number.isNaN(r.date));
+  if (!validRows.length) return rows;
+  if (/^Y\d{4}$/.test(history)) {
+    const year = Number(history.slice(1));
+    return validRows.filter(r => r.date.getFullYear() === year);
+  }
+  const lastDate = validRows[validRows.length - 1].date;
+  const yearsBack = history === '5Y' ? 5 : history === '3Y' ? 3 : null;
+  if (!yearsBack) return validRows;
+  const cutoff = new Date(lastDate);
+  cutoff.setFullYear(cutoff.getFullYear() - yearsBack);
+  return validRows.filter(r => r.date >= cutoff);
+}
+function seasonalityHistoryLabel(history) {
+  if (history === 'FULL') return 'full loaded history';
+  if (history === '5Y') return 'last 5 years';
+  if (history === '3Y') return 'last 3 years';
+  if (/^Y\d{4}$/.test(history)) return history.slice(1);
+  return 'selected history';
+}
+
+function seasonalityStats(rows, idx, history='FULL') {
+  const scopedRows = filterRowsBySeasonalityHistory(rows, history);
+  const pts = seriesRows(scopedRows, idx);
+  if (!pts.length) return null;
+  const monthBuckets = Array.from({ length: 12 }, () => []);
+  pts.forEach(p => monthBuckets[p.date.getMonth()].push(p.value));
+  const monthAverages = monthBuckets.map(vals => average(vals));
+  const validMonths = monthAverages
+    .map((value, monthIdx) => ({ value, monthIdx, label:MONTH_LABELS[monthIdx] }))
+    .filter(x => x.value != null && !Number.isNaN(x.value));
+  if (!validMonths.length) return null;
+  const strongest = validMonths.reduce((best, cur) => cur.value > best.value ? cur : best);
+  const weakest = validMonths.reduce((best, cur) => cur.value < best.value ? cur : best);
+
+  const quarterAverages = [0,1,2,3].map(q => {
+    const vals = validMonths.filter(x => Math.floor(x.monthIdx / 3) === q).map(x => x.value);
+    return { q, label:`Q${q + 1}`, value: average(vals) };
+  }).filter(x => x.value != null && !Number.isNaN(x.value));
+  const strongestQuarter = quarterAverages.length
+    ? quarterAverages.reduce((best, cur) => cur.value > best.value ? cur : best)
+    : null;
+
+  const yearlyPeakCounts = Array(12).fill(0);
+  const byYear = new Map();
+  pts.forEach(p => {
+    const y = p.date.getFullYear();
+    if (!byYear.has(y)) byYear.set(y, []);
+    byYear.get(y).push(p);
+  });
+  byYear.forEach(yearPts => {
+    const peak = yearPts.reduce((best, cur) => cur.value > best.value ? cur : best, yearPts[0]);
+    yearlyPeakCounts[peak.date.getMonth()] += 1;
+  });
+  const peakEntries = yearlyPeakCounts
+    .map((count, monthIdx) => ({ count, monthIdx }))
+    .filter(x => x.count > 0);
+  const frequentPeak = peakEntries.length
+    ? peakEntries.reduce((best, cur) => cur.count > best.count ? cur : best)
+    : null;
+
+  const monthRanking = [...validMonths].sort((a,b) => b.value - a.value).map(x => ({ label:x.label, value:x.value }));
+  const quarterRanking = [...quarterAverages].sort((a,b) => b.value - a.value).map(x => ({ label:x.label, value:x.value }));
+
+  return {
+    strongestMonth: MONTH_LABELS[strongest.monthIdx],
+    weakestMonth: MONTH_LABELS[weakest.monthIdx],
+    strongestQuarter: strongestQuarter ? `Q${strongestQuarter.q + 1}` : '–',
+    peakMonth: frequentPeak ? MONTH_LABELS[frequentPeak.monthIdx] : '–',
+    peakMonthCount: frequentPeak ? frequentPeak.count : 0,
+    yearCount: byYear.size,
+    monthRanking,
+    quarterRanking
+  };
+}
+function filterRange(rows, range) {
+  if (range === "ALL") return rows;
+  const monthsMap = { "1M":1, "3M":3, "6M":6, "1Y":12, "3Y":36, "5Y":60 };
+  const months = monthsMap[range] ?? 12;
+  const lastDate = rows[rows.length - 1].date;
+  const cutoff = new Date(lastDate);
+  cutoff.setMonth(cutoff.getMonth() - months);
+  return rows.filter(r => r.date >= cutoff);
+}
+function seriesRows(rows, idx) {
+  return rows.map(r => ({ date:r.date, value:r.values[idx-1] })).filter(r => r.value != null && !Number.isNaN(r.value));
+}
+function normalizeSeries(points) {
+  if (!points.length) return points;
+  const base = points[0].value;
+  return points.map(p => ({ date:p.date, value: base ? p.value / base * 100 : null }));
+}
+function movingAverage(points, period) {
+  const out = [];
+  for (let i = 0; i < points.length; i++) {
+    if (i + 1 < period) continue;
+    const slice = points.slice(i + 1 - period, i + 1).map(x => x.value);
+    out.push({ date:points[i].date, value: average(slice) });
+  }
+  return out;
+}
+function drawSvgLineChart(svgId, datasets, options={}) {
+  const svg = document.getElementById(svgId);
+  const width = svg.clientWidth || 800;
+  const height = svg.clientHeight || 300;
+  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  svg.innerHTML = "";
+  const margin = { top:18, right:16, bottom:28, left:52 };
+  const innerW = width - margin.left - margin.right;
+  const innerH = height - margin.top - margin.bottom;
+  const allPoints = datasets.flatMap(d => d.points.filter(p => p.value != null && !Number.isNaN(p.value)));
+  if (!allPoints.length) {
+    svg.innerHTML = `<text x="${width/2}" y="${height/2}" text-anchor="middle" fill="#9aa3af" font-size="14">No data available</text>`;
+    return;
+  }
+  const xs = allPoints.map(p => p.date.getTime());
+  const ys = allPoints.map(p => p.value);
+  let yMin = Math.min(...ys), yMax = Math.max(...ys);
+  if (yMin === yMax) { yMin -= 1; yMax += 1; }
+  const pad = (yMax - yMin) * 0.12;
+  yMin -= pad; yMax += pad;
+  const xMin = Math.min(...xs), xMax = Math.max(...xs);
+  const xScale = t => margin.left + ((t - xMin) / (xMax - xMin || 1)) * innerW;
+  const yScale = v => margin.top + innerH - ((v - yMin) / (yMax - yMin || 1)) * innerH;
+  const g = [];
+  for (let i = 0; i < 4; i++) {
+    const yv = yMin + (yMax-yMin) * (i/3);
+    const py = yScale(yv);
+    g.push(`<line x1="${margin.left}" y1="${py}" x2="${width-margin.right}" y2="${py}" stroke="rgba(255,255,255,.07)" />`);
+    g.push(`<text x="${margin.left-8}" y="${py+4}" text-anchor="end" fill="#8f98a5" font-size="11">${options.percent ? yv.toFixed(1)+'%' : yv.toFixed(2)}</text>`);
+  }
+  const xTicks = 5;
+  for (let i = 0; i < xTicks; i++) {
+    const tx = xMin + (xMax - xMin) * (i/(xTicks-1 || 1));
+    const px = xScale(tx);
+    const dt = new Date(tx);
+    g.push(`<line x1="${px}" y1="${margin.top}" x2="${px}" y2="${height-margin.bottom}" stroke="rgba(255,255,255,.04)" />`);
+    g.push(`<text x="${px}" y="${height-8}" text-anchor="middle" fill="#8f98a5" font-size="11">${dt.toLocaleDateString('en-GB', { month:'short', year:'2-digit' })}</text>`);
+  }
+  datasets.forEach(ds => {
+    const pts = ds.points.filter(p => p.value != null && !Number.isNaN(p.value));
+    if (!pts.length) return;
+    const d = pts.map((p,i) => `${i===0?'M':'L'} ${xScale(p.date.getTime()).toFixed(2)} ${yScale(p.value).toFixed(2)}`).join(' ');
+    const dash = ds.dash ? `stroke-dasharray="${ds.dash}"` : "";
+    g.push(`<path d="${d}" fill="none" stroke="${ds.color}" stroke-width="${ds.width || 2}" ${dash} opacity="${ds.opacity || 1}" />`);
+    const lp = pts[pts.length-1];
+    g.push(`<circle cx="${xScale(lp.date.getTime())}" cy="${yScale(lp.value)}" r="2.8" fill="${ds.color}" />`);
+  });
+  svg.innerHTML = `<rect x="0" y="0" width="${width}" height="${height}" fill="transparent"></rect>${g.join('')}`;
+}
+function drawIciChart() {
+  const rows = filterRange(ici, currentRange);
+  const normalize = document.getElementById("normalizeToggle").checked;
+  const activeSeries = iciSeries.filter(s => selectedIci.has(s.key));
+  const datasets = [];
+  activeSeries.forEach((s, idx) => {
+    let pts = seriesRows(rows, s.idx);
+    pts = normalize ? normalizeSeries(pts) : pts;
+    datasets.push({ name:s.key, color:s.color, points:pts, width: idx===0 ? 2.6 : 2.2 });
+    const maShort = movingAverage(pts, Math.min(4, Math.max(2, pts.length)));
+    const maLong = movingAverage(pts, Math.min(12, Math.max(4, pts.length)));
+    if (maShort.length > 3) datasets.push({ name:s.key+" 4W MA", color:s.color, points:maShort, width:1.2, opacity:.55, dash:"5 4" });
+    if (maLong.length > 5) datasets.push({ name:s.key+" 12W MA", color:s.color, points:maLong, width:1.1, opacity:.35, dash:"2 4" });
+  });
+  drawSvgLineChart("iciChart", datasets, { percent:false });
+  document.getElementById("iciSub").textContent =
+    `${normalize ? 'Normalized' : 'Absolute'} view • default focus ICI 1 / ICI 2 • current selection: ${activeSeries.map(s=>s.key).join(', ') || 'None'}`;
+  const leg = document.getElementById("iciLegend");
+  leg.innerHTML = activeSeries.map(s => `<div class="item"><span class="sw" style="background:${s.color}"></span>${s.label}</div>`).join("")
+    + `<div class="item"><span class="sw" style="background:rgba(255,255,255,.3)"></span>4W / 12W MA overlays</div>`;
+}
+function drawNewcChart() {
+  const rows = filterRange(newc, currentNewcRange);
+  let pts = seriesRows(rows, 1);
+  const datasets = [{ name:"NEWC", color:newcSeries[0].color, points:pts, width:2.4 }];
+  const ma20 = movingAverage(pts, Math.min(20, Math.max(5, pts.length)));
+  const ma60 = movingAverage(pts, Math.min(60, Math.max(10, pts.length)));
+  if (ma20.length > 5) datasets.push({ name:"20D MA", color:"#f6cf77", points:ma20, width:1.2, opacity:.65, dash:"5 4" });
+  if (ma60.length > 10) datasets.push({ name:"60D MA", color:"#f6cf77", points:ma60, width:1.0, opacity:.35, dash:"2 4" });
+  drawSvgLineChart("newcChart", datasets);
+  document.getElementById("newcSub").textContent = `Separate benchmark view • current window: ${currentNewcRange} • latest date: ${fmtDate(lastValid(newc,1)?.date)}`;
+}
+function spreadSeries() {
+  const keys = Array.from(selectedIci);
+  if (keys.length < 2) return [];
+  const s1 = iciSeries.find(s => s.key === keys[0]);
+  const s2 = iciSeries.find(s => s.key === keys[1]);
+  const rows = filterRange(ici, currentRange);
+  const map2 = new Map(seriesRows(rows, s2.idx).map(x => [x.date.getTime(), x.value]));
+  return seriesRows(rows, s1.idx).map(x => {
+    const other = map2.get(x.date.getTime());
+    return other == null ? null : { date:x.date, value:x.value - other };
+  }).filter(Boolean);
+}
+function drawSpread() {
+  const pts = spreadSeries();
+  const keys = Array.from(selectedIci);
+  const subtitle = document.getElementById("spreadSub");
+  if (keys.length < 2 || !pts.length) {
+    subtitle.textContent = "Select at least two ICI grades to display the absolute spread";
+    drawSvgLineChart("spreadChart", []);
+    return;
+  }
+  subtitle.textContent = `${keys[0]} minus ${keys[1]} • absolute differential in selected ICI window`;
+  drawSvgLineChart("spreadChart", [{ name:"spread", color:"#ffd166", points:pts, width:2.4 }]);
+}
+function drawDrawdown() {
+  const rows = filterRange(ici, currentRange);
+  const datasets = iciSeries.filter(s => selectedIci.has(s.key)).map(s => {
+    let peak = -Infinity;
+    const pts = seriesRows(rows, s.idx).map(p => {
+      peak = Math.max(peak, p.value);
+      return { date:p.date, value: peak ? (p.value/peak - 1) * 100 : 0 };
+    });
+    return { name:s.key, color:s.color, points:pts, width:2.0 };
+  });
+  drawSvgLineChart("drawdownChart", datasets, { percent:true });
+}
+function renderStrip() {
+  const host = document.getElementById("summaryStrip");
+  const active = iciSeries.filter(s => selectedIci.has(s.key));
+  const latestIciDate = active.map(s => lastValid(ici,s.idx)?.date).filter(Boolean).sort((a,b)=>b-a)[0];
+  const breadth = iciSeries.map(s => lookbackPct(ici, s.idx, 3)).filter(v => v != null);
+  const posBreadth = breadth.filter(v => v > 0).length;
+  const defaultSpread = spreadSeries();
+  const spreadLast = defaultSpread.length ? defaultSpread[defaultSpread.length-1].value : null;
+  const newcLast = lastValid(newc,1);
+  const cards = [
+    {h:"ICI Latest Stamp", v:fmtDate(latestIciDate), s:`Selected: ${Array.from(selectedIci).join(', ')}`},
+    {h:"NEWC Latest Stamp", v:fmtDate(newcLast?.date), s:`Last price ${fmtNum(newcLast?.value)}`},
+    {h:"3M Breadth", v:`${posBreadth} / 5 positive`, s:`Across all ICI grades`},
+    {h:"Selection Spread", v:spreadLast == null ? "–" : fmtNum(spreadLast), s: spreadLast == null ? "Need two selected grades" : `${Array.from(selectedIci)[0]} - ${Array.from(selectedIci)[1]}`}
+  ];
+  host.innerHTML = cards.map(c => `<div class="pill"><div class="h">${c.h}</div><div class="v">${c.v}</div><div class="s">${c.s}</div></div>`).join("");
+}
+function seasonalityCardsHtml(stats, label) {
+  if (!stats) return `<div class="seasonality-message">No seasonality history is available yet for ${label}.</div>`;
+  const cards = [
+    {h:"Strongest Month", v:stats.strongestMonth || "–", s:`Historical average • ${label}`},
+    {h:"Weakest Month", v:stats.weakestMonth || "–", s:`Historical average • ${label}`},
+    {h:"Peak Month", v:stats.peakMonth || "–", s:`Most yearly highs • ${stats.peakMonthCount}/${stats.yearCount} years`},
+    {h:"Strongest Quarter", v:stats.strongestQuarter || "–", s:`Historical average • ${label}`}
+  ];
+  return `<div class="seasonality-grid">${cards.map(c => `<div class="pill"><div class="h">${c.h}</div><div class="v">${c.v}</div><div class="s">${c.s}</div></div>`).join("")}</div>`;
+}
+function monthRankingHtml(stats, label) {
+  if (!stats || !stats.monthRanking?.length) return `<div class="seasonality-message">No monthly ranking is available yet for ${label}.</div>`;
+  return `<div class="seasonality-box"><h3>Month Ranking • ${label}</h3><table class="seasonality-table"><tr><th>Rank</th><th>Month</th><th>Avg</th></tr>${stats.monthRanking.map((m, i) => `<tr><td>${i+1}</td><td>${m.label}</td><td>${fmtNum(m.value)}</td></tr>`).join('')}</table></div>`;
+}
+function quarterRankingHtml(stats, label) {
+  if (!stats || !stats.quarterRanking?.length) return `<div class="seasonality-message">No quarter ranking is available yet for ${label}.</div>`;
+  return `<div class="seasonality-box"><h3>Quarter Ranking • ${label}</h3><table class="seasonality-table"><tr><th>Rank</th><th>Quarter</th><th>Avg</th></tr>${stats.quarterRanking.map((q, i) => `<tr><td>${i+1}</td><td>${q.label}</td><td>${fmtNum(q.value)}</td></tr>`).join('')}</table></div>`;
+}
+function seasonalityDetailedHtml(stats, label) {
+  if (!stats) return seasonalityCardsHtml(stats, label);
+  return `${seasonalityCardsHtml(stats, label)}<div class="seasonality-compare seasonality-detail-stack">${quarterRankingHtml(stats, label)}</div>`;
+}
+
+function renderSeasonality() {
+  const host = document.getElementById("seasonalityContent");
+  const sub = document.getElementById("seasonalitySub");
+  const foot = document.getElementById("seasonalityFoot");
+  const singleWrap = document.getElementById("seasonalitySingleWrap");
+  if (singleWrap) singleWrap.classList.remove('hidden');
+
+  if (seasonalityMode === 'single') {
+    const key = seasonalitySingleSeries;
+    const isNewc = key === 'NEWC';
+    const target = isNewc ? { key:'NEWC', idx:1 } : (iciSeries.find(s => s.key === key) || iciSeries[0]);
+    const targetRows = isNewc ? newc : ici;
+    const stats = seasonalityStats(targetRows, target.idx, seasonalityHistory);
+    host.innerHTML = seasonalityDetailedHtml(stats, key);
+    sub.textContent = `Historical seasonality for ${key} • ${seasonalityHistoryLabel(seasonalityHistory)}`;
+    foot.textContent = stats
+      ? `Method: monthly and quarterly averages use the ${seasonalityHistoryLabel(seasonalityHistory)} for ${key}. Quarter Ranking sorts Q1 to Q4 by historical average price. Peak Month counts which calendar month contained that window's yearly high.`
+      : `Load ${isNewc ? 'NEWC' : 'ICI'} data to calculate historical seasonality for ${key}.`;
+    return;
+  }
+
+  if (seasonalityMode === 'bygrade') {
+    const rows = iciSeries.map(s => ({ key:s.key, stats:seasonalityStats(ici, s.idx, seasonalityHistory) }));
+    host.innerHTML = `<table class="seasonality-table"><tr><th>Grade</th><th>Strongest Month</th><th>Weakest Month</th><th>Peak Month</th><th>Strongest Quarter</th><th>Quarter Ranking</th></tr>${rows.map(r => `<tr><td>${r.key}</td><td>${r.stats?.strongestMonth || '–'}</td><td>${r.stats?.weakestMonth || '–'}</td><td>${r.stats?.peakMonth || '–'}</td><td>${r.stats?.strongestQuarter || '–'}</td><td>${r.stats?.quarterRanking?.map(x => x.label).join(' › ') || '–'}</td></tr>`).join('')}</table>`;
+    sub.textContent = `Historical seasonality • all ICI grades • ${seasonalityHistoryLabel(seasonalityHistory)}`;
+    foot.textContent = `Method: each row is calculated independently from that grade's ${seasonalityHistoryLabel(seasonalityHistory)}. Quarter Ranking sorts Q1 to Q4 by historical average price. Peak Month counts which calendar month contained that grade's yearly high most often within the selected history.`;
+    return;
+  }
+
+  const ici1 = iciSeries.find(s => s.key === 'ICI 1') || iciSeries[0];
+  const ici1Stats = seasonalityStats(ici, ici1.idx, seasonalityHistory);
+  const newcStats = seasonalityStats(newc, 1, seasonalityHistory);
+  host.innerHTML = `<div class="seasonality-compare">    <div class="seasonality-box"><h3>ICI 1</h3>${seasonalityDetailedHtml(ici1Stats, 'ICI 1')}</div>    <div class="seasonality-box"><h3>NEWC</h3>${seasonalityDetailedHtml(newcStats, 'NEWC')}</div>  </div>`;
+  sub.textContent = `Historical seasonality comparison • ICI 1 vs NEWC • ${seasonalityHistoryLabel(seasonalityHistory)}`;
+  foot.textContent = `Method: ICI vs NEWC comparison is fixed to ICI 1 versus NEWC using the ${seasonalityHistoryLabel(seasonalityHistory)}. Quarter Ranking sorts Q1 to Q4 by historical average price. Peak Month counts which calendar month contained each series' yearly high most often within the selected history.`;
+}
+
+function renderKpis() {
+  const grid = document.getElementById("kpiGrid");
+  const all = [
+    ...iciSeries.map(s => ({ name:s.key, idx:s.idx, rows:ici, color:s.color })),
+    { name:"NEWC", idx:1, rows:newc, color:newcSeries[0].color }
+  ];
+  grid.innerHTML = all.map(item => {
+    const last = lastValid(item.rows, item.idx);
+    const prev = last ? previousValid(item.rows, item.idx, last.i) : null;
+    const d = prev && last ? pct(last.value, prev.value) : null;
+    const cls = signClass(d ?? 0);
+    return `<div class="card kpi">
+      <div class="k-head">
+        <div class="series">${item.name}</div>
+        <div class="date">${fmtDate(last?.date)}</div>
+      </div>
+      <div class="price" style="color:${item.color}">${fmtNum(last?.value)}</div>
+      <div class="delta ${cls}">${d == null ? 'No prior print' : `${fmtPct(d)} vs previous observation`}</div>
+      <div class="mini">
+        <div><span class="m-l">1M</span><span class="m-v ${signClass(lookbackPct(item.rows,item.idx,1) ?? 0)}">${fmtPct(lookbackPct(item.rows,item.idx,1))}</span></div>
+        <div><span class="m-l">3M</span><span class="m-v ${signClass(lookbackPct(item.rows,item.idx,3) ?? 0)}">${fmtPct(lookbackPct(item.rows,item.idx,3))}</span></div>
+        <div><span class="m-l">6M</span><span class="m-v ${signClass(lookbackPct(item.rows,item.idx,6) ?? 0)}">${fmtPct(lookbackPct(item.rows,item.idx,6))}</span></div>
+        <div><span class="m-l">YTD</span><span class="m-v ${signClass(ytdPct(item.rows,item.idx) ?? 0)}">${fmtPct(ytdPct(item.rows,item.idx))}</span></div>
+      </div>
+    </div>`;
+  }).join("");
+}
+function renderAnalytics() {
+  const table = document.getElementById("analyticsTable");
+  const rows = [
+    ...iciSeries.map(s => ({name:s.key, idx:s.idx, rows:ici})),
+    {name:"NEWC", idx:1, rows:newc}
+  ];
+  const html = [];
+  html.push(`<tr><th>Series</th><th>Latest</th><th>Latest Date</th><th>1M</th><th>3M</th><th>6M</th><th>YTD</th><th>Vol (3M, %)</th></tr>`);
+  rows.forEach(r => {
+    const last = lastValid(r.rows,r.idx);
+    const retSeries = seriesRows(filterRange(r.rows, "3M"), r.idx).map((p,i,arr)=> i===0 ? null : pct(p.value, arr[i-1].value)).filter(v => v != null);
+    html.push(`<tr>
+      <td>${r.name}</td>
+      <td>${fmtNum(last?.value)}</td>
+      <td>${fmtDate(last?.date)}</td>
+      <td class="${signClass(lookbackPct(r.rows,r.idx,1) ?? 0)}">${fmtPct(lookbackPct(r.rows,r.idx,1))}</td>
+      <td class="${signClass(lookbackPct(r.rows,r.idx,3) ?? 0)}">${fmtPct(lookbackPct(r.rows,r.idx,3))}</td>
+      <td class="${signClass(lookbackPct(r.rows,r.idx,6) ?? 0)}">${fmtPct(lookbackPct(r.rows,r.idx,6))}</td>
+      <td class="${signClass(ytdPct(r.rows,r.idx) ?? 0)}">${fmtPct(ytdPct(r.rows,r.idx))}</td>
+      <td>${fmtNum(stddev(retSeries))}</td>
+    </tr>`);
+  });
+  table.innerHTML = html.join("");
+  const iciLast = lastValid(ici,1)?.date;
+  const newcLast = lastValid(newc,1)?.date;
+  document.getElementById("coverageNote").textContent =
+    `Coverage note: ICI weekly history runs from ${fmtDate(ici[0].date)} to ${fmtDate(iciLast)}. NEWC history runs from ${fmtDate(newc[0].date)} to ${fmtDate(newcLast)}. The workbook carries a later final stamp for ICI than for NEWC, so recency should be read series by series.`;
+}
+function addNote(hostId, title, body, extraClass="") {
+  const host = document.getElementById(hostId);
+  if (!host) return;
+  const className = extraClass ? `note ${extraClass}` : "note";
+  host.innerHTML += `<div class="${className}"><span class="t">${title}</span>${body}</div>`;
+}
+function addCommentarySectionLabel(hostId, label) {
+  const host = document.getElementById(hostId);
+  if (!host) return;
+  host.innerHTML += `<div class="commentary-section-label">${label}</div>`;
+}
+function renderCommentary() {
+  const commentary = document.getElementById("commentary");
+  const physicalMarket = document.getElementById("physicalMarketCommentary");
+  const risk = document.getElementById("riskCommentary");
+  if (commentary) commentary.innerHTML = "";
+  if (physicalMarket) physicalMarket.innerHTML = "";
+  if (risk) risk.innerHTML = "";
+  const active = iciSeries.filter(s => selectedIci.has(s.key));
+  const lead = [...active].map(s => ({ name:s.key, m1:lookbackPct(ici,s.idx,1), m3:lookbackPct(ici,s.idx,3), last:lastValid(ici,s.idx)?.value }))
+    .sort((a,b)=>(b.m3??-999)-(a.m3??-999))[0];
+  const lag = [...active].map(s => ({ name:s.key, m1:lookbackPct(ici,s.idx,1), m3:lookbackPct(ici,s.idx,3), last:lastValid(ici,s.idx)?.value }))
+    .sort((a,b)=>(a.m3??999)-(b.m3??999))[0];
+  const newcLast = lastValid(newc,1);
+  const newc3 = lookbackPct(newc,1,3);
+  const spreadPts = spreadSeries();
+  const spreadLatest = spreadPts.length ? spreadPts[spreadPts.length-1].value : null;
+  const spreadAvg = spreadPts.length ? average(spreadPts.map(x=>x.value)) : null;
+
+  addCommentarySectionLabel("commentary", "Commentary");
+  addNote("commentary", "ICI Structure",
+    `The index remains elevated and stable, holding near recent highs without significant drawdown.<br><br>This is supported by consistent pricing across components, with low volatility and no signs of structural weakness.<br><br><strong>Strength:</strong> Moderate`);
+  addNote("commentary", "NEWC context",
+    `Prices are improving with a gradual recovery from the prior low, now approaching recent highs.<br><br>The move is driven by steady upward momentum and higher lows since the bottom, with no sharp acceleration or breakout yet.<br><br><strong>Strength:</strong> Moderate`);
+  addNote("commentary", "Spread read",
+    spreadLatest == null
+      ? `Spread analytics are waiting for at least two ICI grades to be selected.`
+      : `The active grade spread, <strong>${Array.from(selectedIci)[0]} minus ${Array.from(selectedIci)[1]}</strong>, is <strong>${fmtNum(spreadLatest)}</strong> versus a current-window average of <strong>${fmtNum(spreadAvg)}</strong>. That quickly tells you whether relative value between the selected grades is richening or compressing.`);
+
+  const riskStats = active.map(s => {
+    const pts = seriesRows(filterRange(ici,currentRange), s.idx);
+    const volPts = seriesRows(filterRange(ici,"3M"), s.idx);
+    const rets = volPts.map((p,i,arr)=> i===0 ? null : pct(p.value, arr[i-1].value)).filter(v => v != null);
+    const peak = Math.max(...pts.map(p=>p.value));
+    const last = pts[pts.length-1]?.value;
+    return { name:s.key, vol:stddev(rets), drawdown:last && peak ? (last/peak-1)*100 : null };
+  });
+  const hiVol = [...riskStats].sort((a,b)=>(b.vol??-999)-(a.vol??-999))[0];
+  const worstDd = [...riskStats].sort((a,b)=>(a.drawdown??999)-(b.drawdown??999))[0];
+  const breadth = iciSeries.map(s => lookbackPct(ici,s.idx,3)).filter(v => v != null);
+  const posBreadth = breadth.filter(v => v > 0).length;
+  addNote("riskCommentary", "Volatility concentration",
+    `Within the selected ICI lines, <strong>${hiVol?.name || "–"}</strong> is carrying the highest realized 3M volatility at <strong>${fmtNum(hiVol?.vol)}</strong>. In a terminal-style view, that helps separate a clean trend from a noisier one before you over-read a headline move.`);
+  addNote("riskCommentary", "Peak-to-current pressure",
+    `The deepest drawdown in the active selection sits with <strong>${worstDd?.name || "–"}</strong> at <strong>${fmtPct(worstDd?.drawdown)}</strong> from the local peak in the chosen window. That matters because a benchmark can still look stable on the headline chart while remaining meaningfully below its own recent highs.`);
+  addNote("riskCommentary", "Breadth across the ICI stack",
+    `Across all five ICI grades, <strong>${posBreadth} out of 5</strong> are positive on a 3M basis. That breadth check is useful because it tells you whether strength is broad across the coal quality curve or isolated to only one pocket.`);
+}
+
+function fmtDateShortNum(d) {
+  return d ? d.toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" }) : "–";
+}
+function dateKey(d) {
+  return d instanceof Date && !Number.isNaN(d) ? d.toISOString().slice(0,10) : String(d || '');
+}
+function detectDatasetQuality(rows) {
+  const sorted = [...rows].filter(r => r && r.date instanceof Date && !Number.isNaN(r.date)).sort((a,b) => a.date - b.date);
+  const rowCount = sorted.length;
+  if (!rowCount) {
+    return {
+      rowCount:0, start:null, end:null, latest:null, duplicates:0, invalidCells:0,
+      gapCount:0, missingPeriods:0, expectedDays:null, maxGapDays:null
+    };
+  }
+  const keys = sorted.map(r => dateKey(r.date));
+  const unique = new Set(keys);
+  const duplicates = rowCount - unique.size;
+  let invalidCells = 0;
+  sorted.forEach(r => r.values.forEach(v => { if (v == null || Number.isNaN(v)) invalidCells += 1; }));
+
+  const diffs = [];
+  for (let i = 1; i < sorted.length; i++) {
+    const diff = Math.round((sorted[i].date - sorted[i-1].date) / 86400000);
+    if (diff > 0) diffs.push(diff);
+  }
+  let expectedDays = null;
+  if (diffs.length) {
+    const counts = new Map();
+    diffs.forEach(d => counts.set(d, (counts.get(d) || 0) + 1));
+    expectedDays = [...counts.entries()].sort((a,b) => b[1]-a[1] || a[0]-b[0])[0][0];
+  }
+  let gapCount = 0;
+  let missingPeriods = 0;
+  let maxGapDays = 0;
+  if (expectedDays) {
+    for (const diff of diffs) {
+      if (diff > expectedDays * 1.5) {
+        gapCount += 1;
+        missingPeriods += Math.max(1, Math.round(diff / expectedDays) - 1);
+        if (diff > maxGapDays) maxGapDays = diff;
+      }
+    }
+  }
+  return {
+    rowCount,
+    start: sorted[0].date,
+    end: sorted[sorted.length - 1].date,
+    latest: sorted[sorted.length - 1].date,
+    duplicates,
+    invalidCells,
+    gapCount,
+    missingPeriods,
+    expectedDays,
+    maxGapDays: maxGapDays || null
+  };
+}
+function renderDataQuality() {
+  const iciQ = detectDatasetQuality(ici);
+  const newcQ = detectDatasetQuality(newc);
+  const host = document.getElementById('dataQualityContent');
+  const foot = document.getElementById('dataQualityFoot');
+  if (!host || !foot) return;
+
+  function datasetCard(title, q) {
+    return `
+      <div class="data-quality-card">
+        <div class="dq-title">${title}</div>
+        <div class="dq-row"><span class="dq-key">Rows loaded</span><span class="dq-val">${q.rowCount || '–'}</span></div>
+        <div class="dq-row"><span class="dq-key">Date range</span><span class="dq-val">${fmtDateShortNum(q.start)} → ${fmtDateShortNum(q.end)}</span></div>
+        <div class="dq-row"><span class="dq-key">Latest date</span><span class="dq-val">${fmtDateShortNum(q.latest)}</span></div>
+        <div class="dq-row"><span class="dq-key">Duplicate dates</span><span class="dq-val">${q.duplicates}</span></div>
+        <div class="dq-row"><span class="dq-key">Invalid cells</span><span class="dq-val">${q.invalidCells}</span></div>
+        <div class="dq-row"><span class="dq-key">Detected cadence</span><span class="dq-val">${q.expectedDays ? `${q.expectedDays}-day` : '–'}</span></div>
+      </div>`;
+  }
+
+  const totalRows = iciQ.rowCount + newcQ.rowCount;
+  const totalDup = iciQ.duplicates + newcQ.duplicates;
+  const totalInvalid = iciQ.invalidCells + newcQ.invalidCells;
+  const totalGapFlags = iciQ.gapCount + newcQ.gapCount;
+
+  host.innerHTML = `
+    <div class="data-quality-grid">
+      ${datasetCard('ICI Dataset', iciQ)}
+      ${datasetCard('NEWC Dataset', newcQ)}
+    </div>
+    <div class="data-quality-summary">
+      <div class="data-quality-pill"><span class="dq-key">Total rows</span><span class="dq-val">${totalRows}</span></div>
+      <div class="data-quality-pill"><span class="dq-key">Duplicate dates</span><span class="dq-val">${totalDup}</span></div>
+      <div class="data-quality-pill"><span class="dq-key">Invalid cells</span><span class="dq-val">${totalInvalid}</span></div>
+      <div class="data-quality-pill"><span class="dq-key">Gap flags</span><span class="dq-val">${totalGapFlags}</span></div>
+    </div>`;
+
+  const footBits = [];
+  if (iciQ.gapCount) footBits.push(`ICI gap flags: ${iciQ.gapCount}${iciQ.maxGapDays ? ` (largest gap ${iciQ.maxGapDays} days)` : ''}`);
+  if (newcQ.gapCount) footBits.push(`NEWC gap flags: ${newcQ.gapCount}${newcQ.maxGapDays ? ` (largest gap ${newcQ.maxGapDays} days)` : ''}`);
+  if (!footBits.length) footBits.push('No large date gaps detected using the dominant observed reporting cadence in each dataset.');
+  const publishText = `Published: 18 Apr 2026, 15:23.`;
+  foot.textContent = `${footBits.join(' • ')} ${publishText}`;
+}
+
+function updateMeta() {
+  const iciLast = lastValid(ici,1)?.date;
+  const newcLast = lastValid(newc,1)?.date;
+  const refreshTxt = window.__lastRefreshAt
+    ? `Last refresh: <strong>${window.__lastRefreshAt}</strong><span class="sep">|</span>`
+    : '';
+  const sourceTxt = window.__dataSourceLabel
+    ? `Source: <strong>${window.__dataSourceLabel}</strong><span class="sep">|</span>`
+    : '';
+  const statusTxt = window.__dataStatusText
+    ? `${window.__dataStatusText}<span class="sep">|</span>`
+    : '';
+  document.getElementById("metaStamp").innerHTML = `<span class="published-label">Published</span>: <strong>18 Apr 2026, 15:23</strong>`;
+}
+function syncButtons() {
+  document.querySelectorAll(".range-btn").forEach(b => b.classList.toggle("active", b.dataset.range === currentRange));
+  document.querySelectorAll(".newc-range-btn").forEach(b => b.classList.toggle("active", b.dataset.range === currentNewcRange));
+  document.querySelectorAll('.ici-grade-btn').forEach(b => b.classList.toggle('active', selectedIci.has(b.dataset.grade)));
+  document.getElementById("focusBtn").classList.toggle("active",
+    Array.from(selectedIci).sort().join("|") === ["ICI 1","ICI 2"].join("|"));
+  document.querySelectorAll('.seasonality-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === seasonalityMode));
+  const seasonalitySelect = document.getElementById('seasonalitySingleSelect');
+  if (seasonalitySelect) seasonalitySelect.value = seasonalitySingleSeries;
+  const seasonalityHistorySelect = document.getElementById('seasonalityHistorySelect');
+  if (seasonalityHistorySelect) seasonalityHistorySelect.value = seasonalityHistory;
+}
+function renderAll() {
+  populateSeasonalityHistorySelect();
+  renderStrip();
+  renderKpis();
+  renderSeasonality();
+  drawIciChart();
+  drawNewcChart();
+  drawSpread();
+  drawDrawdown();
+  renderAnalytics();
+  renderDataQuality();
+  renderCommentary();
+  updateMeta();
+  syncButtons();
+}
+document.querySelectorAll('.ici-grade-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const grade = btn.dataset.grade;
+    if (selectedIci.has(grade) && selectedIci.size === 1) return;
+    if (selectedIci.has(grade)) selectedIci.delete(grade);
+    else selectedIci.add(grade);
+    renderAll();
+  });
+});
+document.querySelectorAll('.range-btn').forEach(btn => btn.addEventListener('click', () => {
+  currentRange = btn.dataset.range; renderAll();
+}));
+document.querySelectorAll('.newc-range-btn').forEach(btn => btn.addEventListener('click', () => {
+  currentNewcRange = btn.dataset.range; renderAll();
+}));
+document.getElementById('normalizeToggle').addEventListener('change', renderAll);
+document.getElementById('allGradesBtn').addEventListener('click', () => {
+  selectedIci = new Set(iciSeries.map(s=>s.key));
+  renderAll();
+});
+document.getElementById('focusBtn').addEventListener('click', () => {
+  selectedIci = new Set(["ICI 1","ICI 2"]);
+  renderAll();
+});
+document.querySelectorAll('.seasonality-mode-btn').forEach(btn => btn.addEventListener('click', () => {
+  seasonalityMode = btn.dataset.mode;
+  renderAll();
+}));
+document.getElementById('seasonalitySingleSelect').addEventListener('change', (e) => {
+  seasonalitySingleSeries = e.target.value;
+  seasonalityMode = 'single';
+  renderAll();
+});
+document.getElementById('seasonalityHistorySelect').addEventListener('change', (e) => {
+  seasonalityHistory = e.target.value;
+  renderAll();
+});
+renderAll();
+
+function normalizeHeader(h) {
+  return String(h || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function parseCsvText(text) {
+  const lines = String(text || '').replace(/^\uFEFF/, '').split(/\r?\n/).filter(line => line.trim());
+  if (!lines.length) return [];
+  function parseLine(line) {
+    const out = [];
+    let cur = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
+        else { inQuotes = !inQuotes; }
+      } else if (ch === ',' && !inQuotes) {
+        out.push(cur); cur = '';
+      } else {
+        cur += ch;
+      }
+    }
+    out.push(cur);
+    return out.map(v => v.trim());
+  }
+  const headers = parseLine(lines[0]).map(normalizeHeader);
+  return lines.slice(1).map(line => {
+    const cols = parseLine(line);
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = cols[i] != null ? cols[i] : '');
+    return obj;
+  });
+}
+
+function coerceNumberCsv(value) {
+  if (value == null) return null;
+  const s = String(value).trim();
+  if (!s) return null;
+  const n = Number(s.replace(/,/g, ''));
+  return Number.isFinite(n) ? n : null;
+}
+
+function excelSerialToIso(serial) {
+  const n = Number(serial);
+  if (!Number.isFinite(n)) return null;
+  const utc = new Date(Date.UTC(1899, 11, 30));
+  utc.setUTCDate(utc.getUTCDate() + Math.floor(n));
+  return utc.toISOString().slice(0, 10);
+}
+
+function parseFlexibleDateToIso(value) {
+  const s = String(value || '').trim();
+  if (!s) return null;
+  let m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+  m = s.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/);
+  if (m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+  m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  m = s.match(/^(\d{1,2})-(\d{1,2})-(\d{4})$/);
+  if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  if (/^\d{5,6}$/.test(s)) return excelSerialToIso(s);
+  return null;
+}
+
+function mapIciCsvRows(text) {
+  return parseCsvText(text).map((r, idx) => {
+    const iso = parseFlexibleDateToIso(r.date || r.week || r.timestamp || r.datetime || r.period);
+    if (!iso) throw new Error(`ICI CSV row ${idx + 2} has an unreadable date.`);
+    return [
+      iso,
+      coerceNumberCsv(r.ici1 || r.grade1 || r.ici6500gar || r.ici6500 || r.ici6500nar),
+      coerceNumberCsv(r.ici2 || r.grade2 || r.ici5800gar || r.ici5800 || r.ici5800nar),
+      coerceNumberCsv(r.ici3 || r.grade3 || r.ici5000gar || r.ici5000 || r.ici5000nar),
+      coerceNumberCsv(r.ici4 || r.grade4 || r.ici4200gar || r.ici4200 || r.ici4200nar),
+      coerceNumberCsv(r.ici5 || r.grade5 || r.ici3400gar || r.ici3400 || r.ici3400nar)
+    ];
+  });
+}
+
+function mapNewcCsvRows(text) {
+  return parseCsvText(text).map((r, idx) => {
+    const iso = parseFlexibleDateToIso(r.date || r.day || r.timestamp || r.datetime || r.period);
+    if (!iso) throw new Error(`NEWC CSV row ${idx + 2} has an unreadable date.`);
+    return [iso, coerceNumberCsv(r.newc || r.price || r.value || r.index)];
+  });
+}
+
+function applyImportedData(nextIciRaw, nextNewcRaw, sourceLabel) {
+  if (Array.isArray(nextIciRaw) && nextIciRaw.length) iciRaw = nextIciRaw;
+  if (Array.isArray(nextNewcRaw) && nextNewcRaw.length) newcRaw = nextNewcRaw;
+  ici = iciRaw.map(r => ({ date:new Date(r[0] + 'T00:00:00'), values:r.slice(1) }));
+  newc = newcRaw.map(r => ({ date:new Date(r[0] + 'T00:00:00'), values:[r[1]] }));
+  window.__lastRefreshAt = new Date().toLocaleString('en-GB');
+  window.__dataSourceLabel = sourceLabel || 'Imported CSV';
+  window.__dataStatusText = 'Status: <strong>Loaded</strong>';
+  renderAll();
+}
+
+async function tryFetchSidecarCsv() {
+  const fetchText = async (url) => {
+    const res = await fetch(`${url}?v=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`${url} returned ${res.status}`);
+    return res.text();
+  };
+  const [iciText, newcText] = await Promise.all([fetchText('./ici.csv'), fetchText('./newc.csv')]);
+  applyImportedData(mapIciCsvRows(await iciText), mapNewcCsvRows(await newcText), 'Sidecar CSV files');
+}
+
+async function handleCsvInput(inputEl, mapper, applyFn, label) {
+  const file = inputEl.files && inputEl.files[0];
+  if (!file) {
+    window.__dataStatusText = `Status: <strong>${label} cancelled</strong> — no file selected.`;
+    updateMeta();
+    return;
+  }
+  window.__lastRefreshAt = new Date().toLocaleString('en-GB');
+  window.__dataStatusText = `Status: <strong>Loading ${label}</strong> — ${file.name}`;
+  updateMeta();
+  const text = await file.text();
+  const rows = mapper(text);
+  applyFn(rows, `${label}: ${file.name}`);
+  window.__dataStatusText = `Status: <strong>${label} loaded</strong> — ${rows.length} rows parsed from ${file.name}.`;
+  updateMeta();
+  inputEl.value = '';
+}
+
+document.getElementById('loadIciCsvBtn').addEventListener('click', () => {
+  const input = document.getElementById('iciCsvInput');
+  input.value = '';
+  input.click();
+});
+document.getElementById('loadNewcCsvBtn').addEventListener('click', () => {
+  const input = document.getElementById('newcCsvInput');
+  input.value = '';
+  input.click();
+});
+document.getElementById('reloadSidecarBtn').addEventListener('click', async () => {
+  try {
+    await tryFetchSidecarCsv();
+  } catch (err) {
+    window.__lastRefreshAt = new Date().toLocaleString('en-GB');
+    window.__dataSourceLabel = 'Embedded baseline';
+    window.__dataStatusText = location.protocol === 'file:'
+      ? 'Status: <strong>Sidecar reload unavailable</strong> — open via a local web server for Reload CSV.'
+      : `Status: <strong>Reload failed</strong> — ${err.message}`;
+    updateMeta();
+  }
+});
+document.getElementById('iciCsvInput').addEventListener('change', async (e) => {
+  try {
+    await handleCsvInput(e.target, mapIciCsvRows, (rows, source) => applyImportedData(rows, null, source), 'ICI CSV');
+  } catch (err) {
+    window.__dataStatusText = `Status: <strong>ICI load failed</strong> — ${err.message}`;
+    updateMeta();
+  }
+});
+document.getElementById('newcCsvInput').addEventListener('change', async (e) => {
+  try {
+    await handleCsvInput(e.target, mapNewcCsvRows, (rows, source) => applyImportedData(null, rows, source), 'NEWC CSV');
+  } catch (err) {
+    window.__dataStatusText = `Status: <strong>NEWC load failed</strong> — ${err.message}`;
+    updateMeta();
+  }
+});
+
+window.__dataSourceLabel = 'Embedded baseline';
+window.__dataStatusText = 'Status: <strong>Loaded embedded data</strong>';
+window.__lastRefreshAt = new Date().toLocaleString('en-GB');
+updateMeta();
+
+const chartTooltip = document.getElementById('chartTooltip');
+
+function showTooltip(evt, title, rows) {
+  if (!chartTooltip) return;
+  const inner = rows.map(r =>
+    `<div class="tt-row"><span class="tt-label">${r.label}</span><span class="tt-value">${r.value}</span></div>`
+  ).join('');
+  chartTooltip.innerHTML = `<div class="tt-title">${title}</div>${inner}`;
+  chartTooltip.style.display = 'block';
+  const offsetX = 14, offsetY = 14;
+  const rect = chartTooltip.getBoundingClientRect();
+  let left = evt.clientX + offsetX;
+  let top = evt.clientY + offsetY;
+  if (left + rect.width > window.innerWidth - 10) left = evt.clientX - rect.width - offsetX;
+  if (top + rect.height > window.innerHeight - 10) top = evt.clientY - rect.height - offsetY;
+  chartTooltip.style.left = `${left}px`;
+  chartTooltip.style.top = `${top}px`;
+}
+
+function hideTooltip() {
+  if (!chartTooltip) return;
+  chartTooltip.style.display = 'none';
+}
+
+function addLastValueTag(svg, x, y, text, strokeColor) {
+  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+  txt.setAttribute("class", "chart-last-text");
+  txt.setAttribute("x", x + 8);
+  txt.setAttribute("y", y);
+  txt.textContent = text;
+  svg.appendChild(txt);
+  const bb = txt.getBBox();
+  const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+  rect.setAttribute("class", "chart-last-tag");
+  rect.setAttribute("x", bb.x - 6);
+  rect.setAttribute("y", bb.y - 3);
+  rect.setAttribute("width", bb.width + 12);
+  rect.setAttribute("height", bb.height + 6);
+  if (strokeColor) rect.setAttribute("stroke", strokeColor);
+  g.appendChild(rect);
+  g.appendChild(txt);
+  svg.appendChild(g);
+  return g;
+}
+
+function addCrosshair(svg, innerX, topY, bottomY, dotX, dotY, color, title, rows) {
+  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+  g.style.display = 'none';
+
+  const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line.setAttribute("class", "chart-focus-line");
+  line.setAttribute("x1", innerX);
+  line.setAttribute("x2", innerX);
+  line.setAttribute("y1", topY);
+  line.setAttribute("y2", bottomY);
+  g.appendChild(line);
+
+  const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  dot.setAttribute("class", "chart-focus-dot");
+  dot.setAttribute("cx", dotX);
+  dot.setAttribute("cy", dotY);
+  dot.setAttribute("r", 4);
+  dot.setAttribute("fill", color || '#d63a2f');
+  g.appendChild(dot);
+
+  svg.appendChild(g);
+  return {
+    show(evt, newX, newY, newRows, newTitle) {
+      line.setAttribute("x1", newX);
+      line.setAttribute("x2", newX);
+      dot.setAttribute("cx", newX);
+      dot.setAttribute("cy", newY);
+      if (color) dot.setAttribute("fill", color);
+      g.style.display = 'block';
+      showTooltip(evt, newTitle || title, newRows || rows || []);
+    },
+    hide() {
+      g.style.display = 'none';
+      hideTooltip();
+    }
+  };
+}
+
+function nearestIndexByX(points, x) {
+  let best = 0, bestDist = Infinity;
+  for (let i = 0; i < points.length; i++) {
+    const d = Math.abs(points[i].x - x);
+    if (d < bestDist) { bestDist = d; best = i; }
+  }
+  return best;
+}
+
+</script><script>
+(function(){
+  function fmtMaybePct(v, digits=1){ return v == null || Number.isNaN(v) ? '—' : `${Number(v).toFixed(digits)}%`; }
+  function clsFromSignal(sig){ return sig === 'Bullish' ? 'bullish' : sig === 'Bearish' ? 'bearish' : 'neutral'; }
+  function safeNum(v){ return v == null || Number.isNaN(v) ? null : Number(v); }
+  function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+  function normTrend(v, scale){
+    if (v == null || Number.isNaN(v)) return 0;
+    return clamp(v / scale, -1, 1);
+  }
+  function drawdownPenalty(dd){
+    if (dd == null || Number.isNaN(dd)) return 0;
+    return clamp(Math.abs(Math.min(dd, 0)) / 15, 0, 1);
+  }
+  function windowReturn(pts){
+    if (!pts || pts.length < 2) return null;
+    const first = pts[0]?.value;
+    const last = pts[pts.length - 1]?.value;
+    if (first == null || last == null || Number.isNaN(first) || Number.isNaN(last) || first === 0) return null;
+    return ((last / first) - 1) * 100;
+  }
+  function signalFromScore(score, prevKey){
+    const prev = (window.__commentarySignalState || {})[prevKey] || null;
+    let sig = 'Neutral';
+    if (prev === 'Bullish') {
+      sig = score < 0.20 ? (score < -0.35 ? 'Bearish' : 'Neutral') : 'Bullish';
+    } else if (prev === 'Bearish') {
+      sig = score > -0.20 ? (score > 0.35 ? 'Bullish' : 'Neutral') : 'Bearish';
+    } else {
+      if (score > 0.35) sig = 'Bullish';
+      else if (score < -0.35) sig = 'Bearish';
+      else sig = 'Neutral';
+    }
+    window.__commentarySignalState = window.__commentarySignalState || {};
+    window.__commentarySignalState[prevKey] = sig;
+    return sig;
+  }
+  function strengthFromScore(score, ddPenaltyVal){
+    const absScore = Math.abs(score);
+    if (absScore > 0.60 && ddPenaltyVal < 0.40) return 'Strong';
+    if (absScore > 0.30) return 'Moderate';
+    return 'Weak';
+  }
+  function makeWatch(watch){
+    return `<div class="watch-grid">${watch.map(w=>`<div class="watch-item"><span class="wl">${w[0]}</span><span class="wv">${w[1]}</span></div>`).join('')}</div>`;
+  }
+  function noteHtml(title, signal, body, watch){
+    const cls = clsFromSignal(signal);
+    return `<div class="note signal-${cls}"><span class="t">${title}<span class="signal-chip ${cls}">${String(signal).toUpperCase()}</span></span><div class="analyst-line">${body}</div>${makeWatch(watch)}</div>`;
+  }
+
+  window.renderCommentary = function(){
+    const commentary = document.getElementById('commentary');
+    const physicalMarket = document.getElementById('physicalMarketCommentary');
+    if (!commentary || typeof iciSeries === 'undefined' || typeof selectedIci === 'undefined') return;
+    if (physicalMarket) physicalMarket.innerHTML = '';
+
+    const active = iciSeries.filter(s => selectedIci.has(s.key));
+    const activeStats = active.map(s => {
+      const rangePts = (typeof filterRange === 'function' && typeof seriesRows === 'function') ? seriesRows(filterRange(ici, currentRange), s.idx) : [];
+      return {
+        name: s.key,
+        idx: s.idx,
+        m1: safeNum(typeof lookbackPct === 'function' ? lookbackPct(ici, s.idx, 1) : null),
+        m3: safeNum(typeof lookbackPct === 'function' ? lookbackPct(ici, s.idx, 3) : null),
+        lastObj: typeof lastValid === 'function' ? lastValid(ici, s.idx) : null,
+        rangePts,
+        windowRet: safeNum(windowReturn(rangePts))
+      };
+    });
+
+    const avgM3 = activeStats.length ? activeStats.reduce((a,b)=>a + (b.m3 ?? 0),0) / activeStats.length : null;
+    const avgWindowRet = activeStats.length ? activeStats.reduce((a,b)=>a + (b.windowRet ?? 0),0) / activeStats.length : null;
+
+    const spreadPts = typeof spreadSeries === 'function' ? spreadSeries() : [];
+    const spreadValues = spreadPts.map(x => x.value).filter(v => v != null && !Number.isNaN(v));
+    const spreadLatest = spreadValues.length ? spreadValues[spreadValues.length - 1] : null;
+    const spreadAvg = spreadValues.length && typeof average === 'function' ? average(spreadValues) : null;
+    const spreadStd = spreadValues.length && typeof stddev === 'function' ? stddev(spreadValues) : null;
+    const spreadDelta = spreadLatest != null && spreadAvg != null ? spreadLatest - spreadAvg : null;
+    const spreadThreshold = spreadStd != null ? Math.max(0.8, spreadStd * 0.35) : 1.0;
+    const spreadRegime = spreadDelta == null ? 'stable' : (spreadDelta > spreadThreshold ? 'widening' : (spreadDelta < -spreadThreshold ? 'tightening' : 'stable'));
+
+    const drawdowns = activeStats.map(s => {
+      const pts = (s.rangePts || []).filter(p => p && p.value != null && !Number.isNaN(p.value));
+      if (!pts.length) return null;
+      let rollingPeak = pts[0].value;
+      let worst = 0;
+      for (let i = 1; i < pts.length; i++) {
+        const v = pts[i].value;
+        if (v > rollingPeak) rollingPeak = v;
+        const dd = rollingPeak ? ((v / rollingPeak) - 1) * 100 : null;
+        if (dd != null && !Number.isNaN(dd) && dd < worst) worst = dd;
+      }
+      return worst;
+    }).filter(v => v != null && !Number.isNaN(v));
+    const worstDd = drawdowns.length ? Math.min(...drawdowns) : null;
+
+    let iciSignal = 'Neutral';
+    let iciBody = `The index remains elevated and stable, holding near recent highs without significant drawdown.<br><br>This is supported by consistent pricing across components, with low volatility and no signs of structural weakness.<br><br><strong>Strength:</strong> Moderate`;
+    let iciWatch = [
+      ['Selection', activeStats.length ? activeStats.map(x => x.name).join(', ') : 'None'],
+      ['Window', currentRange],
+      ['Spread', spreadLatest == null ? '—' : fmtNum(spreadLatest)]
+    ];
+
+    if (activeStats.length === 1) {
+      const s = activeStats[0];
+      const ddPenaltyVal = drawdownPenalty(drawdowns.length ? drawdowns[0] : null);
+      const score = (0.60 * normTrend(s.m3, 6)) + (0.25 * normTrend(s.windowRet, 10)) - (0.15 * ddPenaltyVal);
+      iciSignal = signalFromScore(score, 'single');
+      const strength = strengthFromScore(score, ddPenaltyVal);
+      const directionText = iciSignal === 'Bullish'
+        ? `The selected <strong>${s.name}</strong> grade is improving, with recent behaviour holding constructive even as the <strong>${currentRange}</strong> view provides broader context.`
+        : iciSignal === 'Bearish'
+          ? `The selected <strong>${s.name}</strong> grade is softening, with recent behaviour softening and the broader <strong>${currentRange}</strong> view offering limited support.`
+          : `The selected <strong>${s.name}</strong> grade is broadly stable, with recent behaviour mixed rather than decisively extending in either direction.`;
+      const driverText = `This is supported by a recent <strong>3M return of ${fmtMaybePct(s.m3)}</strong>, a <strong>${currentRange}</strong> window return of <strong>${fmtMaybePct(s.windowRet)}</strong>, and a selected-window drawdown of <strong>${fmtMaybePct(drawdowns.length ? drawdowns[0] : null)}</strong>.`;
+      iciBody = `${directionText}<br><br>${driverText}<br><br><strong>Strength:</strong> ${strength}`;
+      iciWatch = [
+        ['Selection', s.name],
+        ['Window', currentRange],
+        ['3M', fmtMaybePct(s.m3)]
+      ];
+    } else if (activeStats.length >= 2 && activeStats.length < iciSeries.length) {
+      const ddPenaltyVal = drawdownPenalty(worstDd);
+      const score = (0.60 * normTrend(avgM3, 6)) + (0.25 * normTrend(avgWindowRet, 10)) - (0.15 * ddPenaltyVal);
+      iciSignal = signalFromScore(score, 'multi');
+      const strength = strengthFromScore(score, ddPenaltyVal);
+      const directionText = iciSignal === 'Bullish'
+        ? `The selected ICI basket is improving across the active grades, with recent behaviour staying constructive while the <strong>${currentRange}</strong> view continues to confirm the broader structure.`
+        : iciSignal === 'Bearish'
+          ? `The selected ICI basket is softening across the active grades, with softer recent behaviour and a broader <strong>${currentRange}</strong> backdrop that is no longer confirming strength.`
+          : `The selected ICI basket is broadly stable, with recent behaviour mixed and the <strong>${currentRange}</strong> view offering only partial directional confirmation.`;
+      const spreadDriverText = spreadRegime === 'widening'
+        ? `Within the selected <strong>${currentRange}</strong> window, cross-grade dispersion is <strong>widening</strong>: the active spread is <strong>${fmtNum(spreadLatest)}</strong> versus a window average of <strong>${fmtNum(spreadAvg)}</strong>.`
+        : spreadRegime === 'tightening'
+          ? `Within the selected <strong>${currentRange}</strong> window, cross-grade dispersion is <strong>tightening</strong>: the active spread is <strong>${fmtNum(spreadLatest)}</strong> versus a window average of <strong>${fmtNum(spreadAvg)}</strong>.`
+          : `Within the selected <strong>${currentRange}</strong> window, cross-grade dispersion is <strong>stable</strong>: the active spread is <strong>${fmtNum(spreadLatest)}</strong> versus a window average of <strong>${fmtNum(spreadAvg)}</strong>.`;
+      const driverText = `This is supported by an average recent <strong>3M return of ${fmtMaybePct(avgM3)}</strong> across <strong>${activeStats.length}</strong> selected grades, a <strong>${currentRange}</strong> basket return of <strong>${fmtMaybePct(avgWindowRet)}</strong>, and a worst selected-window drawdown of <strong>${fmtMaybePct(worstDd)}</strong>. ${spreadDriverText}`;
+      iciBody = `${directionText}<br><br>${driverText}<br><br><strong>Strength:</strong> ${strength}`;
+      iciWatch = [
+        ['Selection', activeStats.map(x => x.name).join(', ')],
+        ['Window', currentRange],
+        ['Spread regime', spreadRegime.charAt(0).toUpperCase() + spreadRegime.slice(1)]
+      ];
+    }
+
+    const newcLast = typeof lastValid === 'function' ? lastValid(newc, 1) : null;
+    const newc1 = safeNum(typeof lookbackPct === 'function' ? lookbackPct(newc, 1, 1) : null);
+    const newc3 = safeNum(typeof lookbackPct === 'function' ? lookbackPct(newc, 1, 3) : null);
+
+    const html = [
+      noteHtml('ICI Structure', iciSignal, iciBody, iciWatch),
+      noteHtml('NEWC Context', 'Moderate Bullish', `Prices are improving with a gradual recovery from the prior low, now approaching recent highs.<br><br>The move is driven by steady upward momentum and higher lows since the bottom, with no sharp acceleration or breakout yet.<br><br><strong>Strength:</strong> Moderate`, [
+        ['NEWC', newcLast ? fmtNum(newcLast.value) : '—'],
+        ['1M', fmtMaybePct(newc1)],
+        ['3M', fmtMaybePct(newc3)]
+      ])
+    ].join('');
+
+    commentary.innerHTML = html;
+  };
+
+  if (typeof renderAll === 'function') {
+    setTimeout(function(){ try { renderAll(); } catch(e) { console.error(e); } }, 80);
+  }
+})();
+
+</script><script>
+/* Commentary stability pass: uses selectedIci / ici / newc as source of truth */
+(function () {
+  function safePct(v) {
+    return v == null || Number.isNaN(v) ? null : Number(v);
+  }
+  function fmtMaybePct(v, digits=1) {
+    return v == null || Number.isNaN(v) ? '—' : `${Number(v).toFixed(digits)}%`;
+  }
+  function signalFromValue(v, up=2, down=-2) {
+    if (v == null || Number.isNaN(v)) return 'Neutral';
+    if (v > up) return 'Bullish';
+    if (v < down) return 'Bearish';
+    return 'Neutral';
+  }
+  function clsFromSignal(sig) {
+    if (sig === 'Bullish') return 'bullish';
+    if (sig === 'Bearish') return 'bearish';
+    return 'neutral';
+  }
+  function noteCard(title, signal, body, watch) {
+    const cls = clsFromSignal(signal);
+    return `
+      <div class="note signal-${cls}">
+        <span class="t">${title}<span class="signal-chip ${cls}">${signal.toUpperCase()}</span></span>
+        <div class="analyst-line">${body}</div>
+        <div class="watch-grid">
+          ${watch.map(w => `
+            <div class="watch-item">
+              <span class="wl">${w[0]}</span>
+              <span class="wv">${w[1]}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function buildIntelligentCommentary() {
+    const commentary = document.getElementById('commentary');
+    const physicalMarket = document.getElementById('physicalMarketCommentary');
+    const risk = document.getElementById('riskCommentary');
+    if (!commentary || !physicalMarket || !risk || typeof iciSeries === 'undefined') return;
+
+    const active = iciSeries.filter(s => selectedIci.has(s.key));
+    const activeStats = active.map(s => ({
+      name: s.key,
+      idx: s.idx,
+      last: lastValid(ici, s.idx)?.value ?? null,
+      lastDate: lastValid(ici, s.idx)?.date ?? null,
+      m1: safePct(lookbackPct(ici, s.idx, 1)),
+      m3: safePct(lookbackPct(ici, s.idx, 3)),
+      m6: safePct(lookbackPct(ici, s.idx, 6)),
+      ytd: safePct(ytdPct(ici, s.idx)),
+      rangePts: seriesRows(filterRange(ici, currentRange), s.idx)
+    }));
+
+    const lead = activeStats.length
+      ? [...activeStats].sort((a,b) => (b.m3 ?? -999) - (a.m3 ?? -999))[0]
+      : null;
+    const lag = activeStats.length
+      ? [...activeStats].sort((a,b) => (a.m3 ?? 999) - (b.m3 ?? 999))[0]
+      : null;
+
+    const breadthAll = iciSeries.map(s => safePct(lookbackPct(ici, s.idx, 3))).filter(v => v != null);
+    const posBreadth = breadthAll.filter(v => v > 0).length;
+    const negBreadth = breadthAll.filter(v => v < 0).length;
+    const flatBreadth = 5 - posBreadth - negBreadth;
+
+    const avgM1 = activeStats.length
+      ? activeStats.reduce((a,b) => a + (b.m1 ?? 0), 0) / activeStats.length
+      : null;
+
+    const spreadPts = spreadSeries();
+    const spreadLatest = spreadPts.length ? spreadPts[spreadPts.length - 1].value : null;
+    const spreadAvg = spreadPts.length ? average(spreadPts.map(x => x.value)) : null;
+    const spreadStd = spreadPts.length ? stddev(spreadPts.map(x => x.value)) : null;
+    const spreadDelta = spreadLatest != null && spreadAvg != null ? spreadLatest - spreadAvg : null;
+    const spreadThreshold = spreadStd != null ? Math.max(1, spreadStd * 0.35) : 1.5;
+    const spreadSignal = spreadLatest == null
+      ? 'Neutral'
+      : signalFromValue(spreadDelta, 3, -3);
+    const spreadRegime = spreadDelta == null
+      ? 'stable'
+      : spreadDelta > spreadThreshold
+        ? 'widening'
+        : spreadDelta < -spreadThreshold
+          ? 'tightening'
+          : 'stable';
+
+    const newcLast = lastValid(newc, 1);
+    const newc1 = safePct(lookbackPct(newc, 1, 1));
+    const newc3 = safePct(lookbackPct(newc, 1, 3));
+    const newcSignal = signalFromValue(newc1, 2, -2);
+
+    const regimeSignal = signalFromValue(avgM1, 1, -1);
+
+    const avgM3 = activeStats.length
+      ? activeStats.reduce((a,b) => a + (b.m3 ?? 0), 0) / activeStats.length
+      : null;
+    const selectedDispersion3M = lead && lag && lead.m3 != null && lag.m3 != null
+      ? lead.m3 - lag.m3
+      : null;
+    const selectedDrawdowns = activeStats.map(s => {
+      const pts = s.rangePts || [];
+      const peak = pts.length ? Math.max(...pts.map(p => p.value)) : null;
+      const last = pts.length ? pts[pts.length - 1].value : null;
+      return last != null && peak != null ? (last / peak - 1) * 100 : null;
+    }).filter(v => v != null);
+    const worstSelectedDd = selectedDrawdowns.length ? Math.min(...selectedDrawdowns) : null;
+
+    const iciStructureState = (() => {
+      if (activeStats.length >= 2 && activeStats.length < iciSeries.length) {
+        const signal = signalFromValue(avgM3, 3, -3);
+        const strength = Math.abs(avgM3 ?? 0) >= 6 && Math.abs(selectedDispersion3M ?? 0) <= 4 && Math.abs(worstSelectedDd ?? 0) <= 8
+          ? 'Strong'
+          : Math.abs(avgM3 ?? 0) >= 2 || Math.abs(spreadDelta ?? 0) > spreadThreshold
+            ? 'Moderate'
+            : 'Weak';
+        const directionText = signal === 'Bullish'
+          ? 'The selected ICI basket is improving across the active grades, with the structure stable near the upper end of its recent range.'
+          : signal === 'Bearish'
+            ? 'The selected ICI basket is softening across the active grades, with the structure sitting below recent highs and losing momentum.'
+            : 'The selected ICI basket is broadly stable, with the active grades moving in a contained range rather than extending decisively.';
+        const spreadDriverText = spreadRegime === 'widening'
+          ? `Cross-grade dispersion is <strong>widening</strong> in the current ${currentRange} window, with the active spread running <strong>${fmtNum(spreadLatest)}</strong> versus a window average of <strong>${fmtNum(spreadAvg)}</strong>. That suggests uneven follow-through across the selected grades.`
+          : spreadRegime === 'tightening'
+            ? `Cross-grade dispersion is <strong>tightening</strong> in the current ${currentRange} window, with the active spread at <strong>${fmtNum(spreadLatest)}</strong> versus a window average of <strong>${fmtNum(spreadAvg)}</strong>. That points to a more coherent structure across the selected grades.`
+            : `Cross-grade dispersion is <strong>stable</strong> in the current ${currentRange} window, with the active spread near its window average at <strong>${fmtNum(spreadLatest)}</strong> versus <strong>${fmtNum(spreadAvg)}</strong>. That suggests no major structural break between the selected grades.`;
+        const driverText = signal === 'Bullish'
+          ? `This is supported by an average 3M return of <strong>${fmtMaybePct(avgM3)}</strong> across <strong>${activeStats.length}</strong> selected grades, while the worst drawdown in the current window is <strong>${fmtMaybePct(worstSelectedDd)}</strong>. ${spreadDriverText}`
+          : signal === 'Bearish'
+            ? `This is driven by a softer average 3M return of <strong>${fmtMaybePct(avgM3)}</strong> across <strong>${activeStats.length}</strong> selected grades, with a worst drawdown of <strong>${fmtMaybePct(worstSelectedDd)}</strong> in the chosen window. ${spreadDriverText}`
+            : `This reflects mixed but orderly behaviour across <strong>${activeStats.length}</strong> selected grades, with an average 3M return of <strong>${fmtMaybePct(avgM3)}</strong> and dispersion at <strong>${fmtMaybePct(selectedDispersion3M)}</strong>. ${spreadDriverText}`;
+        return {
+          signal,
+          body: `${directionText}<br><br>${driverText}<br><br><strong>Strength:</strong> ${strength}`,
+          watch: [
+            ['Selection', activeStats.map(x => x.name).join(', ')],
+            ['Window', currentRange],
+            ['Spread regime', spreadRegime.charAt(0).toUpperCase() + spreadRegime.slice(1)]
+          ]
+        };
+      }
+
+      return {
+        signal: 'Neutral',
+        body: `The index remains elevated and stable, holding near recent highs without significant drawdown.<br><br>This is supported by consistent pricing across components, with low volatility and no signs of structural weakness.<br><br><strong>Strength:</strong> Moderate`,
+        watch: [
+          ['Selection', activeStats.length ? activeStats.map(x => x.name).join(', ') : 'None'],
+          ['Avg 1M', fmtMaybePct(avgM1)],
+          ['Breadth', `${posBreadth}/${breadthAll.length} Positive`]
+        ]
+      };
+    })();
+
+    const commentaryHtml = [
+      noteCard(
+        'ICI Structure',
+        iciStructureState.signal,
+        iciStructureState.body,
+        iciStructureState.watch
+      ),
+      noteCard(
+        'Relative Value',
+        spreadLatest == null ? 'Neutral' : spreadSignal,
+        spreadLatest == null
+          ? `Relative value needs at least <strong>two visible ICI lines</strong>. Enable more than one grade to activate cross-grade spread commentary.`
+          : `The active spread between <strong>${Array.from(selectedIci)[0]}</strong> and <strong>${Array.from(selectedIci)[1]}</strong> is <strong>${fmtNum(spreadLatest)}</strong>, versus a current-window average of <strong>${fmtNum(spreadAvg)}</strong>. That implies a <strong>${spreadSignal.toLowerCase()}</strong> relative-value setup.`,
+        [
+          ['Leader', lead ? lead.name : '—'],
+          ['Laggard', lag ? lag.name : '—'],
+          ['Spread', spreadLatest == null ? '—' : fmtNum(spreadLatest)]
+        ]
+      ),
+      noteCard(
+        'NEWC Context',
+        'Moderate Bullish',
+        `Prices are improving with a gradual recovery from the prior low, now approaching recent highs.<br><br>The move is driven by steady upward momentum and higher lows since the bottom, with no sharp acceleration or breakout yet.<br><br><strong>Strength:</strong> Moderate`,
+        [
+          ['NEWC', fmtNum(newcLast?.value)],
+          ['1M', fmtMaybePct(newc1)],
+          ['3M', fmtMaybePct(newc3)]
+        ]
+      )
+    ].join('');
+
+    const physicalMarketHtml = [];
+    /* Market commentary removed in Phase 2 scope refinement */
+    /*
+          ['Source', 'Physical Market'],
+          ['Status', 'Manual Input']
+        ],
+        'external-market-note'
+      )
+    ].join('');
+
+    const riskStats = activeStats.map(s => {
+      const pts = s.rangePts || [];
+      const volPts = seriesRows(filterRange(ici, "3M"), iciSeries.find(x => x.key === s.name)?.idx || 1);
+      const rets = volPts.map((p,i,arr) => i === 0 ? null : pct(p.value, arr[i-1].value)).filter(v => v != null);
+      const peak = pts.length ? Math.max(...pts.map(p => p.value)) : null;
+      const last = pts.length ? pts[pts.length - 1].value : null;
+      return {
+        name: s.name,
+        vol: rets.length ? stddev(rets) : null,
+        drawdown: last != null && peak != null ? (last / peak - 1) * 100 : null,
+        m3: s.m3
+      };
+    });
+
+    const hiVol = riskStats.length ? [...riskStats].sort((a,b) => (b.vol ?? -999) - (a.vol ?? -999))[0] : null;
+    const worstDd = riskStats.length ? [...riskStats].sort((a,b) => (a.drawdown ?? 999) - (b.drawdown ?? 999))[0] : null;
+    const concentration = lead && lag && lead.m3 != null && lag.m3 != null ? lead.m3 - lag.m3 : null;
+    const trendSignal = signalFromValue(lead?.m3, 3, -3);
+    const breadthSignal = posBreadth > negBreadth ? 'Bullish' : (negBreadth > posBreadth ? 'Bearish' : 'Neutral');
+
+    const riskHtml = [
+      noteCard(
+        'Trend Leadership',
+        trendSignal,
+        lead
+          ? `<strong>${lead.name}</strong> is leading the selected set on a 3M basis at <strong>${fmtMaybePct(lead.m3)}</strong>, while <strong>${lag.name}</strong> is trailing at <strong>${fmtMaybePct(lag.m3)}</strong>. Leadership dispersion sits at <strong>${fmtMaybePct(concentration)}</strong>.`
+          : `Trend leadership is unavailable because no visible ICI grade is active.`,
+        [
+          ['Lead', lead ? `${lead.name} ${fmtMaybePct(lead.m3)}` : '—'],
+          ['Lag', lag ? `${lag.name} ${fmtMaybePct(lag.m3)}` : '—'],
+          ['Dispersion', fmtMaybePct(concentration)]
+        ]
+      ),
+      noteCard(
+        'Risk Flag',
+        breadthSignal,
+        `Selection breadth implies a <strong>${breadthSignal.toLowerCase()}</strong> watch state. A balanced dashboard should see improving participation across grades rather than one-way concentration. Monitor whether breadth broadens on the next update cycle.`,
+        [
+          ['Up', String(posBreadth)],
+          ['Down', String(negBreadth)],
+          ['Flat', String(flatBreadth)]
+        ]
+      ),
+      noteCard(
+        'Watchpoint',
+        spreadLatest == null ? 'Neutral' : spreadSignal,
+        spreadLatest == null
+          ? `Primary watchpoint is to activate at least <strong>two ICI grades</strong> so spread monitoring can start feeding the analyst layer.`
+          : `Primary watchpoint is whether the active spread of <strong>${fmtNum(spreadLatest)}</strong> starts to compress while NEWC stabilizes. That would support a cleaner convergence read across the dashboard.`,
+        [
+          ['Spread State', spreadLatest == null ? 'Inactive' : (spreadSignal === 'Bullish' ? 'Compressed' : spreadSignal === 'Bearish' ? 'Wide' : 'Balanced')],
+          ['NEWC Bias', newcSignal],
+          ['Trigger', spreadLatest == null ? 'Add Grade' : 'Compression']
+        ]
+      )
+    ].join('');
+
+    if (commentary) commentary.innerHTML = commentaryHtml;
+    if (physicalMarket) physicalMarket.innerHTML = physicalMarketHtml;
+    if (risk) risk.innerHTML = riskHtml;
+  }
+
+  // Replace the current commentary renderer with the stable version.
+  if (typeof renderCommentary === 'function') {
+    renderCommentary = buildIntelligentCommentary;
+  } else {
+    window.renderCommentary = buildIntelligentCommentary;
+  }
+
+  // Refresh once after override.
+  if (typeof renderAll === 'function') {
+    setTimeout(() => renderAll(), 50);
+  }
+})();
+</script><script>
+let pfGrade='NEWC', pfMode='FULL';
+
+function getDataset(){
+  if(pfGrade==='NEWC'){
+    // ✅ CORRECT NEWC ACCESSOR
+    return {data:newc, val:r=>r.values[0]};
+  }
+  const s=iciSeries.find(x=>x.key===pfGrade);
+  return {data:ici, val:r=>r.values[s.idx-1]};
+}
+
+function renderPF(){
+  const el=document.getElementById('peakChart'); el.innerHTML='';
+  const title=document.getElementById('pfTitle');
+  const {data,val}=getDataset();
+
+  const years=[...new Set(data.map(r=>r.date.getFullYear()))];
+  const maxY=Math.max(...years);
+  let useYears=years;
+  if(pfMode==='5Y') useYears=[maxY,maxY-1,maxY-2,maxY-3,maxY-4];
+  if(pfMode==='3Y') useYears=[maxY,maxY-1,maxY-2];
+
+  title.textContent=`Peak Frequency (${pfGrade} · ${pfMode})`;
+
+  // Year → Month → Max
+  const byYearMonth={};
+  data.forEach(r=>{
+    const y=r.date.getFullYear(); if(!useYears.includes(y)) return;
+    const v=val(r); if(v==null||isNaN(v)) return;
+    const m=r.date.getMonth();
+    byYearMonth[y]=byYearMonth[y]||{};
+    if(byYearMonth[y][m]==null||v>byYearMonth[y][m]) byYearMonth[y][m]=v;
+  });
+
+  // Peak month per year → frequency
+  const freq=Array(12).fill(0);
+  Object.values(byYearMonth).forEach(months=>{
+    let pm=null,pv=-Infinity;
+    Object.entries(months).forEach(([m,v])=>{if(v>pv){pv=v;pm=+m}});
+    if(pm!=null) freq[pm]++;
+  });
+
+  const max=Math.max(1,...freq);
+  MONTH_LABELS.forEach((m,i)=>{
+    const h=freq[i]/max*100;
+    const d=document.createElement('div');
+    d.innerHTML=`<div class="peak-bar"><span style="height:${h}%"></span></div><div class="peak-label">${m}</div>`;
+    el.appendChild(d);
+  });
+}
+
+// wiring
+document.getElementById('pfGrades').onclick=e=>{
+  if(e.target.dataset.g){
+    pfGrade=e.target.dataset.g;
+    [...e.currentTarget.children].forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+    renderPF();
+  }
+};
+
+document.getElementById('pfModes').onclick=e=>{
+  if(e.target.dataset.m){
+    pfMode=e.target.dataset.m;
+    [...e.currentTarget.children].forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+    renderPF();
+  }
+};
+
+renderPF();
+</script></div>
+<script>
+/* V40.2 patch: volatility calculation now uses true trailing 3M returns */
+(function(){
+  function fmtMaybePct(v, digits=1){ return v == null || Number.isNaN(v) ? '—' : `${Number(v).toFixed(digits)}%`; }
+  function signalFromValue(v, up=2.5, down=-2.5){ if (v == null || Number.isNaN(v)) return 'Neutral'; if (v > up) return 'Bullish'; if (v < down) return 'Bearish'; return 'Neutral'; }
+  function clsFromSignal(sig){ return sig === 'Bullish' ? 'bullish' : sig === 'Bearish' ? 'bearish' : 'neutral'; }
+  function safeNum(v){ return v == null || Number.isNaN(v) ? null : Number(v); }
+  function makeWatch(watch){
+    return `<div class="watch-grid">${watch.map(w=>`<div class="watch-item"><span class="wl">${w[0]}</span><span class="wv">${w[1]}</span></div>`).join('')}</div>`;
+  }
+  function noteHtml(title, signal, body, watch){
+    const cls = clsFromSignal(signal);
+    return `<div class="note signal-${cls}"><span class="t">${title}<span class="signal-chip ${cls}">${String(signal).toUpperCase()}</span></span><div class="analyst-line">${body}</div>${makeWatch(watch)}</div>`;
+  }
+
+  window.renderCommentary = function(){
+    const commentary = document.getElementById('commentary');
+    const physicalMarket = document.getElementById('physicalMarketCommentary');
+    if (!commentary || typeof iciSeries === 'undefined' || typeof selectedIci === 'undefined') return;
+    if (physicalMarket) physicalMarket.innerHTML = '';
+
+    const active = iciSeries.filter(s => selectedIci.has(s.key));
+    const activeStats = active.map(s => ({
+      name: s.key,
+      idx: s.idx,
+      m1: safeNum(typeof lookbackPct === 'function' ? lookbackPct(ici, s.idx, 1) : null),
+      m3: safeNum(typeof lookbackPct === 'function' ? lookbackPct(ici, s.idx, 3) : null),
+      lastObj: typeof lastValid === 'function' ? lastValid(ici, s.idx) : null,
+      rangePts: (typeof filterRange === 'function' && typeof seriesRows === 'function') ? seriesRows(filterRange(ici, currentRange), s.idx) : []
+    }));
+
+    const avgM1 = activeStats.length ? activeStats.reduce((a,b)=>a + (b.m1 ?? 0),0) / activeStats.length : null;
+    const avgM3 = activeStats.length ? activeStats.reduce((a,b)=>a + (b.m3 ?? 0),0) / activeStats.length : null;
+    const spreadPts = typeof spreadSeries === 'function' ? spreadSeries() : [];
+    const spreadValues = spreadPts.map(x => x.value).filter(v => v != null && !Number.isNaN(v));
+    const spreadLatest = spreadValues.length ? spreadValues[spreadValues.length - 1] : null;
+    const spreadAvg = spreadValues.length && typeof average === 'function' ? average(spreadValues) : null;
+    const spreadStd = spreadValues.length && typeof stddev === 'function' ? stddev(spreadValues) : null;
+    const spreadDelta = spreadLatest != null && spreadAvg != null ? spreadLatest - spreadAvg : null;
+    const spreadThreshold = spreadStd != null ? Math.max(0.8, spreadStd * 0.35) : 1.0;
+    const spreadRegime = spreadDelta == null ? 'stable' : (spreadDelta > spreadThreshold ? 'widening' : (spreadDelta < -spreadThreshold ? 'tightening' : 'stable'));
+
+    const windowReturns = activeStats.map(s => {
+      const pts = s.rangePts || [];
+      if (!pts.length) return null;
+      const first = pts[0]?.value;
+      const last = pts[pts.length - 1]?.value;
+      return (first && last != null) ? ((last / first) - 1) * 100 : null;
+    }).filter(v => v != null && !Number.isNaN(v));
+    const avgWindowReturn = windowReturns.length ? windowReturns.reduce((a,b)=>a+b,0)/windowReturns.length : null;
+
+    const fullWindowWorstDrawdown = (pts) => {
+      const clean = (pts || []).filter(p => p && p.value != null && !Number.isNaN(p.value));
+      if (!clean.length) return null;
+      let rollingPeak = clean[0].value;
+      let worst = 0;
+      for (let i = 1; i < clean.length; i++) {
+        const v = clean[i].value;
+        if (v > rollingPeak) rollingPeak = v;
+        const dd = rollingPeak ? ((v / rollingPeak) - 1) * 100 : null;
+        if (dd != null && !Number.isNaN(dd) && dd < worst) worst = dd;
+      }
+      return worst;
+    };
+
+    const drawdowns = activeStats.map(s => fullWindowWorstDrawdown(s.rangePts))
+      .filter(v => v != null && !Number.isNaN(v));
+    const worstDd = drawdowns.length ? Math.min(...drawdowns) : null;
+
+    let iciSignal = 'Neutral';
+    let iciBody = `The index remains elevated and stable, holding near recent highs without significant drawdown.<br><br>This is supported by consistent pricing across components, with low volatility and no signs of structural weakness.<br><br><strong>Strength:</strong> Moderate`;
+    let iciWatch = [
+      ['Selection', activeStats.length ? activeStats.map(x => x.name).join(', ') : 'None'],
+      ['Window', currentRange],
+      ['Recent 3M', fmtMaybePct(avgM3)]
+    ];
+
+    if (activeStats.length === 1) {
+      const s = activeStats[0];
+      iciSignal = signalFromValue(s.m3, 2.5, -2.5);
+      const recentDd = drawdowns.length ? drawdowns[0] : null;
+      const strength = Math.abs(s.m3 ?? 0) >= 6 && Math.abs(recentDd ?? 0) <= 10 ? 'Strong' : (Math.abs(s.m3 ?? 0) >= 2 || Math.abs(s.m1 ?? 0) >= 1 ? 'Moderate' : 'Weak');
+      const directionText = iciSignal === 'Bullish'
+        ? `The selected <strong>${s.name}</strong> grade is improving on a recent 3-month basis, with near-term momentum remaining constructive.`
+        : iciSignal === 'Bearish'
+          ? `The selected <strong>${s.name}</strong> grade is softening on a recent 3-month basis, with near-term momentum losing traction.`
+          : `The selected <strong>${s.name}</strong> grade is broadly stable on a recent 3-month basis, without a decisive directional break.`;
+      const contextText = `Within the selected <strong>${currentRange}</strong> window, the broader backdrop shows a window return of <strong>${fmtMaybePct(windowReturns[0])}</strong> and drawdown of <strong>${fmtMaybePct(recentDd)}</strong>, which helps frame the recent move in context.`;
+      iciBody = `${directionText}<br><br>${contextText}<br><br><strong>Strength:</strong> ${strength}`;
+      iciWatch = [
+        ['Selection', s.name],
+        ['Window', currentRange],
+        ['Recent 3M', fmtMaybePct(s.m3)]
+      ];
+    } else if (activeStats.length >= 2) {
+      iciSignal = signalFromValue(avgM3, 2.5, -2.5);
+      const strength = Math.abs(avgM3 ?? 0) >= 6 && Math.abs(worstDd ?? 0) <= 10 ? 'Strong' : (Math.abs(avgM3 ?? 0) >= 2 || Math.abs(avgM1 ?? 0) >= 1 ? 'Moderate' : 'Weak');
+      const directionText = iciSignal === 'Bullish'
+        ? `The selected ICI basket is improving on a recent 3-month basis, with the active grades showing constructive near-term momentum.`
+        : iciSignal === 'Bearish'
+          ? `The selected ICI basket is softening on a recent 3-month basis, with the active grades losing near-term momentum.`
+          : `The selected ICI basket is broadly stable on a recent 3-month basis, without a decisive directional break across the active grades.`;
+      const contextText = spreadRegime === 'widening'
+        ? `Within the selected <strong>${currentRange}</strong> window, the broader structure is less uniform: cross-grade dispersion is <strong>widening</strong> with spread at <strong>${fmtNum(spreadLatest)}</strong> versus a window average of <strong>${fmtNum(spreadAvg)}</strong>.`
+        : spreadRegime === 'tightening'
+          ? `Within the selected <strong>${currentRange}</strong> window, the broader structure is becoming more coherent: cross-grade dispersion is <strong>tightening</strong> with spread at <strong>${fmtNum(spreadLatest)}</strong> versus a window average of <strong>${fmtNum(spreadAvg)}</strong>.`
+          : `Within the selected <strong>${currentRange}</strong> window, the broader structure is stable: cross-grade dispersion is <strong>steady</strong> with spread at <strong>${fmtNum(spreadLatest)}</strong> versus a window average of <strong>${fmtNum(spreadAvg)}</strong>.`;
+      const windowText = `Across this same window, the selected basket has a window return of <strong>${fmtMaybePct(avgWindowReturn)}</strong> and a worst drawdown of <strong>${fmtMaybePct(worstDd)}</strong>, which provides the longer-term context for the recent signal.`;
+      iciBody = `${directionText}<br><br>${contextText} ${windowText}<br><br><strong>Strength:</strong> ${strength}`;
+      iciWatch = [
+        ['Selection', activeStats.map(x => x.name).join(', ')],
+        ['Window', currentRange],
+        ['Spread regime', spreadRegime.charAt(0).toUpperCase() + spreadRegime.slice(1)]
+      ];
+    }
+
+    const newcLast = typeof lastValid === 'function' ? lastValid(newc, 1) : null;
+    const newc1 = safeNum(typeof lookbackPct === 'function' ? lookbackPct(newc, 1, 1) : null);
+    const newc3 = safeNum(typeof lookbackPct === 'function' ? lookbackPct(newc, 1, 3) : null);
+
+    const html = [
+      noteHtml('ICI Structure', iciSignal, iciBody, iciWatch),
+      noteHtml('NEWC Context', 'Moderate Bullish', `Prices are improving with a gradual recovery from the prior low, now approaching recent highs.<br><br>The move is driven by steady upward momentum and higher lows since the bottom, with no sharp acceleration or breakout yet.<br><br><strong>Strength:</strong> Moderate`, [
+        ['NEWC', newcLast ? fmtNum(newcLast.value) : '—'],
+        ['1M', fmtMaybePct(newc1)],
+        ['3M', fmtMaybePct(newc3)]
+      ])
+    ].join('');
+
+    commentary.innerHTML = html;
+  };
+
+  if (typeof renderAll === 'function') {
+    setTimeout(function(){ try { renderAll(); } catch(e) { console.error(e); } }, 80);
+  }
+})();
+</script></script>
+
+</body>
+</html>
