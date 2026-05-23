@@ -518,51 +518,72 @@ td {
 .mg-card {
   background: linear-gradient(180deg,rgba(15,20,26,.98),rgba(8,11,15,.98));
   border: 1px solid var(--border);
-  border-left: 3px solid rgba(214,58,47,.65);
+  border-left: 3px solid rgba(214,58,47,.55);
   border-radius: 4px;
   box-shadow: 0 0 0 1px rgba(255,255,255,.025) inset, 0 18px 34px rgba(0,0,0,.22);
-  padding: 12px 10px 10px;
+  padding: 10px 10px 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 0;
 }
-.mg-label {
+.mg-series-label {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--accent2);
   text-align: center;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
+  width: 100%;
 }
-.mg-canvas { display: block; width: 100%; height: auto; }
+.mg-canvas-wrap {
+  position: relative;
+  width: 100%;
+  line-height: 0;
+}
+.mg-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
 .mg-value {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 900;
   letter-spacing: -.02em;
   font-variant-numeric: tabular-nums;
-  margin-top: -10px;
+  margin-top: 2px;
   line-height: 1;
+  text-align: center;
+}
+.mg-signal-row {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .mg-badge {
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: .08em;
+  letter-spacing: .09em;
   text-transform: uppercase;
   padding: 2px 8px;
   border-radius: 999px;
-  margin-top: 4px;
 }
-.mg-roc-label {
-  font-size: 10px;
+.mg-badge.strong   { background:rgba(57,217,138,.12);  color:#39d98a; border:1px solid rgba(57,217,138,.4); }
+.mg-badge.moderate { background:rgba(109,213,168,.10); color:#6dd5a8; border:1px solid rgba(109,213,168,.35); }
+.mg-badge.neutral  { background:rgba(224,197,53,.10);  color:#e0c535; border:1px solid rgba(224,197,53,.35); }
+.mg-badge.weak     { background:rgba(255,107,107,.12); color:#ff6b6b; border:1px solid rgba(255,107,107,.4); }
+.mg-badge.extreme  { background:rgba(57,217,138,.2);   color:#39d98a; border:2px solid rgba(57,217,138,.6); }
+.mg-badge.declining{ background:rgba(224,60,53,.15);   color:#e03535; border:1px solid rgba(224,60,53,.5); }
+.mg-footer {
+  font-size: 9px;
   color: var(--muted);
-  letter-spacing: .04em;
-  margin-top: 2px;
+  letter-spacing: .07em;
+  text-align: center;
+  margin-top: 4px;
+  text-transform: uppercase;
 }
-.mg-badge.bullish  { background:rgba(57,217,138,.12);  color:#39d98a; border:1px solid rgba(57,217,138,.35); }
-.mg-badge.bearish  { background:rgba(255,107,107,.12); color:#ff6b6b; border:1px solid rgba(255,107,107,.35); }
-.mg-badge.neutral  { background:rgba(255,255,255,.07); color:#9aa3af; border:1px solid rgba(255,255,255,.12); }
 @media (max-width:1200px) { .mini-gauge-row { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 @media (max-width:760px)  { .mini-gauge-row { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 
@@ -588,6 +609,19 @@ td {
 .ms-gauge-badge.backwardation { background:rgba(245,166,35,.12); color:#f5a623; border:1px solid rgba(245,166,35,.4); }
 .ms-gauge-badge.contango      { background:rgba(87,166,255,.12);  color:#57a6ff; border:1px solid rgba(87,166,255,.4); }
 .ms-gauge-badge.neutral       { background:rgba(255,255,255,.07); color:#9aa3af; border:1px solid rgba(255,255,255,.12); }
+
+
+/* ── KPI range bar + sparkline ── */
+.kpi-spark-wrap {
+  margin: 4px 0 6px;
+  display: block;
+}
+.kpi-sparkline {
+  display: block;
+  width: 100%;
+  height: 32px;
+  overflow: visible;
+}
 
 .kpi-highlight {
   position: absolute;
@@ -642,12 +676,18 @@ td {
 }
 .signal-chip.bearish::before { background:#ff6b6b; }
 
-.signal-chip.neutral {
-  background:rgba(214,58,47,.12);
-  color:#ff8a80;
-  border:1px solid rgba(255,138,128,.4);
+.signal-chip.moderate {
+  background: rgba(109,213,168,.12);
+  color: #6dd5a8;
+  border: 1px solid rgba(109,213,168,.4);
 }
-.signal-chip.neutral::before { background:#ff8a80; }
+.signal-chip.moderate::before { background: #6dd5a8; }
+.signal-chip.neutral {
+  background:rgba(224,197,53,.12);
+  color:#e0c535;
+  border:1px solid rgba(224,197,53,.4);
+}
+.signal-chip.neutral::before { background:#e0c535; }
 
 .watch-grid {
   display:grid;
@@ -1079,9 +1119,9 @@ td {
 <div class="brand">
   <div class="logo-block">
     <svg class="logo-img" viewBox="0 0 148 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="6" height="32" rx="1" fill="#d63a2f"></rect>
-      <rect x="10" y="8" width="6" height="24" rx="1" fill="#d63a2f" opacity=".7"></rect>
-      <rect x="20" y="14" width="6" height="18" rx="1" fill="#d63a2f" opacity=".45"></rect>
+      <rect width="6" height="32" rx="1" fill="#d63a2f"/>
+      <rect x="10" y="8" width="6" height="24" rx="1" fill="#d63a2f" opacity=".7"/>
+      <rect x="20" y="14" width="6" height="18" rx="1" fill="#d63a2f" opacity=".45"/>
       <text x="32" y="22" font-family="ui-sans-serif,system-ui,sans-serif" font-size="14" font-weight="800" letter-spacing="0.06em" fill="#f2f4f8">COALTRACK</text>
     </svg>
     <div class="logo-sub">ANALYTICS</div>
@@ -1115,7 +1155,7 @@ td {
 <input accept=".csv,text/csv" id="newcCsvInput" style="display:none" type="file">
 </div>
 </div>
-</div><section class="dashboard-section" id="section-summary-strip"><div class="status-ribbon" id="metaStamp"><span class="published-label">Published</span>: <strong>23 May 2026 15:54</strong></div><div class="strip" id="summaryStrip"><div class="pill"><div class="h">ICI Latest Stamp</div><div class="v">22 May 2026</div><div class="s">Selected: ICI 1, ICI 2</div></div><div class="pill"><div class="h">NEWC Latest Stamp</div><div class="v">22 May 2026</div><div class="s">Last price 138.64</div></div><div class="pill"><div class="h">3M Breadth</div><div class="v">5 / 5 positive</div><div class="s">Across all ICI grades</div></div><div class="pill"><div class="h">Selection Spread</div><div class="v">19.77</div><div class="s">ICI 1 - ICI 2</div></div></div></section><section class="dashboard-section" id="section-gauges"><div class="mini-gauge-row" id="miniGaugeRow"><div class="mg-card" id="mg-card-ICI1"><div class="mg-label">ICI 1</div><canvas class="mg-canvas" id="mg-canvas-ICI1" width="212" height="123"></canvas><div class="mg-value" id="mg-val-ICI1" style="color: rgb(57, 217, 138);">+4.3%</div><div class="mg-badge bullish" id="mg-badge-ICI1">▲ Bull</div><div class="mg-roc-label" id="mg-roc-ICI1">4-week momentum</div></div><div class="mg-card" id="mg-card-ICI2"><div class="mg-label">ICI 2</div><canvas class="mg-canvas" id="mg-canvas-ICI2" width="212" height="123"></canvas><div class="mg-value" id="mg-val-ICI2" style="color: rgb(57, 217, 138);">+14.3%</div><div class="mg-badge bullish" id="mg-badge-ICI2">▲ Bull</div><div class="mg-roc-label" id="mg-roc-ICI2">4-week momentum</div></div><div class="mg-card" id="mg-card-ICI3"><div class="mg-label">ICI 3</div><canvas class="mg-canvas" id="mg-canvas-ICI3" width="212" height="123"></canvas><div class="mg-value" id="mg-val-ICI3" style="color: rgb(57, 217, 138);">+7.5%</div><div class="mg-badge bullish" id="mg-badge-ICI3">▲ Bull</div><div class="mg-roc-label" id="mg-roc-ICI3">4-week momentum</div></div><div class="mg-card" id="mg-card-ICI4"><div class="mg-label">ICI 4</div><canvas class="mg-canvas" id="mg-canvas-ICI4" width="212" height="123"></canvas><div class="mg-value" id="mg-val-ICI4" style="color: rgb(57, 217, 138);">+5.9%</div><div class="mg-badge neutral" id="mg-badge-ICI4">● Flat</div><div class="mg-roc-label" id="mg-roc-ICI4">4-week momentum</div></div><div class="mg-card" id="mg-card-ICI5"><div class="mg-label">ICI 5</div><canvas class="mg-canvas" id="mg-canvas-ICI5" width="212" height="123"></canvas><div class="mg-value" id="mg-val-ICI5" style="color: rgb(57, 217, 138);">+9.9%</div><div class="mg-badge bullish" id="mg-badge-ICI5">▲ Bull</div><div class="mg-roc-label" id="mg-roc-ICI5">4-week momentum</div></div><div class="mg-card" id="mg-card-NEWC"><div class="mg-label">NEWC</div><canvas class="mg-canvas" id="mg-canvas-NEWC" width="212" height="123"></canvas><div class="mg-value" id="mg-val-NEWC" style="color: rgb(57, 217, 138);">+10.7%</div><div class="mg-badge bullish" id="mg-badge-NEWC">▲ Bull</div><div class="mg-roc-label" id="mg-roc-NEWC">4-week momentum</div></div></div><section class="dashboard-section" id="section-kpi"><div class="grid-kpi" id="kpiGrid"><div class="card kpi">
+</div><section class="dashboard-section" id="section-summary-strip"><div class="status-ribbon" id="metaStamp"><span class="published-label">Published</span>: <strong>23 May 2026 09:44</strong></div><div class="strip" id="summaryStrip"><div class="pill"><div class="h">ICI Latest Stamp</div><div class="v">22 May 2026</div><div class="s">Selected: ICI 1, ICI 2</div></div><div class="pill"><div class="h">NEWC Latest Stamp</div><div class="v">22 May 2026</div><div class="s">Last price 138.64</div></div><div class="pill"><div class="h">3M Breadth</div><div class="v">5 / 5 positive</div><div class="s">Across all ICI grades</div></div><div class="pill"><div class="h">Selection Spread</div><div class="v">19.77</div><div class="s">ICI 1 - ICI 2</div></div></div></section><section class="dashboard-section" id="section-gauges"><div class="mini-gauge-row" id="miniGaugeRow"><div class="mg-card" id="mg-card-ICI1"><div class="mg-series-label">ICI 1</div><div class="mg-canvas-wrap"><canvas class="mg-canvas" id="mg-canvas-ICI1"></canvas></div><div class="mg-value" id="mg-val-ICI1">—</div><div class="mg-signal-row"><span class="mg-badge neutral" id="mg-badge-ICI1">—</span></div><div class="mg-footer" id="mg-roc-ICI1">30D MoM</div></div><div class="mg-card" id="mg-card-ICI2"><div class="mg-series-label">ICI 2</div><div class="mg-canvas-wrap"><canvas class="mg-canvas" id="mg-canvas-ICI2"></canvas></div><div class="mg-value" id="mg-val-ICI2">—</div><div class="mg-signal-row"><span class="mg-badge neutral" id="mg-badge-ICI2">—</span></div><div class="mg-footer" id="mg-roc-ICI2">30D MoM</div></div><div class="mg-card" id="mg-card-ICI3"><div class="mg-series-label">ICI 3</div><div class="mg-canvas-wrap"><canvas class="mg-canvas" id="mg-canvas-ICI3"></canvas></div><div class="mg-value" id="mg-val-ICI3">—</div><div class="mg-signal-row"><span class="mg-badge neutral" id="mg-badge-ICI3">—</span></div><div class="mg-footer" id="mg-roc-ICI3">30D MoM</div></div><div class="mg-card" id="mg-card-ICI4"><div class="mg-series-label">ICI 4</div><div class="mg-canvas-wrap"><canvas class="mg-canvas" id="mg-canvas-ICI4"></canvas></div><div class="mg-value" id="mg-val-ICI4">—</div><div class="mg-signal-row"><span class="mg-badge neutral" id="mg-badge-ICI4">—</span></div><div class="mg-footer" id="mg-roc-ICI4">30D MoM</div></div><div class="mg-card" id="mg-card-ICI5"><div class="mg-series-label">ICI 5</div><div class="mg-canvas-wrap"><canvas class="mg-canvas" id="mg-canvas-ICI5"></canvas></div><div class="mg-value" id="mg-val-ICI5">—</div><div class="mg-signal-row"><span class="mg-badge neutral" id="mg-badge-ICI5">—</span></div><div class="mg-footer" id="mg-roc-ICI5">30D MoM</div></div><div class="mg-card" id="mg-card-NEWC"><div class="mg-series-label">NEWC</div><div class="mg-canvas-wrap"><canvas class="mg-canvas" id="mg-canvas-NEWC"></canvas></div><div class="mg-value" id="mg-val-NEWC">—</div><div class="mg-signal-row"><span class="mg-badge neutral" id="mg-badge-NEWC">—</span></div><div class="mg-footer" id="mg-roc-NEWC">30D MoM</div></div></div><section class="dashboard-section" id="section-kpi"><div class="grid-kpi" id="kpiGrid"><div class="card kpi">
       <div class="k-head">
         <div class="series">ICI 1</div>
         <div class="date">22 May 2026</div>
@@ -1231,7 +1271,7 @@ td {
 </div>
 </div>
 <div class="panel-body" id="panel-body-ici-benchmark">
-<div class="chart-tall" id="wrap-ici-chart"><svg id="iciChart" viewBox="0 0 1058 360"><rect x="0" y="0" width="1058" height="360" fill="transparent"></rect><line x1="52" y1="332" x2="1042" y2="332" stroke="rgba(255,255,255,.07)"></line><text x="44" y="336" text-anchor="end" fill="#8f98a5" font-size="11">66.46</text><line x1="52" y1="227.33333333333334" x2="1042" y2="227.33333333333334" stroke="rgba(255,255,255,.07)"></line><text x="44" y="231.33333333333334" text-anchor="end" fill="#8f98a5" font-size="11">87.89</text><line x1="52" y1="122.66666666666669" x2="1042" y2="122.66666666666669" stroke="rgba(255,255,255,.07)"></line><text x="44" y="126.66666666666669" text-anchor="end" fill="#8f98a5" font-size="11">109.31</text><line x1="52" y1="18" x2="1042" y2="18" stroke="rgba(255,255,255,.07)"></line><text x="44" y="22" text-anchor="end" fill="#8f98a5" font-size="11">130.74</text><line x1="52" y1="18" x2="52" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="52" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">May 25</text><line x1="299.5" y1="18" x2="299.5" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="299.5" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">Aug 25</text><line x1="547" y1="18" x2="547" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="547" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">Nov 25</text><line x1="794.5" y1="18" x2="794.5" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="794.5" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">Feb 26</text><line x1="1042" y1="18" x2="1042" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="1042" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">May 26</text><path d="M 52.00 155.07 L 71.04 162.15 L 90.08 166.06 L 109.12 171.43 L 128.15 174.46 L 147.19 178.47 L 166.23 178.47 L 185.27 178.27 L 204.31 179.45 L 223.35 177.20 L 242.38 173.34 L 261.42 168.94 L 280.46 167.43 L 299.50 165.47 L 318.54 166.65 L 337.58 167.97 L 356.62 169.04 L 375.65 171.19 L 394.69 169.68 L 413.73 168.26 L 432.77 168.16 L 451.81 164.45 L 470.85 163.77 L 489.88 164.06 L 508.92 159.52 L 527.96 156.83 L 547.00 154.53 L 566.04 153.02 L 585.08 151.75 L 604.12 152.68 L 623.15 156.10 L 642.19 157.90 L 661.23 157.66 L 680.27 156.68 L 699.31 154.68 L 718.35 152.48 L 737.38 148.04 L 756.42 143.93 L 775.46 138.71 L 794.50 132.50 L 813.54 127.62 L 832.58 113.89 L 851.62 99.68 L 870.65 93.13 L 889.69 85.41 L 906.01 81.31 L 927.77 76.82 L 946.81 76.03 L 965.85 73.20 L 984.88 65.63 L 1003.92 60.21 L 1022.96 55.91 L 1042.00 48.39" fill="none" stroke="#ffd166" stroke-width="2.6" opacity="1"></path><circle cx="1042" cy="48.387096774193594" r="2.8" fill="#ffd166"></circle><path d="M 109.12 163.68 L 128.15 168.53 L 147.19 172.61 L 166.23 175.71 L 185.27 177.42 L 204.31 178.66 L 223.35 178.35 L 242.38 177.06 L 261.42 174.73 L 280.46 171.73 L 299.50 168.80 L 318.54 167.12 L 337.58 166.88 L 356.62 167.28 L 375.65 168.71 L 394.69 169.47 L 413.73 169.54 L 432.77 169.32 L 451.81 167.64 L 470.85 166.16 L 489.88 165.11 L 508.92 162.95 L 527.96 161.04 L 547.00 158.73 L 566.04 155.97 L 585.08 154.03 L 604.12 152.99 L 623.15 153.38 L 642.19 154.61 L 661.23 156.08 L 680.27 157.09 L 699.31 156.73 L 718.35 155.38 L 737.38 152.97 L 756.42 149.78 L 775.46 145.79 L 794.50 140.79 L 813.54 135.69 L 832.58 128.18 L 851.62 118.42 L 870.65 108.58 L 889.69 98.03 L 906.01 89.88 L 927.77 84.17 L 946.81 79.89 L 965.85 76.84 L 984.88 72.92 L 1003.92 68.77 L 1022.96 63.74 L 1042.00 57.53" fill="none" stroke="#ffd166" stroke-width="1.2" stroke-dasharray="5 4" opacity="0.55"></path><circle cx="1042" cy="57.53380438570298" r="2.8" fill="#ffd166"></circle><path d="M 261.42 171.94 L 280.46 172.97 L 299.50 173.25 L 318.54 173.30 L 337.58 173.01 L 356.62 172.56 L 375.65 171.95 L 394.69 171.22 L 413.73 170.38 L 432.77 169.44 L 451.81 168.38 L 470.85 167.58 L 489.88 167.18 L 508.92 166.52 L 527.96 165.80 L 547.00 164.79 L 566.04 163.54 L 585.08 162.10 L 604.12 160.56 L 623.15 159.43 L 642.19 158.56 L 661.23 157.69 L 680.27 157.04 L 699.31 156.28 L 718.35 155.32 L 737.38 154.36 L 756.42 153.29 L 775.46 151.97 L 794.50 150.26 L 813.54 148.25 L 832.58 145.02 L 851.62 140.31 L 870.65 134.92 L 889.69 128.90 L 906.01 122.62 L 927.77 116.13 L 946.81 109.76 L 965.85 103.52 L 984.88 96.99 L 1003.92 90.45 L 1022.96 84.07 L 1042.00 77.47" fill="none" stroke="#ffd166" stroke-width="1.1" stroke-dasharray="2 4" opacity="0.35"></path><circle cx="1042" cy="77.46768385769289" r="2.8" fill="#ffd166"></circle><path d="M 52.00 279.58 L 71.04 285.74 L 90.08 289.30 L 109.12 294.24 L 128.15 300.15 L 147.19 299.90 L 166.23 301.61 L 185.27 300.44 L 204.31 299.22 L 223.35 297.36 L 242.38 294.09 L 261.42 291.70 L 280.46 288.08 L 299.50 284.66 L 318.54 282.90 L 337.58 284.81 L 356.62 285.40 L 375.65 284.22 L 394.69 283.30 L 413.73 281.83 L 432.77 281.05 L 451.81 276.80 L 470.85 275.63 L 489.88 272.35 L 508.92 267.81 L 527.96 263.32 L 547.00 257.55 L 566.04 257.80 L 585.08 259.31 L 604.12 261.56 L 623.15 264.24 L 642.19 265.03 L 661.23 265.12 L 680.27 263.17 L 699.31 261.17 L 718.35 259.07 L 737.38 256.67 L 756.42 251.54 L 775.46 246.12 L 794.50 240.65 L 813.54 233.32 L 832.58 228.20 L 851.62 222.28 L 870.65 222.09 L 889.69 218.23 L 906.01 215.35 L 927.77 212.12 L 946.81 209.44 L 965.85 208.85 L 984.88 202.94 L 1003.92 195.76 L 1022.96 157.37 L 1042.00 144.96" fill="none" stroke="#57a6ff" stroke-width="2.2" opacity="1"></path><circle cx="1042" cy="144.9587440262844" r="2.8" fill="#57a6ff"></circle><path d="M 109.12 287.22 L 128.15 292.36 L 147.19 295.90 L 166.23 298.98 L 185.27 300.53 L 204.31 300.29 L 223.35 299.66 L 242.38 297.78 L 261.42 295.59 L 280.46 292.81 L 299.50 289.63 L 318.54 286.84 L 337.58 285.11 L 356.62 284.44 L 375.65 284.33 L 394.69 284.43 L 413.73 283.69 L 432.77 282.60 L 451.81 280.74 L 470.85 278.83 L 489.88 276.46 L 508.92 273.15 L 527.96 269.78 L 547.00 265.26 L 566.04 261.62 L 585.08 259.49 L 604.12 259.05 L 623.15 260.73 L 642.19 262.53 L 661.23 263.99 L 680.27 264.39 L 699.31 263.62 L 718.35 262.13 L 737.38 260.02 L 756.42 257.11 L 775.46 253.35 L 794.50 248.75 L 813.54 242.91 L 832.58 237.07 L 851.62 231.11 L 870.65 226.47 L 889.69 222.70 L 906.01 219.49 L 927.77 216.95 L 946.81 213.78 L 965.85 211.44 L 984.88 208.34 L 1003.92 204.25 L 1022.96 191.23 L 1042.00 175.26" fill="none" stroke="#57a6ff" stroke-width="1.2" stroke-dasharray="5 4" opacity="0.55"></path><circle cx="1042" cy="175.2564497461171" r="2.8" fill="#57a6ff"></circle><path d="M 261.42 294.44 L 280.46 295.15 L 299.50 295.06 L 318.54 294.53 L 337.58 293.74 L 356.62 292.52 L 375.65 291.21 L 394.69 289.68 L 413.73 288.13 L 432.77 286.62 L 451.81 284.90 L 470.85 283.36 L 489.88 281.75 L 508.92 280.06 L 527.96 278.28 L 547.00 276.17 L 566.04 273.92 L 585.08 271.75 L 604.12 269.86 L 623.15 268.27 L 642.19 266.87 L 661.23 265.54 L 680.27 264.41 L 699.31 263.20 L 718.35 262.10 L 737.38 261.17 L 756.42 260.19 L 775.46 259.23 L 794.50 257.80 L 813.54 255.64 L 832.58 252.86 L 851.62 249.36 L 870.65 245.78 L 889.69 241.88 L 906.01 237.89 L 927.77 233.80 L 946.81 229.67 L 965.85 225.68 L 984.88 221.63 L 1003.92 217.44 L 1022.96 210.50 L 1042.00 203.13" fill="none" stroke="#57a6ff" stroke-width="1.1" stroke-dasharray="2 4" opacity="0.35"></path><circle cx="1042" cy="203.13213008595523" r="2.8" fill="#57a6ff"></circle></svg></div>
+<div class="chart-tall" id="wrap-ici-chart"><svg id="iciChart" viewBox="0 0 1029 360"><rect x="0" y="0" width="1029" height="360" fill="transparent"></rect><line x1="52" y1="332" x2="1013" y2="332" stroke="rgba(255,255,255,.07)"></line><text x="44" y="336" text-anchor="end" fill="#8f98a5" font-size="11">66.46</text><line x1="52" y1="227.33333333333334" x2="1013" y2="227.33333333333334" stroke="rgba(255,255,255,.07)"></line><text x="44" y="231.33333333333334" text-anchor="end" fill="#8f98a5" font-size="11">87.89</text><line x1="52" y1="122.66666666666669" x2="1013" y2="122.66666666666669" stroke="rgba(255,255,255,.07)"></line><text x="44" y="126.66666666666669" text-anchor="end" fill="#8f98a5" font-size="11">109.31</text><line x1="52" y1="18" x2="1013" y2="18" stroke="rgba(255,255,255,.07)"></line><text x="44" y="22" text-anchor="end" fill="#8f98a5" font-size="11">130.74</text><line x1="52" y1="18" x2="52" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="52" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">May 25</text><line x1="292.25" y1="18" x2="292.25" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="292.25" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">Aug 25</text><line x1="532.5" y1="18" x2="532.5" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="532.5" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">Nov 25</text><line x1="772.75" y1="18" x2="772.75" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="772.75" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">Feb 26</text><line x1="1013" y1="18" x2="1013" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="1013" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">May 26</text><path d="M 52.00 155.07 L 70.48 162.15 L 88.96 166.06 L 107.44 171.43 L 125.92 174.46 L 144.40 178.47 L 162.88 178.47 L 181.37 178.27 L 199.85 179.45 L 218.33 177.20 L 236.81 173.34 L 255.29 168.94 L 273.77 167.43 L 292.25 165.47 L 310.73 166.65 L 329.21 167.97 L 347.69 169.04 L 366.17 171.19 L 384.65 169.68 L 403.13 168.26 L 421.62 168.16 L 440.10 164.45 L 458.58 163.77 L 477.06 164.06 L 495.54 159.52 L 514.02 156.83 L 532.50 154.53 L 550.98 153.02 L 569.46 151.75 L 587.94 152.68 L 606.42 156.10 L 624.90 157.90 L 643.38 157.66 L 661.87 156.68 L 680.35 154.68 L 698.83 152.48 L 717.31 148.04 L 735.79 143.93 L 754.27 138.71 L 772.75 132.50 L 791.23 127.62 L 809.71 113.89 L 828.19 99.68 L 846.67 93.13 L 865.15 85.41 L 880.99 81.31 L 902.12 76.82 L 920.60 76.03 L 939.08 73.20 L 957.56 65.63 L 976.04 60.21 L 994.52 55.91 L 1013.00 48.39" fill="none" stroke="#ffd166" stroke-width="2.6" opacity="1"></path><circle cx="1013" cy="48.387096774193594" r="2.8" fill="#ffd166"></circle><path d="M 107.44 163.68 L 125.92 168.53 L 144.40 172.61 L 162.88 175.71 L 181.37 177.42 L 199.85 178.66 L 218.33 178.35 L 236.81 177.06 L 255.29 174.73 L 273.77 171.73 L 292.25 168.80 L 310.73 167.12 L 329.21 166.88 L 347.69 167.28 L 366.17 168.71 L 384.65 169.47 L 403.13 169.54 L 421.62 169.32 L 440.10 167.64 L 458.58 166.16 L 477.06 165.11 L 495.54 162.95 L 514.02 161.04 L 532.50 158.73 L 550.98 155.97 L 569.46 154.03 L 587.94 152.99 L 606.42 153.38 L 624.90 154.61 L 643.38 156.08 L 661.87 157.09 L 680.35 156.73 L 698.83 155.38 L 717.31 152.97 L 735.79 149.78 L 754.27 145.79 L 772.75 140.79 L 791.23 135.69 L 809.71 128.18 L 828.19 118.42 L 846.67 108.58 L 865.15 98.03 L 880.99 89.88 L 902.12 84.17 L 920.60 79.89 L 939.08 76.84 L 957.56 72.92 L 976.04 68.77 L 994.52 63.74 L 1013.00 57.53" fill="none" stroke="#ffd166" stroke-width="1.2" stroke-dasharray="5 4" opacity="0.55"></path><circle cx="1013" cy="57.53380438570298" r="2.8" fill="#ffd166"></circle><path d="M 255.29 171.94 L 273.77 172.97 L 292.25 173.25 L 310.73 173.30 L 329.21 173.01 L 347.69 172.56 L 366.17 171.95 L 384.65 171.22 L 403.13 170.38 L 421.62 169.44 L 440.10 168.38 L 458.58 167.58 L 477.06 167.18 L 495.54 166.52 L 514.02 165.80 L 532.50 164.79 L 550.98 163.54 L 569.46 162.10 L 587.94 160.56 L 606.42 159.43 L 624.90 158.56 L 643.38 157.69 L 661.87 157.04 L 680.35 156.28 L 698.83 155.32 L 717.31 154.36 L 735.79 153.29 L 754.27 151.97 L 772.75 150.26 L 791.23 148.25 L 809.71 145.02 L 828.19 140.31 L 846.67 134.92 L 865.15 128.90 L 880.99 122.62 L 902.12 116.13 L 920.60 109.76 L 939.08 103.52 L 957.56 96.99 L 976.04 90.45 L 994.52 84.07 L 1013.00 77.47" fill="none" stroke="#ffd166" stroke-width="1.1" stroke-dasharray="2 4" opacity="0.35"></path><circle cx="1013" cy="77.46768385769289" r="2.8" fill="#ffd166"></circle><path d="M 52.00 279.58 L 70.48 285.74 L 88.96 289.30 L 107.44 294.24 L 125.92 300.15 L 144.40 299.90 L 162.88 301.61 L 181.37 300.44 L 199.85 299.22 L 218.33 297.36 L 236.81 294.09 L 255.29 291.70 L 273.77 288.08 L 292.25 284.66 L 310.73 282.90 L 329.21 284.81 L 347.69 285.40 L 366.17 284.22 L 384.65 283.30 L 403.13 281.83 L 421.62 281.05 L 440.10 276.80 L 458.58 275.63 L 477.06 272.35 L 495.54 267.81 L 514.02 263.32 L 532.50 257.55 L 550.98 257.80 L 569.46 259.31 L 587.94 261.56 L 606.42 264.24 L 624.90 265.03 L 643.38 265.12 L 661.87 263.17 L 680.35 261.17 L 698.83 259.07 L 717.31 256.67 L 735.79 251.54 L 754.27 246.12 L 772.75 240.65 L 791.23 233.32 L 809.71 228.20 L 828.19 222.28 L 846.67 222.09 L 865.15 218.23 L 880.99 215.35 L 902.12 212.12 L 920.60 209.44 L 939.08 208.85 L 957.56 202.94 L 976.04 195.76 L 994.52 157.37 L 1013.00 144.96" fill="none" stroke="#57a6ff" stroke-width="2.2" opacity="1"></path><circle cx="1013" cy="144.9587440262844" r="2.8" fill="#57a6ff"></circle><path d="M 107.44 287.22 L 125.92 292.36 L 144.40 295.90 L 162.88 298.98 L 181.37 300.53 L 199.85 300.29 L 218.33 299.66 L 236.81 297.78 L 255.29 295.59 L 273.77 292.81 L 292.25 289.63 L 310.73 286.84 L 329.21 285.11 L 347.69 284.44 L 366.17 284.33 L 384.65 284.43 L 403.13 283.69 L 421.62 282.60 L 440.10 280.74 L 458.58 278.83 L 477.06 276.46 L 495.54 273.15 L 514.02 269.78 L 532.50 265.26 L 550.98 261.62 L 569.46 259.49 L 587.94 259.05 L 606.42 260.73 L 624.90 262.53 L 643.38 263.99 L 661.87 264.39 L 680.35 263.62 L 698.83 262.13 L 717.31 260.02 L 735.79 257.11 L 754.27 253.35 L 772.75 248.75 L 791.23 242.91 L 809.71 237.07 L 828.19 231.11 L 846.67 226.47 L 865.15 222.70 L 880.99 219.49 L 902.12 216.95 L 920.60 213.78 L 939.08 211.44 L 957.56 208.34 L 976.04 204.25 L 994.52 191.23 L 1013.00 175.26" fill="none" stroke="#57a6ff" stroke-width="1.2" stroke-dasharray="5 4" opacity="0.55"></path><circle cx="1013" cy="175.2564497461171" r="2.8" fill="#57a6ff"></circle><path d="M 255.29 294.44 L 273.77 295.15 L 292.25 295.06 L 310.73 294.53 L 329.21 293.74 L 347.69 292.52 L 366.17 291.21 L 384.65 289.68 L 403.13 288.13 L 421.62 286.62 L 440.10 284.90 L 458.58 283.36 L 477.06 281.75 L 495.54 280.06 L 514.02 278.28 L 532.50 276.17 L 550.98 273.92 L 569.46 271.75 L 587.94 269.86 L 606.42 268.27 L 624.90 266.87 L 643.38 265.54 L 661.87 264.41 L 680.35 263.20 L 698.83 262.10 L 717.31 261.17 L 735.79 260.19 L 754.27 259.23 L 772.75 257.80 L 791.23 255.64 L 809.71 252.86 L 828.19 249.36 L 846.67 245.78 L 865.15 241.88 L 880.99 237.89 L 902.12 233.80 L 920.60 229.67 L 939.08 225.68 L 957.56 221.63 L 976.04 217.44 L 994.52 210.50 L 1013.00 203.13" fill="none" stroke="#57a6ff" stroke-width="1.1" stroke-dasharray="2 4" opacity="0.35"></path><circle cx="1013" cy="203.13213008595523" r="2.8" fill="#57a6ff"></circle></svg></div>
 <div class="legend" id="iciLegend"><div class="item"><span class="sw" style="background:#ffd166"></span>ICI 1 (6500 GAR)</div><div class="item"><span class="sw" style="background:#57a6ff"></span>ICI 2 (5800 GAR)</div><div class="item"><span class="sw" style="background:rgba(255,255,255,.3)"></span>4W / 12W MA overlays</div></div>
 </div>
 </div>
@@ -1258,7 +1298,7 @@ td {
 </div>
 </div>
 <div class="panel-body" id="panel-body-newc-benchmark">
-<div class="chart-tall" id="wrap-newc-chart"><svg id="newcChart" viewBox="0 0 1058 360"><rect x="0" y="0" width="1058" height="360" fill="transparent"></rect><line x1="52" y1="332" x2="1042" y2="332" stroke="rgba(255,255,255,.07)"></line><text x="44" y="336" text-anchor="end" fill="#8f98a5" font-size="11">93.68</text><line x1="52" y1="227.33333333333337" x2="1042" y2="227.33333333333337" stroke="rgba(255,255,255,.07)"></line><text x="44" y="231.33333333333337" text-anchor="end" fill="#8f98a5" font-size="11">114.19</text><line x1="52" y1="122.66666666666669" x2="1042" y2="122.66666666666669" stroke="rgba(255,255,255,.07)"></line><text x="44" y="126.66666666666669" text-anchor="end" fill="#8f98a5" font-size="11">134.69</text><line x1="52" y1="18" x2="1042" y2="18" stroke="rgba(255,255,255,.07)"></line><text x="44" y="22" text-anchor="end" fill="#8f98a5" font-size="11">155.20</text><line x1="52" y1="18" x2="52" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="52" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">May 25</text><line x1="299.5" y1="18" x2="299.5" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="299.5" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">Aug 25</text><line x1="547" y1="18" x2="547" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="547" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">Nov 25</text><line x1="794.5" y1="18" x2="794.5" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="794.5" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">Feb 26</text><line x1="1042" y1="18" x2="1042" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="1042" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">May 26</text><path d="M 52.00 290.59 L 54.71 289.36 L 62.85 274.21 L 65.56 269.10 L 68.27 269.51 L 70.99 270.07 L 73.70 272.93 L 81.84 288.24 L 84.55 286.30 L 87.26 285.28 L 89.97 283.75 L 92.68 282.22 L 100.82 272.93 L 103.53 275.59 L 106.25 275.59 L 108.96 276.35 L 111.67 277.37 L 119.81 258.90 L 122.52 257.93 L 125.23 255.99 L 127.95 253.34 L 130.66 251.70 L 138.79 234.66 L 141.51 242.47 L 144.22 247.31 L 146.93 250.58 L 149.64 254.46 L 157.78 260.94 L 160.49 255.38 L 163.21 252.06 L 165.92 250.38 L 168.63 249.46 L 176.77 257.62 L 179.48 257.72 L 182.19 254.25 L 184.90 250.63 L 187.62 248.54 L 195.75 230.83 L 198.47 235.27 L 201.18 240.17 L 203.89 242.62 L 206.60 244.61 L 214.74 256.19 L 217.45 255.94 L 220.16 252.26 L 222.88 249.81 L 225.59 247.62 L 233.73 235.93 L 236.44 232.72 L 239.15 231.44 L 241.86 230.47 L 244.58 229.04 L 252.71 219.30 L 255.42 219.09 L 258.14 220.93 L 260.85 223.53 L 263.56 227.46 L 271.70 245.58 L 274.41 244.76 L 277.12 244.76 L 279.84 247.01 L 282.55 247.77 L 290.68 253.03 L 293.40 252.11 L 296.11 250.78 L 298.82 248.28 L 301.53 247.82 L 309.67 252.52 L 312.38 251.24 L 315.10 249.10 L 317.81 252.01 L 320.52 252.26 L 328.66 253.79 L 331.37 256.65 L 334.08 257.83 L 336.79 259.05 L 339.51 260.02 L 347.64 274.21 L 350.36 280.59 L 353.07 287.43 L 355.78 291.00 L 358.49 294.06 L 366.63 301.61 L 369.34 299.27 L 372.05 295.95 L 374.77 293.19 L 377.48 289.36 L 385.62 269.72 L 388.33 273.03 L 391.04 275.33 L 393.75 277.12 L 396.47 276.91 L 404.60 278.49 L 407.32 277.78 L 410.03 277.17 L 412.74 276.61 L 415.45 276.10 L 423.59 274.21 L 426.30 276.10 L 429.01 276.91 L 431.73 277.68 L 434.44 277.98 L 442.58 278.60 L 445.29 283.90 L 448.00 284.31 L 450.71 284.47 L 453.42 283.65 L 461.56 281.20 L 464.27 283.24 L 466.99 282.37 L 469.70 281.61 L 472.41 280.64 L 480.55 274.82 L 483.26 273.24 L 485.97 272.47 L 488.68 270.69 L 491.40 267.93 L 499.53 258.34 L 502.25 257.78 L 504.96 257.21 L 507.67 256.30 L 510.38 254.76 L 518.52 253.64 L 521.23 257.52 L 523.95 260.33 L 526.66 255.99 L 529.37 253.54 L 537.51 234.66 L 540.22 228.28 L 542.93 226.34 L 545.64 227.92 L 548.36 229.55 L 556.49 232.11 L 559.21 231.75 L 561.92 232.72 L 564.63 232.87 L 567.34 233.89 L 575.48 257.62 L 578.19 258.44 L 580.90 259.05 L 583.62 257.98 L 586.33 256.24 L 594.47 245.32 L 597.18 245.22 L 599.89 246.96 L 602.60 249.61 L 605.32 250.53 L 613.45 253.59 L 616.16 253.95 L 618.88 256.09 L 621.59 257.27 L 624.30 259.10 L 632.44 264.36 L 635.15 262.73 L 637.86 264.26 L 640.58 264.26 L 643.29 264.26 L 651.42 261.09 L 654.14 259.66 L 656.85 260.99 L 659.56 260.99 L 662.27 261.30 L 670.41 265.89 L 673.12 267.01 L 675.84 264.61 L 678.55 264.15 L 681.26 263.75 L 689.40 262.67 L 692.11 261.96 L 694.82 255.99 L 697.53 252.88 L 700.25 251.60 L 708.38 237.21 L 711.10 239.10 L 713.81 238.43 L 716.52 237.97 L 719.23 242.26 L 727.37 245.48 L 730.08 247.36 L 732.79 249.30 L 735.51 249.46 L 738.22 246.24 L 746.36 220.93 L 749.07 223.94 L 751.78 225.52 L 754.49 226.03 L 757.21 225.57 L 765.34 226.34 L 768.05 226.03 L 770.77 225.52 L 773.48 226.03 L 776.19 223.48 L 784.33 210.42 L 787.04 212.31 L 789.75 213.38 L 792.47 211.39 L 795.18 210.93 L 803.32 216.80 L 806.03 217.41 L 808.74 218.89 L 811.45 219.60 L 814.16 219.55 L 822.30 191.89 L 825.01 166.73 L 827.73 166.73 L 830.44 166.73 L 833.15 149.02 L 835.86 149.02 L 838.58 149.02 L 841.29 89.21 L 844.00 108.40 L 846.71 116.77 L 849.42 118.51 L 852.14 120.39 L 854.85 120.39 L 857.56 120.39 L 860.27 155.56 L 862.99 160.76 L 865.70 149.28 L 868.41 126.37 L 871.12 119.43 L 873.84 119.43 L 876.55 119.43 L 879.26 96.87 L 881.97 115.80 L 884.68 122.54 L 887.40 124.43 L 890.11 118.97 L 892.82 118.97 L 895.53 118.97 L 898.25 73.55 L 900.96 76.66 L 903.67 78.14 L 906.38 82.63 L 909.10 82.63 L 911.81 82.63 L 914.52 82.63 L 917.23 82.63 L 919.95 48.39 L 922.66 93.65 L 925.37 111.67 L 928.08 115.29 L 930.79 115.29 L 933.51 115.29 L 936.22 124.63 L 938.93 131.16 L 941.64 136.57 L 944.36 143.61 L 947.07 149.13 L 949.78 149.13 L 952.49 149.13 L 955.21 148.51 L 957.92 170.56 L 960.63 174.54 L 963.34 172.55 L 966.05 170.82 L 968.77 170.82 L 971.48 170.82 L 974.19 149.18 L 976.90 147.90 L 979.62 144.28 L 982.33 139.84 L 985.04 138.10 L 987.75 138.10 L 990.47 138.10 L 993.18 131.37 L 995.89 129.38 L 998.60 134.28 L 1001.32 139.94 L 1004.03 142.80 L 1012.16 146.63 L 1014.88 146.52 L 1017.59 146.68 L 1020.30 145.91 L 1023.01 147.80 L 1031.15 126.21 L 1033.86 123.66 L 1036.58 124.02 L 1039.29 126.93 L 1042.00 102.53" fill="none" stroke="#f5a623" stroke-width="2.4" opacity="1"></path><circle cx="1042" cy="102.53312270026396" r="2.8" fill="#f5a623"></circle><path d="M 125.23 275.61 L 127.95 273.75 L 130.66 271.87 L 138.79 269.89 L 141.51 268.56 L 144.22 267.45 L 146.93 266.47 L 149.64 265.55 L 157.78 264.18 L 160.49 262.64 L 163.21 260.98 L 165.92 259.31 L 168.63 257.67 L 176.77 256.90 L 179.48 256.01 L 182.19 254.94 L 184.90 253.66 L 187.62 252.22 L 195.75 250.81 L 198.47 249.68 L 201.18 248.89 L 203.89 248.35 L 206.60 248.00 L 214.74 249.07 L 217.45 249.75 L 220.16 250.00 L 222.88 249.96 L 225.59 249.62 L 233.73 248.37 L 236.44 247.23 L 239.15 246.20 L 241.86 245.21 L 244.58 244.19 L 252.71 242.27 L 255.42 240.34 L 258.14 238.67 L 260.85 237.32 L 263.56 236.26 L 271.70 237.00 L 274.41 237.47 L 277.12 237.70 L 279.84 237.92 L 282.55 238.08 L 290.68 237.92 L 293.40 237.73 L 296.11 237.66 L 298.82 237.58 L 301.53 237.59 L 309.67 238.42 L 312.38 239.35 L 315.10 240.23 L 317.81 241.31 L 320.52 242.47 L 328.66 244.19 L 331.37 246.07 L 334.08 247.92 L 336.79 249.69 L 339.51 251.32 L 347.64 252.75 L 350.36 254.54 L 353.07 256.68 L 355.78 258.88 L 358.49 261.19 L 366.63 263.62 L 369.34 265.98 L 372.05 268.23 L 374.77 270.48 L 377.48 272.56 L 385.62 273.42 L 388.33 274.51 L 391.04 275.82 L 393.75 277.07 L 396.47 278.31 L 404.60 279.54 L 407.32 280.60 L 410.03 281.56 L 412.74 282.44 L 415.45 283.25 L 423.59 283.25 L 426.30 283.02 L 429.01 282.50 L 431.73 281.83 L 434.44 281.03 L 442.58 279.88 L 445.29 279.11 L 448.00 278.53 L 450.71 278.09 L 453.42 277.80 L 461.56 278.38 L 464.27 278.89 L 466.99 279.24 L 469.70 279.46 L 472.41 279.65 L 480.55 279.47 L 483.26 279.24 L 485.97 279.01 L 488.68 278.71 L 491.40 278.30 L 499.53 277.51 L 502.25 276.59 L 504.96 275.61 L 507.67 274.54 L 510.38 273.38 L 518.52 272.13 L 521.23 270.81 L 523.95 269.61 L 526.66 268.19 L 529.37 266.68 L 537.51 264.35 L 540.22 261.61 L 542.93 258.80 L 545.64 256.12 L 548.36 253.57 L 556.49 251.43 L 559.21 249.36 L 561.92 247.37 L 564.63 245.48 L 567.34 243.77 L 575.48 243.74 L 578.19 243.77 L 580.90 243.86 L 583.62 243.95 L 586.33 244.02 L 594.47 243.61 L 597.18 242.99 L 599.89 242.32 L 602.60 242.00 L 605.32 241.85 L 613.45 242.80 L 616.16 244.08 L 618.88 245.57 L 621.59 247.04 L 624.30 248.52 L 632.44 250.13 L 635.15 251.68 L 637.86 253.25 L 640.58 254.82 L 643.29 256.34 L 651.42 256.52 L 654.14 256.58 L 656.85 256.67 L 659.56 256.82 L 662.27 257.08 L 670.41 258.10 L 673.12 259.19 L 675.84 260.08 L 678.55 260.80 L 681.26 261.47 L 689.40 261.92 L 692.11 262.32 L 694.82 262.31 L 697.53 262.10 L 700.25 261.72 L 708.38 260.36 L 711.10 259.18 L 713.81 257.89 L 716.52 256.58 L 719.23 255.48 L 727.37 254.70 L 730.08 254.08 L 732.79 253.50 L 735.51 252.92 L 738.22 252.17 L 746.36 249.92 L 749.07 247.77 L 751.78 245.81 L 754.49 243.90 L 757.21 242.00 L 765.34 240.18 L 768.05 238.38 L 770.77 236.86 L 773.48 235.52 L 776.19 234.11 L 784.33 232.77 L 787.04 231.43 L 789.75 230.18 L 792.47 228.85 L 795.18 227.28 L 803.32 225.85 L 806.03 224.35 L 808.74 222.83 L 811.45 221.34 L 814.16 220.00 L 822.30 218.55 L 825.01 215.69 L 827.73 212.75 L 830.44 209.79 L 833.15 205.96 L 835.86 202.09 L 838.58 198.24 L 841.29 191.43 L 844.00 185.55 L 846.71 180.21 L 849.42 175.61 L 852.14 171.02 L 854.85 166.37 L 857.56 161.82 L 860.27 159.05 L 862.99 156.25 L 865.70 152.84 L 868.41 148.22 L 871.12 143.21 L 873.84 138.20 L 876.55 134.58 L 879.26 131.09 L 881.97 128.54 L 884.68 126.33 L 887.40 125.10 L 890.11 123.60 L 892.82 122.09 L 895.53 123.58 L 898.25 121.84 L 900.96 119.83 L 903.67 117.81 L 906.38 115.93 L 909.10 114.04 L 911.81 112.15 L 914.52 108.50 L 917.23 104.60 L 919.95 99.55 L 922.66 97.92 L 925.37 97.53 L 928.08 97.32 L 930.79 97.12 L 933.51 98.04 L 936.22 98.48 L 938.93 98.91 L 941.64 99.52 L 944.36 100.75 L 947.07 102.26 L 949.78 103.77 L 952.49 107.54 L 955.21 111.14 L 957.92 115.76 L 960.63 120.35 L 963.34 124.85 L 966.05 129.26 L 968.77 133.67 L 971.48 138.08 L 974.19 143.12 L 976.90 145.83 L 979.62 147.46 L 982.33 148.69 L 985.04 149.83 L 987.75 150.97 L 990.47 151.64 L 993.18 151.65 L 995.89 151.29 L 998.60 150.83 L 1001.32 150.37 L 1004.03 150.05 L 1012.16 149.92 L 1014.88 149.83 L 1017.59 148.63 L 1020.30 147.20 L 1023.01 145.96 L 1031.15 143.73 L 1033.86 141.37 L 1036.58 139.03 L 1039.29 137.92 L 1042.00 135.65" fill="none" stroke="#f6cf77" stroke-width="1.2" stroke-dasharray="5 4" opacity="0.65"></path><circle cx="1042" cy="135.65354760697434" r="2.8" fill="#f6cf77"></circle><path d="M 277.12 254.07 L 279.84 253.34 L 282.55 252.65 L 290.68 252.30 L 293.40 252.01 L 296.11 251.70 L 298.82 251.34 L 301.53 250.92 L 309.67 250.32 L 312.38 249.74 L 315.10 249.14 L 317.81 248.61 L 320.52 248.11 L 328.66 247.79 L 331.37 247.47 L 334.08 247.18 L 336.79 246.89 L 339.51 246.60 L 347.64 246.85 L 350.36 247.23 L 353.07 247.76 L 355.78 248.38 L 358.49 249.09 L 366.63 250.21 L 369.34 251.15 L 372.05 251.96 L 374.77 252.67 L 377.48 253.25 L 385.62 253.40 L 388.33 253.70 L 391.04 254.08 L 393.75 254.53 L 396.47 254.99 L 404.60 255.33 L 407.32 255.67 L 410.03 256.05 L 412.74 256.48 L 415.45 256.94 L 423.59 257.67 L 426.30 258.35 L 429.01 258.96 L 431.73 259.54 L 434.44 260.10 L 442.58 260.47 L 445.29 260.94 L 448.00 261.47 L 450.71 262.05 L 453.42 262.65 L 461.56 263.41 L 464.27 264.25 L 466.99 265.10 L 469.70 265.95 L 472.41 266.81 L 480.55 267.73 L 483.26 268.64 L 485.97 269.50 L 488.68 270.28 L 491.40 270.96 L 499.53 271.17 L 502.25 271.39 L 504.96 271.59 L 507.67 271.75 L 510.38 271.86 L 518.52 271.87 L 521.23 271.96 L 523.95 272.12 L 526.66 272.25 L 529.37 272.35 L 537.51 272.05 L 540.22 271.67 L 542.93 271.29 L 545.64 270.89 L 548.36 270.51 L 556.49 270.15 L 559.21 269.73 L 561.92 269.31 L 564.63 268.88 L 567.34 268.44 L 575.48 268.16 L 578.19 267.80 L 580.90 267.32 L 583.62 266.77 L 586.33 266.14 L 594.47 265.20 L 597.18 264.30 L 599.89 263.49 L 602.60 262.76 L 605.32 262.11 L 613.45 261.84 L 616.16 261.53 L 618.88 261.20 L 621.59 260.87 L 624.30 260.58 L 632.44 260.34 L 635.15 260.09 L 637.86 259.88 L 640.58 259.67 L 643.29 259.47 L 651.42 259.25 L 654.14 258.98 L 656.85 258.71 L 659.56 258.44 L 662.27 258.16 L 670.41 257.95 L 673.12 257.66 L 675.84 257.34 L 678.55 257.00 L 681.26 256.67 L 689.40 256.36 L 692.11 256.00 L 694.82 255.56 L 697.53 255.08 L 700.25 254.60 L 708.38 253.97 L 711.10 253.40 L 713.81 252.84 L 716.52 252.29 L 719.23 251.86 L 727.37 251.65 L 730.08 251.48 L 732.79 251.34 L 735.51 251.23 L 738.22 251.09 L 746.36 250.54 L 749.07 249.98 L 751.78 249.40 L 754.49 248.90 L 757.21 248.44 L 765.34 248.30 L 768.05 248.26 L 770.77 248.25 L 773.48 248.22 L 776.19 248.12 L 784.33 247.75 L 787.04 247.43 L 789.75 247.11 L 792.47 246.75 L 795.18 246.37 L 803.32 245.69 L 806.03 245.00 L 808.74 244.33 L 811.45 243.69 L 814.16 243.08 L 822.30 242.19 L 825.01 240.88 L 827.73 239.55 L 830.44 238.17 L 833.15 236.47 L 835.86 234.73 L 838.58 232.98 L 841.29 230.20 L 844.00 227.72 L 846.71 225.35 L 849.42 222.92 L 852.14 220.54 L 854.85 218.15 L 857.56 215.75 L 860.27 213.94 L 862.99 212.27 L 865.70 210.43 L 868.41 208.18 L 871.12 205.82 L 873.84 203.46 L 876.55 201.02 L 879.26 198.18 L 881.97 195.70 L 884.68 193.34 L 887.40 191.02 L 890.11 188.62 L 892.82 186.24 L 895.53 183.96 L 898.25 180.97 L 900.96 178.05 L 903.67 175.40 L 906.38 172.79 L 909.10 170.20 L 911.81 167.61 L 914.52 164.95 L 917.23 162.23 L 919.95 158.92 L 922.66 156.32 L 925.37 154.03 L 928.08 151.84 L 930.79 150.08 L 933.51 148.27 L 936.22 146.59 L 938.93 145.01 L 941.64 143.53 L 944.36 142.15 L 947.07 140.86 L 949.78 139.59 L 952.49 138.31 L 955.21 137.06 L 957.92 136.40 L 960.63 135.77 L 963.34 135.09 L 966.05 134.41 L 968.77 133.74 L 971.48 132.98 L 974.19 131.84 L 976.90 130.65 L 979.62 129.40 L 982.33 128.07 L 985.04 127.17 L 987.75 126.70 L 990.47 126.22 L 993.18 125.63 L 995.89 125.30 L 998.60 125.06 L 1001.32 124.91 L 1004.03 125.80 L 1012.16 126.44 L 1014.88 126.93 L 1017.59 127.40 L 1020.30 127.83 L 1023.01 128.28 L 1031.15 128.38 L 1033.86 127.85 L 1036.58 127.24 L 1039.29 126.86 L 1042.00 126.47" fill="none" stroke="#f6cf77" stroke-width="1" stroke-dasharray="2 4" opacity="0.35"></path><circle cx="1042" cy="126.46675486384663" r="2.8" fill="#f6cf77"></circle></svg></div>
+<div class="chart-tall" id="wrap-newc-chart"><svg id="newcChart" viewBox="0 0 1029 360"><rect x="0" y="0" width="1029" height="360" fill="transparent"></rect><line x1="52" y1="332" x2="1013" y2="332" stroke="rgba(255,255,255,.07)"></line><text x="44" y="336" text-anchor="end" fill="#8f98a5" font-size="11">93.68</text><line x1="52" y1="227.33333333333337" x2="1013" y2="227.33333333333337" stroke="rgba(255,255,255,.07)"></line><text x="44" y="231.33333333333337" text-anchor="end" fill="#8f98a5" font-size="11">114.19</text><line x1="52" y1="122.66666666666669" x2="1013" y2="122.66666666666669" stroke="rgba(255,255,255,.07)"></line><text x="44" y="126.66666666666669" text-anchor="end" fill="#8f98a5" font-size="11">134.69</text><line x1="52" y1="18" x2="1013" y2="18" stroke="rgba(255,255,255,.07)"></line><text x="44" y="22" text-anchor="end" fill="#8f98a5" font-size="11">155.20</text><line x1="52" y1="18" x2="52" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="52" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">May 25</text><line x1="292.25" y1="18" x2="292.25" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="292.25" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">Aug 25</text><line x1="532.5" y1="18" x2="532.5" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="532.5" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">Nov 25</text><line x1="772.75" y1="18" x2="772.75" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="772.75" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">Feb 26</text><line x1="1013" y1="18" x2="1013" y2="332" stroke="rgba(255,255,255,.04)"></line><text x="1013" y="352" text-anchor="middle" fill="#8f98a5" font-size="11">May 26</text><path d="M 52.00 290.59 L 54.63 289.36 L 62.53 274.21 L 65.16 269.10 L 67.80 269.51 L 70.43 270.07 L 73.06 272.93 L 80.96 288.24 L 83.59 286.30 L 86.23 285.28 L 88.86 283.75 L 91.49 282.22 L 99.39 272.93 L 102.02 275.59 L 104.66 275.59 L 107.29 276.35 L 109.92 277.37 L 117.82 258.90 L 120.45 257.93 L 123.09 255.99 L 125.72 253.34 L 128.35 251.70 L 136.25 234.66 L 138.88 242.47 L 141.52 247.31 L 144.15 250.58 L 146.78 254.46 L 154.68 260.94 L 157.32 255.38 L 159.95 252.06 L 162.58 250.38 L 165.21 249.46 L 173.11 257.62 L 175.75 257.72 L 178.38 254.25 L 181.01 250.63 L 183.64 248.54 L 191.54 230.83 L 194.18 235.27 L 196.81 240.17 L 199.44 242.62 L 202.07 244.61 L 209.97 256.19 L 212.61 255.94 L 215.24 252.26 L 217.87 249.81 L 220.50 247.62 L 228.40 235.93 L 231.04 232.72 L 233.67 231.44 L 236.30 230.47 L 238.93 229.04 L 246.83 219.30 L 249.47 219.09 L 252.10 220.93 L 254.73 223.53 L 257.36 227.46 L 265.26 245.58 L 267.90 244.76 L 270.53 244.76 L 273.16 247.01 L 275.79 247.77 L 283.69 253.03 L 286.33 252.11 L 288.96 250.78 L 291.59 248.28 L 294.22 247.82 L 302.12 252.52 L 304.76 251.24 L 307.39 249.10 L 310.02 252.01 L 312.65 252.26 L 320.55 253.79 L 323.19 256.65 L 325.82 257.83 L 328.45 259.05 L 331.08 260.02 L 338.98 274.21 L 341.62 280.59 L 344.25 287.43 L 346.88 291.00 L 349.52 294.06 L 357.41 301.61 L 360.05 299.27 L 362.68 295.95 L 365.31 293.19 L 367.95 289.36 L 375.84 269.72 L 378.48 273.03 L 381.11 275.33 L 383.74 277.12 L 386.38 276.91 L 394.27 278.49 L 396.91 277.78 L 399.54 277.17 L 402.17 276.61 L 404.81 276.10 L 412.70 274.21 L 415.34 276.10 L 417.97 276.91 L 420.60 277.68 L 423.24 277.98 L 431.13 278.60 L 433.77 283.90 L 436.40 284.31 L 439.03 284.47 L 441.67 283.65 L 449.56 281.20 L 452.20 283.24 L 454.83 282.37 L 457.46 281.61 L 460.10 280.64 L 467.99 274.82 L 470.63 273.24 L 473.26 272.47 L 475.89 270.69 L 478.53 267.93 L 486.42 258.34 L 489.06 257.78 L 491.69 257.21 L 494.32 256.30 L 496.96 254.76 L 504.85 253.64 L 507.49 257.52 L 510.12 260.33 L 512.75 255.99 L 515.39 253.54 L 523.28 234.66 L 525.92 228.28 L 528.55 226.34 L 531.18 227.92 L 533.82 229.55 L 541.72 232.11 L 544.35 231.75 L 546.98 232.72 L 549.61 232.87 L 552.25 233.89 L 560.15 257.62 L 562.78 258.44 L 565.41 259.05 L 568.04 257.98 L 570.68 256.24 L 578.58 245.32 L 581.21 245.22 L 583.84 246.96 L 586.47 249.61 L 589.11 250.53 L 597.01 253.59 L 599.64 253.95 L 602.27 256.09 L 604.90 257.27 L 607.54 259.10 L 615.44 264.36 L 618.07 262.73 L 620.70 264.26 L 623.33 264.26 L 625.97 264.26 L 633.87 261.09 L 636.50 259.66 L 639.13 260.99 L 641.76 260.99 L 644.40 261.30 L 652.30 265.89 L 654.93 267.01 L 657.56 264.61 L 660.19 264.15 L 662.83 263.75 L 670.73 262.67 L 673.36 261.96 L 675.99 255.99 L 678.62 252.88 L 681.26 251.60 L 689.16 237.21 L 691.79 239.10 L 694.42 238.43 L 697.05 237.97 L 699.69 242.26 L 707.59 245.48 L 710.22 247.36 L 712.85 249.30 L 715.48 249.46 L 718.12 246.24 L 726.02 220.93 L 728.65 223.94 L 731.28 225.52 L 733.92 226.03 L 736.55 225.57 L 744.45 226.34 L 747.08 226.03 L 749.71 225.52 L 752.35 226.03 L 754.98 223.48 L 762.88 210.42 L 765.51 212.31 L 768.14 213.38 L 770.78 211.39 L 773.41 210.93 L 781.31 216.80 L 783.94 217.41 L 786.57 218.89 L 789.21 219.60 L 791.84 219.55 L 799.74 191.89 L 802.37 166.73 L 805.00 166.73 L 807.64 166.73 L 810.27 149.02 L 812.90 149.02 L 815.53 149.02 L 818.17 89.21 L 820.80 108.40 L 823.43 116.77 L 826.07 118.51 L 828.70 120.39 L 831.33 120.39 L 833.96 120.39 L 836.60 155.56 L 839.23 160.76 L 841.86 149.28 L 844.50 126.37 L 847.13 119.43 L 849.76 119.43 L 852.39 119.43 L 855.03 96.87 L 857.66 115.80 L 860.29 122.54 L 862.93 124.43 L 865.56 118.97 L 868.19 118.97 L 870.82 118.97 L 873.46 73.55 L 876.09 76.66 L 878.72 78.14 L 881.36 82.63 L 883.99 82.63 L 886.62 82.63 L 889.25 82.63 L 891.89 82.63 L 894.52 48.39 L 897.15 93.65 L 899.79 111.67 L 902.42 115.29 L 905.05 115.29 L 907.68 115.29 L 910.32 124.63 L 912.95 131.16 L 915.58 136.57 L 918.22 143.61 L 920.85 149.13 L 923.48 149.13 L 926.12 149.13 L 928.75 148.51 L 931.38 170.56 L 934.01 174.54 L 936.65 172.55 L 939.28 170.82 L 941.91 170.82 L 944.55 170.82 L 947.18 149.18 L 949.81 147.90 L 952.44 144.28 L 955.08 139.84 L 957.71 138.10 L 960.34 138.10 L 962.98 138.10 L 965.61 131.37 L 968.24 129.38 L 970.87 134.28 L 973.51 139.94 L 976.14 142.80 L 984.04 146.63 L 986.67 146.52 L 989.30 146.68 L 991.94 145.91 L 994.57 147.80 L 1002.47 126.21 L 1005.10 123.66 L 1007.73 124.02 L 1010.37 126.93 L 1013.00 102.53" fill="none" stroke="#f5a623" stroke-width="2.4" opacity="1"></path><circle cx="1013" cy="102.53312270026396" r="2.8" fill="#f5a623"></circle><path d="M 123.09 275.61 L 125.72 273.75 L 128.35 271.87 L 136.25 269.89 L 138.88 268.56 L 141.52 267.45 L 144.15 266.47 L 146.78 265.55 L 154.68 264.18 L 157.32 262.64 L 159.95 260.98 L 162.58 259.31 L 165.21 257.67 L 173.11 256.90 L 175.75 256.01 L 178.38 254.94 L 181.01 253.66 L 183.64 252.22 L 191.54 250.81 L 194.18 249.68 L 196.81 248.89 L 199.44 248.35 L 202.07 248.00 L 209.97 249.07 L 212.61 249.75 L 215.24 250.00 L 217.87 249.96 L 220.50 249.62 L 228.40 248.37 L 231.04 247.23 L 233.67 246.20 L 236.30 245.21 L 238.93 244.19 L 246.83 242.27 L 249.47 240.34 L 252.10 238.67 L 254.73 237.32 L 257.36 236.26 L 265.26 237.00 L 267.90 237.47 L 270.53 237.70 L 273.16 237.92 L 275.79 238.08 L 283.69 237.92 L 286.33 237.73 L 288.96 237.66 L 291.59 237.58 L 294.22 237.59 L 302.12 238.42 L 304.76 239.35 L 307.39 240.23 L 310.02 241.31 L 312.65 242.47 L 320.55 244.19 L 323.19 246.07 L 325.82 247.92 L 328.45 249.69 L 331.08 251.32 L 338.98 252.75 L 341.62 254.54 L 344.25 256.68 L 346.88 258.88 L 349.52 261.19 L 357.41 263.62 L 360.05 265.98 L 362.68 268.23 L 365.31 270.48 L 367.95 272.56 L 375.84 273.42 L 378.48 274.51 L 381.11 275.82 L 383.74 277.07 L 386.38 278.31 L 394.27 279.54 L 396.91 280.60 L 399.54 281.56 L 402.17 282.44 L 404.81 283.25 L 412.70 283.25 L 415.34 283.02 L 417.97 282.50 L 420.60 281.83 L 423.24 281.03 L 431.13 279.88 L 433.77 279.11 L 436.40 278.53 L 439.03 278.09 L 441.67 277.80 L 449.56 278.38 L 452.20 278.89 L 454.83 279.24 L 457.46 279.46 L 460.10 279.65 L 467.99 279.47 L 470.63 279.24 L 473.26 279.01 L 475.89 278.71 L 478.53 278.30 L 486.42 277.51 L 489.06 276.59 L 491.69 275.61 L 494.32 274.54 L 496.96 273.38 L 504.85 272.13 L 507.49 270.81 L 510.12 269.61 L 512.75 268.19 L 515.39 266.68 L 523.28 264.35 L 525.92 261.61 L 528.55 258.80 L 531.18 256.12 L 533.82 253.57 L 541.72 251.43 L 544.35 249.36 L 546.98 247.37 L 549.61 245.48 L 552.25 243.77 L 560.15 243.74 L 562.78 243.77 L 565.41 243.86 L 568.04 243.95 L 570.68 244.02 L 578.58 243.61 L 581.21 242.99 L 583.84 242.32 L 586.47 242.00 L 589.11 241.85 L 597.01 242.80 L 599.64 244.08 L 602.27 245.57 L 604.90 247.04 L 607.54 248.52 L 615.44 250.13 L 618.07 251.68 L 620.70 253.25 L 623.33 254.82 L 625.97 256.34 L 633.87 256.52 L 636.50 256.58 L 639.13 256.67 L 641.76 256.82 L 644.40 257.08 L 652.30 258.10 L 654.93 259.19 L 657.56 260.08 L 660.19 260.80 L 662.83 261.47 L 670.73 261.92 L 673.36 262.32 L 675.99 262.31 L 678.62 262.10 L 681.26 261.72 L 689.16 260.36 L 691.79 259.18 L 694.42 257.89 L 697.05 256.58 L 699.69 255.48 L 707.59 254.70 L 710.22 254.08 L 712.85 253.50 L 715.48 252.92 L 718.12 252.17 L 726.02 249.92 L 728.65 247.77 L 731.28 245.81 L 733.92 243.90 L 736.55 242.00 L 744.45 240.18 L 747.08 238.38 L 749.71 236.86 L 752.35 235.52 L 754.98 234.11 L 762.88 232.77 L 765.51 231.43 L 768.14 230.18 L 770.78 228.85 L 773.41 227.28 L 781.31 225.85 L 783.94 224.35 L 786.57 222.83 L 789.21 221.34 L 791.84 220.00 L 799.74 218.55 L 802.37 215.69 L 805.00 212.75 L 807.64 209.79 L 810.27 205.96 L 812.90 202.09 L 815.53 198.24 L 818.17 191.43 L 820.80 185.55 L 823.43 180.21 L 826.07 175.61 L 828.70 171.02 L 831.33 166.37 L 833.96 161.82 L 836.60 159.05 L 839.23 156.25 L 841.86 152.84 L 844.50 148.22 L 847.13 143.21 L 849.76 138.20 L 852.39 134.58 L 855.03 131.09 L 857.66 128.54 L 860.29 126.33 L 862.93 125.10 L 865.56 123.60 L 868.19 122.09 L 870.82 123.58 L 873.46 121.84 L 876.09 119.83 L 878.72 117.81 L 881.36 115.93 L 883.99 114.04 L 886.62 112.15 L 889.25 108.50 L 891.89 104.60 L 894.52 99.55 L 897.15 97.92 L 899.79 97.53 L 902.42 97.32 L 905.05 97.12 L 907.68 98.04 L 910.32 98.48 L 912.95 98.91 L 915.58 99.52 L 918.22 100.75 L 920.85 102.26 L 923.48 103.77 L 926.12 107.54 L 928.75 111.14 L 931.38 115.76 L 934.01 120.35 L 936.65 124.85 L 939.28 129.26 L 941.91 133.67 L 944.55 138.08 L 947.18 143.12 L 949.81 145.83 L 952.44 147.46 L 955.08 148.69 L 957.71 149.83 L 960.34 150.97 L 962.98 151.64 L 965.61 151.65 L 968.24 151.29 L 970.87 150.83 L 973.51 150.37 L 976.14 150.05 L 984.04 149.92 L 986.67 149.83 L 989.30 148.63 L 991.94 147.20 L 994.57 145.96 L 1002.47 143.73 L 1005.10 141.37 L 1007.73 139.03 L 1010.37 137.92 L 1013.00 135.65" fill="none" stroke="#f6cf77" stroke-width="1.2" stroke-dasharray="5 4" opacity="0.65"></path><circle cx="1013" cy="135.65354760697434" r="2.8" fill="#f6cf77"></circle><path d="M 270.53 254.07 L 273.16 253.34 L 275.79 252.65 L 283.69 252.30 L 286.33 252.01 L 288.96 251.70 L 291.59 251.34 L 294.22 250.92 L 302.12 250.32 L 304.76 249.74 L 307.39 249.14 L 310.02 248.61 L 312.65 248.11 L 320.55 247.79 L 323.19 247.47 L 325.82 247.18 L 328.45 246.89 L 331.08 246.60 L 338.98 246.85 L 341.62 247.23 L 344.25 247.76 L 346.88 248.38 L 349.52 249.09 L 357.41 250.21 L 360.05 251.15 L 362.68 251.96 L 365.31 252.67 L 367.95 253.25 L 375.84 253.40 L 378.48 253.70 L 381.11 254.08 L 383.74 254.53 L 386.38 254.99 L 394.27 255.33 L 396.91 255.67 L 399.54 256.05 L 402.17 256.48 L 404.81 256.94 L 412.70 257.67 L 415.34 258.35 L 417.97 258.96 L 420.60 259.54 L 423.24 260.10 L 431.13 260.47 L 433.77 260.94 L 436.40 261.47 L 439.03 262.05 L 441.67 262.65 L 449.56 263.41 L 452.20 264.25 L 454.83 265.10 L 457.46 265.95 L 460.10 266.81 L 467.99 267.73 L 470.63 268.64 L 473.26 269.50 L 475.89 270.28 L 478.53 270.96 L 486.42 271.17 L 489.06 271.39 L 491.69 271.59 L 494.32 271.75 L 496.96 271.86 L 504.85 271.87 L 507.49 271.96 L 510.12 272.12 L 512.75 272.25 L 515.39 272.35 L 523.28 272.05 L 525.92 271.67 L 528.55 271.29 L 531.18 270.89 L 533.82 270.51 L 541.72 270.15 L 544.35 269.73 L 546.98 269.31 L 549.61 268.88 L 552.25 268.44 L 560.15 268.16 L 562.78 267.80 L 565.41 267.32 L 568.04 266.77 L 570.68 266.14 L 578.58 265.20 L 581.21 264.30 L 583.84 263.49 L 586.47 262.76 L 589.11 262.11 L 597.01 261.84 L 599.64 261.53 L 602.27 261.20 L 604.90 260.87 L 607.54 260.58 L 615.44 260.34 L 618.07 260.09 L 620.70 259.88 L 623.33 259.67 L 625.97 259.47 L 633.87 259.25 L 636.50 258.98 L 639.13 258.71 L 641.76 258.44 L 644.40 258.16 L 652.30 257.95 L 654.93 257.66 L 657.56 257.34 L 660.19 257.00 L 662.83 256.67 L 670.73 256.36 L 673.36 256.00 L 675.99 255.56 L 678.62 255.08 L 681.26 254.60 L 689.16 253.97 L 691.79 253.40 L 694.42 252.84 L 697.05 252.29 L 699.69 251.86 L 707.59 251.65 L 710.22 251.48 L 712.85 251.34 L 715.48 251.23 L 718.12 251.09 L 726.02 250.54 L 728.65 249.98 L 731.28 249.40 L 733.92 248.90 L 736.55 248.44 L 744.45 248.30 L 747.08 248.26 L 749.71 248.25 L 752.35 248.22 L 754.98 248.12 L 762.88 247.75 L 765.51 247.43 L 768.14 247.11 L 770.78 246.75 L 773.41 246.37 L 781.31 245.69 L 783.94 245.00 L 786.57 244.33 L 789.21 243.69 L 791.84 243.08 L 799.74 242.19 L 802.37 240.88 L 805.00 239.55 L 807.64 238.17 L 810.27 236.47 L 812.90 234.73 L 815.53 232.98 L 818.17 230.20 L 820.80 227.72 L 823.43 225.35 L 826.07 222.92 L 828.70 220.54 L 831.33 218.15 L 833.96 215.75 L 836.60 213.94 L 839.23 212.27 L 841.86 210.43 L 844.50 208.18 L 847.13 205.82 L 849.76 203.46 L 852.39 201.02 L 855.03 198.18 L 857.66 195.70 L 860.29 193.34 L 862.93 191.02 L 865.56 188.62 L 868.19 186.24 L 870.82 183.96 L 873.46 180.97 L 876.09 178.05 L 878.72 175.40 L 881.36 172.79 L 883.99 170.20 L 886.62 167.61 L 889.25 164.95 L 891.89 162.23 L 894.52 158.92 L 897.15 156.32 L 899.79 154.03 L 902.42 151.84 L 905.05 150.08 L 907.68 148.27 L 910.32 146.59 L 912.95 145.01 L 915.58 143.53 L 918.22 142.15 L 920.85 140.86 L 923.48 139.59 L 926.12 138.31 L 928.75 137.06 L 931.38 136.40 L 934.01 135.77 L 936.65 135.09 L 939.28 134.41 L 941.91 133.74 L 944.55 132.98 L 947.18 131.84 L 949.81 130.65 L 952.44 129.40 L 955.08 128.07 L 957.71 127.17 L 960.34 126.70 L 962.98 126.22 L 965.61 125.63 L 968.24 125.30 L 970.87 125.06 L 973.51 124.91 L 976.14 125.80 L 984.04 126.44 L 986.67 126.93 L 989.30 127.40 L 991.94 127.83 L 994.57 128.28 L 1002.47 128.38 L 1005.10 127.85 L 1007.73 127.24 L 1010.37 126.86 L 1013.00 126.47" fill="none" stroke="#f6cf77" stroke-width="1" stroke-dasharray="2 4" opacity="0.35"></path><circle cx="1013" cy="126.46675486384663" r="2.8" fill="#f6cf77"></circle></svg></div>
 </div>
 </div>
 </div>
@@ -1284,7 +1324,7 @@ td {
 </div>
 </div>
 <div class="panel-body">
-<div class="chart-medium" id="wrap-spread-chart"><svg id="spreadChart" viewBox="0 0 693 250"><rect x="0" y="0" width="693" height="250" fill="transparent"></rect><line x1="52" y1="222" x2="677" y2="222" stroke="rgba(255,255,255,.07)"></line><text x="44" y="226" text-anchor="end" fill="#8f98a5" font-size="11">18.77</text><line x1="52" y1="154" x2="677" y2="154" stroke="rgba(255,255,255,.07)"></line><text x="44" y="158" text-anchor="end" fill="#8f98a5" font-size="11">22.22</text><line x1="52" y1="86" x2="677" y2="86" stroke="rgba(255,255,255,.07)"></line><text x="44" y="90" text-anchor="end" fill="#8f98a5" font-size="11">25.66</text><line x1="52" y1="18" x2="677" y2="18" stroke="rgba(255,255,255,.07)"></line><text x="44" y="22" text-anchor="end" fill="#8f98a5" font-size="11">29.11</text><line x1="52" y1="18" x2="52" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="52" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">May 25</text><line x1="208.25" y1="18" x2="208.25" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="208.25" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">Aug 25</text><line x1="364.5" y1="18" x2="364.5" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="364.5" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">Nov 25</text><line x1="520.75" y1="18" x2="520.75" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="520.75" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">Feb 26</text><line x1="677" y1="18" x2="677" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="677" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">May 26</text><path d="M 52.00 89.42 L 64.02 93.17 L 76.04 94.55 L 88.06 96.33 L 100.08 84.69 L 112.10 101.85 L 124.12 94.95 L 136.13 98.89 L 148.15 108.56 L 160.17 106.98 L 172.19 104.61 L 184.21 96.53 L 196.23 105.01 L 208.25 110.93 L 220.27 122.76 L 232.29 120.39 L 244.31 122.37 L 256.33 135.78 L 268.35 133.41 L 280.37 133.61 L 292.38 136.37 L 304.40 138.54 L 316.42 140.52 L 328.44 154.92 L 340.46 154.92 L 352.48 162.21 L 364.50 176.22 L 376.52 169.12 L 388.54 157.87 L 400.56 152.55 L 412.58 155.51 L 424.60 159.65 L 436.62 158.27 L 448.63 162.21 L 460.65 162.21 L 472.67 161.82 L 484.69 153.53 L 496.71 157.68 L 508.73 158.47 L 520.75 155.51 L 532.77 165.37 L 544.79 130.65 L 556.81 97.12 L 568.83 71.47 L 580.85 55.89 L 591.15 50.96 L 604.88 45.83 L 616.90 53.52 L 628.92 44.45 L 640.94 37.74 L 652.96 44.84 L 664.98 182.53 L 677.00 202.26" fill="none" stroke="#ffd166" stroke-width="2.4" opacity="1"></path><circle cx="677" cy="202.25806451612902" r="2.8" fill="#ffd166"></circle></svg></div>
+<div class="chart-medium" id="wrap-spread-chart"><svg id="spreadChart" viewBox="0 0 679 250"><rect x="0" y="0" width="679" height="250" fill="transparent"></rect><line x1="52" y1="222" x2="663" y2="222" stroke="rgba(255,255,255,.07)"></line><text x="44" y="226" text-anchor="end" fill="#8f98a5" font-size="11">18.77</text><line x1="52" y1="154" x2="663" y2="154" stroke="rgba(255,255,255,.07)"></line><text x="44" y="158" text-anchor="end" fill="#8f98a5" font-size="11">22.22</text><line x1="52" y1="86" x2="663" y2="86" stroke="rgba(255,255,255,.07)"></line><text x="44" y="90" text-anchor="end" fill="#8f98a5" font-size="11">25.66</text><line x1="52" y1="18" x2="663" y2="18" stroke="rgba(255,255,255,.07)"></line><text x="44" y="22" text-anchor="end" fill="#8f98a5" font-size="11">29.11</text><line x1="52" y1="18" x2="52" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="52" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">May 25</text><line x1="204.75" y1="18" x2="204.75" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="204.75" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">Aug 25</text><line x1="357.5" y1="18" x2="357.5" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="357.5" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">Nov 25</text><line x1="510.25" y1="18" x2="510.25" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="510.25" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">Feb 26</text><line x1="663" y1="18" x2="663" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="663" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">May 26</text><path d="M 52.00 89.42 L 63.75 93.17 L 75.50 94.55 L 87.25 96.33 L 99.00 84.69 L 110.75 101.85 L 122.50 94.95 L 134.25 98.89 L 146.00 108.56 L 157.75 106.98 L 169.50 104.61 L 181.25 96.53 L 193.00 105.01 L 204.75 110.93 L 216.50 122.76 L 228.25 120.39 L 240.00 122.37 L 251.75 135.78 L 263.50 133.41 L 275.25 133.61 L 287.00 136.37 L 298.75 138.54 L 310.50 140.52 L 322.25 154.92 L 334.00 154.92 L 345.75 162.21 L 357.50 176.22 L 369.25 169.12 L 381.00 157.87 L 392.75 152.55 L 404.50 155.51 L 416.25 159.65 L 428.00 158.27 L 439.75 162.21 L 451.50 162.21 L 463.25 161.82 L 475.00 153.53 L 486.75 157.68 L 498.50 158.47 L 510.25 155.51 L 522.00 165.37 L 533.75 130.65 L 545.50 97.12 L 557.25 71.47 L 569.00 55.89 L 579.07 50.96 L 592.50 45.83 L 604.25 53.52 L 616.00 44.45 L 627.75 37.74 L 639.50 44.84 L 651.25 182.53 L 663.00 202.26" fill="none" stroke="#ffd166" stroke-width="2.4" opacity="1"></path><circle cx="663" cy="202.25806451612902" r="2.8" fill="#ffd166"></circle></svg></div>
 </div>
 </div>
 <div class="card panel-visual-only chart-panel" id="panel-drawdown-monitor">
@@ -1295,7 +1335,7 @@ td {
 </div>
 </div>
 <div class="panel-body">
-<div class="chart-medium" id="wrap-drawdown-chart"><svg id="drawdownChart" viewBox="0 0 693 250"><rect x="0" y="0" width="693" height="250" fill="transparent"></rect><line x1="52" y1="222" x2="677" y2="222" stroke="rgba(255,255,255,.07)"></line><text x="44" y="226" text-anchor="end" fill="#8f98a5" font-size="11">-6.5%</text><line x1="52" y1="154" x2="677" y2="154" stroke="rgba(255,255,255,.07)"></line><text x="44" y="158" text-anchor="end" fill="#8f98a5" font-size="11">-4.1%</text><line x1="52" y1="86" x2="677" y2="86" stroke="rgba(255,255,255,.07)"></line><text x="44" y="90" text-anchor="end" fill="#8f98a5" font-size="11">-1.7%</text><line x1="52" y1="18" x2="677" y2="18" stroke="rgba(255,255,255,.07)"></line><text x="44" y="22" text-anchor="end" fill="#8f98a5" font-size="11">0.7%</text><line x1="52" y1="18" x2="52" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="52" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">May 25</text><line x1="208.25" y1="18" x2="208.25" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="208.25" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">Aug 25</text><line x1="364.5" y1="18" x2="364.5" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="364.5" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">Nov 25</text><line x1="520.75" y1="18" x2="520.75" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="520.75" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">Feb 26</text><line x1="677" y1="18" x2="677" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="677" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">May 26</text><path d="M 52.00 37.74 L 64.02 77.50 L 76.04 99.44 L 88.06 129.61 L 100.08 146.61 L 112.10 169.10 L 124.12 169.10 L 136.13 168.00 L 148.15 174.58 L 160.17 161.97 L 172.19 140.30 L 184.21 115.62 L 196.23 107.12 L 208.25 96.15 L 220.27 102.73 L 232.29 110.14 L 244.31 116.17 L 256.33 128.24 L 268.35 119.74 L 280.37 111.78 L 292.38 111.23 L 304.40 90.39 L 316.42 86.55 L 328.44 88.20 L 340.46 62.70 L 352.48 47.61 L 364.50 37.74 L 376.52 37.74 L 388.54 37.74 L 400.56 42.92 L 412.58 61.99 L 424.60 72.07 L 436.62 70.70 L 448.63 65.26 L 460.65 54.09 L 472.67 41.83 L 484.69 37.74 L 496.71 37.74 L 508.73 37.74 L 520.75 37.74 L 532.77 37.74 L 544.79 37.74 L 556.81 37.74 L 568.83 37.74 L 580.85 37.74 L 591.15 37.74 L 604.88 37.74 L 616.90 37.74 L 628.92 37.74 L 640.94 37.74 L 652.96 37.74 L 664.98 37.74 L 677.00 37.74" fill="none" stroke="#ffd166" stroke-width="2" opacity="1"></path><circle cx="677" cy="37.741935483870975" r="2.8" fill="#ffd166"></circle><path d="M 52.00 37.74 L 64.02 83.70 L 76.04 110.33 L 88.06 147.18 L 100.08 191.31 L 112.10 189.49 L 124.12 202.26 L 136.13 193.50 L 148.15 184.38 L 160.17 170.52 L 172.19 146.08 L 184.21 128.21 L 196.23 101.21 L 208.25 75.68 L 220.27 62.55 L 232.29 76.77 L 244.31 81.15 L 256.33 72.40 L 268.35 65.47 L 280.37 54.52 L 292.38 48.69 L 304.40 37.74 L 316.42 37.74 L 328.44 37.74 L 340.46 37.74 L 352.48 37.74 L 364.50 37.74 L 376.52 39.47 L 388.54 50.15 L 400.56 66.00 L 412.58 84.96 L 424.60 90.47 L 436.62 91.16 L 448.63 77.38 L 460.65 63.25 L 472.67 48.43 L 484.69 37.74 L 496.71 37.74 L 508.73 37.74 L 520.75 37.74 L 532.77 37.74 L 544.79 37.74 L 556.81 37.74 L 568.83 37.74 L 580.85 37.74 L 591.15 37.74 L 604.88 37.74 L 616.90 37.74 L 628.92 37.74 L 640.94 37.74 L 652.96 37.74 L 664.98 37.74 L 677.00 37.74" fill="none" stroke="#57a6ff" stroke-width="2" opacity="1"></path><circle cx="677" cy="37.741935483870975" r="2.8" fill="#57a6ff"></circle></svg></div>
+<div class="chart-medium" id="wrap-drawdown-chart"><svg id="drawdownChart" viewBox="0 0 679 250"><rect x="0" y="0" width="679" height="250" fill="transparent"></rect><line x1="52" y1="222" x2="663" y2="222" stroke="rgba(255,255,255,.07)"></line><text x="44" y="226" text-anchor="end" fill="#8f98a5" font-size="11">-6.5%</text><line x1="52" y1="154" x2="663" y2="154" stroke="rgba(255,255,255,.07)"></line><text x="44" y="158" text-anchor="end" fill="#8f98a5" font-size="11">-4.1%</text><line x1="52" y1="86" x2="663" y2="86" stroke="rgba(255,255,255,.07)"></line><text x="44" y="90" text-anchor="end" fill="#8f98a5" font-size="11">-1.7%</text><line x1="52" y1="18" x2="663" y2="18" stroke="rgba(255,255,255,.07)"></line><text x="44" y="22" text-anchor="end" fill="#8f98a5" font-size="11">0.7%</text><line x1="52" y1="18" x2="52" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="52" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">May 25</text><line x1="204.75" y1="18" x2="204.75" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="204.75" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">Aug 25</text><line x1="357.5" y1="18" x2="357.5" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="357.5" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">Nov 25</text><line x1="510.25" y1="18" x2="510.25" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="510.25" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">Feb 26</text><line x1="663" y1="18" x2="663" y2="222" stroke="rgba(255,255,255,.04)"></line><text x="663" y="242" text-anchor="middle" fill="#8f98a5" font-size="11">May 26</text><path d="M 52.00 37.74 L 63.75 77.50 L 75.50 99.44 L 87.25 129.61 L 99.00 146.61 L 110.75 169.10 L 122.50 169.10 L 134.25 168.00 L 146.00 174.58 L 157.75 161.97 L 169.50 140.30 L 181.25 115.62 L 193.00 107.12 L 204.75 96.15 L 216.50 102.73 L 228.25 110.14 L 240.00 116.17 L 251.75 128.24 L 263.50 119.74 L 275.25 111.78 L 287.00 111.23 L 298.75 90.39 L 310.50 86.55 L 322.25 88.20 L 334.00 62.70 L 345.75 47.61 L 357.50 37.74 L 369.25 37.74 L 381.00 37.74 L 392.75 42.92 L 404.50 61.99 L 416.25 72.07 L 428.00 70.70 L 439.75 65.26 L 451.50 54.09 L 463.25 41.83 L 475.00 37.74 L 486.75 37.74 L 498.50 37.74 L 510.25 37.74 L 522.00 37.74 L 533.75 37.74 L 545.50 37.74 L 557.25 37.74 L 569.00 37.74 L 579.07 37.74 L 592.50 37.74 L 604.25 37.74 L 616.00 37.74 L 627.75 37.74 L 639.50 37.74 L 651.25 37.74 L 663.00 37.74" fill="none" stroke="#ffd166" stroke-width="2" opacity="1"></path><circle cx="663" cy="37.741935483870975" r="2.8" fill="#ffd166"></circle><path d="M 52.00 37.74 L 63.75 83.70 L 75.50 110.33 L 87.25 147.18 L 99.00 191.31 L 110.75 189.49 L 122.50 202.26 L 134.25 193.50 L 146.00 184.38 L 157.75 170.52 L 169.50 146.08 L 181.25 128.21 L 193.00 101.21 L 204.75 75.68 L 216.50 62.55 L 228.25 76.77 L 240.00 81.15 L 251.75 72.40 L 263.50 65.47 L 275.25 54.52 L 287.00 48.69 L 298.75 37.74 L 310.50 37.74 L 322.25 37.74 L 334.00 37.74 L 345.75 37.74 L 357.50 37.74 L 369.25 39.47 L 381.00 50.15 L 392.75 66.00 L 404.50 84.96 L 416.25 90.47 L 428.00 91.16 L 439.75 77.38 L 451.50 63.25 L 463.25 48.43 L 475.00 37.74 L 486.75 37.74 L 498.50 37.74 L 510.25 37.74 L 522.00 37.74 L 533.75 37.74 L 545.50 37.74 L 557.25 37.74 L 569.00 37.74 L 579.07 37.74 L 592.50 37.74 L 604.25 37.74 L 616.00 37.74 L 627.75 37.74 L 639.50 37.74 L 651.25 37.74 L 663.00 37.74" fill="none" stroke="#57a6ff" stroke-width="2" opacity="1"></path><circle cx="663" cy="37.741935483870975" r="2.8" fill="#57a6ff"></circle></svg></div>
 </div>
 </div>
 </div></section>
@@ -1498,7 +1538,7 @@ let newc = newcRaw.map(r => ({ date:new Date(r[0]+"T00:00:00"), values:[r[1]] })
 
 let currentRange = "1Y";
 let currentNewcRange = "1Y";
-window.__publishedAt = "23 May 2026 15:54";
+window.__publishedAt = "23 May 2026 09:44";
 let selectedIci = new Set(["ICI 1","ICI 2"]);
 let seasonalityMode = "single";
 let seasonalitySingleSeries = "ICI 1";
@@ -1961,6 +2001,7 @@ function renderKpis() {
       </div>
       <div class="price" style="color:${item.color}" data-price-key="${item.name}" data-price-target="${target}">0.00</div>
       <div class="delta ${cls}">${d == null ? 'No prior print' : `${fmtPct(d)} vs previous observation`}</div>
+      <div class="kpi-spark-wrap" id="spark-${item.name.replace(/ /g,'')}"></div>
       <div class="mini">
         <div><span class="m-l">1M</span><span class="m-v ${signClass(lookbackPct(item.rows,item.idx,1) ?? 0)}">${fmtPct(lookbackPct(item.rows,item.idx,1))}</span></div>
         <div><span class="m-l">3M</span><span class="m-v ${signClass(lookbackPct(item.rows,item.idx,3) ?? 0)}">${fmtPct(lookbackPct(item.rows,item.idx,3))}</span></div>
@@ -2044,6 +2085,26 @@ function addCommentarySectionLabel(hostId, label) {
   if (!host) return;
   host.innerHTML += `<div class="commentary-section-label">${label}</div>`;
 }
+/* ── Live gauge signal — shared by commentary and gauges ── */
+function getLiveGaugeSignal(rows, idx) {
+  const ms30D = 30 * 24 * 60 * 60 * 1000;
+  const valid = rows.filter(r => r.values[idx-1] != null && !isNaN(r.values[idx-1]));
+  if (!valid.length) return { signal: 'Neutral', badge: 'neutral', mom: null };
+  const latest  = valid[valid.length - 1];
+  const cutoff  = new Date(latest.date.getTime() - ms30D);
+  const prev    = valid.filter(r => r.date <= cutoff).pop();
+  const mom     = prev ? ((latest.values[idx-1] - prev.values[idx-1]) / prev.values[idx-1]) * 100 : null;
+  let signal, badge;
+  if (mom == null)    { signal = 'Neutral';   badge = 'neutral';  }
+  else if (mom >= 20) { signal = 'Extreme';   badge = 'extreme';  }
+  else if (mom >= 10) { signal = 'Strong';    badge = 'strong';   }
+  else if (mom >= 3)  { signal = 'Moderate';  badge = 'moderate'; }
+  else if (mom >= -3) { signal = 'Neutral';   badge = 'neutral';  }
+  else if (mom >= -10){ signal = 'Weak';      badge = 'weak';     }
+  else                { signal = 'Declining'; badge = 'declining';}
+  return { signal, badge, mom };
+}
+
 function renderCommentary() {
   const commentary = document.getElementById("commentary");
   const physicalMarket = document.getElementById("physicalMarketCommentary");
@@ -2221,72 +2282,80 @@ function syncButtons() {
   if (seasonalityHistorySelect) seasonalityHistorySelect.value = seasonalityHistory;
 }
 
-/* ── Mini gauge renderer ── */
-function drawMiniGauge(canvasId, value01, seriesColor) {
+/* ── Mini gauge: arc + needle only, all labels in HTML ── */
+function drawMiniGauge(canvasId, norm) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return;
-  // Size canvas to its rendered CSS width
-  const cssW = canvas.parentElement ? canvas.parentElement.clientWidth - 20 : 160;
-  const cssH = Math.round(cssW * 0.58);
-  canvas.width  = Math.max(cssW, 80);
-  canvas.height = Math.max(cssH, 46);
+
+  // Size canvas to card width
+  const cw = canvas.parentElement ? canvas.parentElement.clientWidth : 140;
+  const ch = Math.round(cw * 0.55);
+  canvas.width  = Math.max(cw, 80);
+  canvas.height = Math.max(ch, 44);
   const W = canvas.width, H = canvas.height;
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, W, H);
-  const cx = W / 2, cy = H - 6;
-  const r = Math.min(W * 0.42, H * 0.88);
-  const lw = Math.max(7, r * 0.18);
 
-  // Background track zones
-  const zones = [
-    {from:0,   to:0.2,  col:'#ff4d4d'},
-    {from:0.2, to:0.4,  col:'#ff8c5a'},
-    {from:0.4, to:0.6,  col:'#6b7685'},
-    {from:0.6, to:0.8,  col:'#6dd5a8'},
-    {from:0.8, to:1.0,  col:'#39d98a'},
+  const cx = W / 2;
+  const cy = H - 4;
+  const r  = Math.min(W * 0.41, H * 0.90);
+  const sw = Math.max(5, r * 0.165);   // segment width
+  const gap = 0.03;                     // gap between segments in radians
+
+  // 5 segments: red | orange | amber | light-green | green
+  // Maps to: Declining | Weak | Neutral | Moderate | Strong
+  const segs = [
+    '#e03535',   // 0.0 – 0.2  declining
+    '#e07a35',   // 0.2 – 0.4  weak
+    '#e0c535',   // 0.4 – 0.6  neutral
+    '#7ecf70',   // 0.6 – 0.8  moderate
+    '#39d98a',   // 0.8 – 1.0  strong
   ];
-  zones.forEach(z => {
+
+  const totalArc = Math.PI;
+  const segArc   = (totalArc - gap * segs.length) / segs.length;
+
+  segs.forEach((col, i) => {
+    const a1 = Math.PI + i * (segArc + gap);
+    const a2 = a1 + segArc;
+    const lit = norm >= i / segs.length;
     ctx.beginPath();
-    ctx.arc(cx, cy, r, Math.PI + z.from * Math.PI, Math.PI + z.to * Math.PI);
-    ctx.lineWidth = lw;
-    ctx.strokeStyle = z.col;
-    ctx.globalAlpha = 0.18;
+    ctx.arc(cx, cy, r, a1, a2);
+    ctx.lineWidth  = sw;
+    ctx.strokeStyle = col;
+    ctx.globalAlpha = lit ? 0.90 : 0.15;
+    ctx.lineCap = 'butt';
     ctx.stroke();
     ctx.globalAlpha = 1;
   });
 
-  // Active fill
+  // Slim needle
+  const na  = Math.PI + norm * Math.PI;
+  const nTip = r - sw * 0.55;
+  const nBase = sw * 0.35;
   ctx.beginPath();
-  ctx.arc(cx, cy, r, Math.PI, Math.PI + value01 * Math.PI);
-  ctx.lineWidth = lw;
-  ctx.strokeStyle = seriesColor;
-  ctx.globalAlpha = 0.9;
-  ctx.stroke();
-  ctx.globalAlpha = 1;
-
-  // Needle
-  const na = Math.PI + value01 * Math.PI;
-  ctx.beginPath();
-  ctx.moveTo(cx + Math.cos(na + Math.PI) * 8, cy + Math.sin(na + Math.PI) * 8);
-  ctx.lineTo(cx + Math.cos(na) * (r - 14), cy + Math.sin(na) * (r - 14));
-  ctx.lineWidth = 1.8;
-  ctx.strokeStyle = '#ffffff';
+  ctx.moveTo(cx + Math.cos(na + Math.PI) * nBase, cy + Math.sin(na + Math.PI) * nBase);
+  ctx.lineTo(cx + Math.cos(na) * nTip,             cy + Math.sin(na) * nTip);
+  ctx.lineWidth   = Math.max(1, W * 0.008);
+  ctx.strokeStyle = 'rgba(230,236,244,0.95)';
   ctx.lineCap = 'round';
   ctx.stroke();
 
-  // Pivot
+  // Hollow pivot ring
+  const pr = Math.max(3.5, W * 0.028);
   ctx.beginPath();
-  ctx.arc(cx, cy, 4, 0, Math.PI * 2);
-  ctx.fillStyle = '#ffffff';
-  ctx.fill();
+  ctx.arc(cx, cy, pr, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(230,236,244,0.85)';
+  ctx.lineWidth = Math.max(1.2, W * 0.008);
+  ctx.stroke();
 }
 
+/* ── Gauge logic: 30D MoM, Argus/McCloskey thresholds ── */
 function renderGauges() {
-  const msIn4W = 28 * 24 * 60 * 60 * 1000;
-  const ms2Y   = 2 * 365 * 24 * 60 * 60 * 1000;
+  const ms30D = 30 * 24 * 60 * 60 * 1000;
 
   const allSeries = [
-    ...iciSeries.map(s => ({ id: s.key.replace(' ',''), key: s.key, idx: s.idx, rows: ici, color: s.color })),
+    ...iciSeries.map(s => ({ id: s.key.replace(/ /g,''), key: s.key, idx: s.idx, rows: ici, color: s.color })),
     { id: 'NEWC', key: 'NEWC', idx: 1, rows: newc, color: newcSeries[0].color }
   ];
 
@@ -2294,33 +2363,50 @@ function renderGauges() {
     const valid = s.rows.filter(r => r.values[s.idx-1] != null && !isNaN(r.values[s.idx-1]));
     if (!valid.length) return;
     const latest = valid[valid.length - 1];
-    const cutoff = new Date(latest.date.getTime() - msIn4W);
-    const prev   = valid.filter(r => r.date <= cutoff).pop();
-    const roc    = (prev && latest) ? ((latest.values[s.idx-1] - prev.values[s.idx-1]) / prev.values[s.idx-1]) * 100 : null;
 
-    // Normalise against 2Y rolling 4W ROCs
-    const win2Y  = valid.filter(r => r.date >= new Date(latest.date.getTime() - ms2Y));
-    const rocs   = [];
-    win2Y.forEach((r, i) => {
-      const b = win2Y.slice(0, i).filter(x => x.date <= new Date(r.date.getTime() - msIn4W)).pop();
-      if (b) rocs.push(((r.values[s.idx-1] - b.values[s.idx-1]) / b.values[s.idx-1]) * 100);
-    });
-    const minR = Math.min(...rocs), maxR = Math.max(...rocs);
-    const norm = (roc != null && maxR > minR)
-      ? Math.max(0, Math.min(1, (roc - minR) / (maxR - minR))) : 0.5;
+    // 30D MoM — same as 1M in KPI mini grid
+    const cutoff30 = new Date(latest.date.getTime() - ms30D);
+    const prev30   = valid.filter(r => r.date <= cutoff30).pop();
+    const mom = prev30 ? ((latest.values[s.idx-1] - prev30.values[s.idx-1]) / prev30.values[s.idx-1]) * 100 : null;
 
-    const color  = norm >= 0.6 ? '#39d98a' : norm <= 0.4 ? '#ff6b6b' : '#9aa3af';
-    const badge  = norm >= 0.65 ? 'bullish' : norm <= 0.35 ? 'bearish' : 'neutral';
-    const blabel = norm >= 0.65 ? '▲ Bull' : norm <= 0.35 ? '▼ Bear' : '● Flat';
+    // Argus/McCloskey MoM thresholds
+    // Extreme decline < -20% | Declining -10 to -20% | Weak -3 to -10%
+    // Neutral ±3% | Weak 3-10% | Moderate 10-20% | Strong/Extreme > 20%
+    let signal, badge, norm;
+    if (mom == null) {
+      signal = 'Neutral'; badge = 'neutral'; norm = 0.5;
+    } else if (mom >= 20) {
+      signal = 'Extreme'; badge = 'extreme'; norm = 0.98;
+    } else if (mom >= 10) {
+      signal = 'Strong';  badge = 'strong';  norm = 0.80 + (mom - 10) / 10 * 0.18;
+    } else if (mom >= 3) {
+      signal = 'Moderate'; badge = 'moderate'; norm = 0.60 + (mom - 3) / 7 * 0.18;
+    } else if (mom >= -3) {
+      signal = 'Neutral'; badge = 'neutral'; norm = 0.50 + (mom / 3) * 0.10;
+    } else if (mom >= -10) {
+      signal = 'Weak';    badge = 'weak';    norm = 0.40 - ((Math.abs(mom) - 3) / 7) * 0.18;
+    } else {
+      signal = 'Declining'; badge = 'declining'; norm = Math.max(0.02, 0.22 - ((Math.abs(mom) - 10) / 10) * 0.20);
+    }
+    norm = Math.max(0.01, Math.min(0.99, norm));
 
-    drawMiniGauge('mg-canvas-' + s.id, norm, s.color);
+    const valColor = badge === 'extreme' || badge === 'strong'   ? '#39d98a'
+                   : badge === 'moderate'                        ? '#7ecf70'
+                   : badge === 'neutral'                         ? '#e0c535'
+                   : badge === 'weak'                            ? '#e07a35'
+                   :                                               '#e03535';
+
+    drawMiniGauge('mg-canvas-' + s.id, norm);
 
     const valEl = document.getElementById('mg-val-' + s.id);
-    if (valEl) { valEl.textContent = roc != null ? (roc >= 0 ? '+' : '') + roc.toFixed(1) + '%' : '—'; valEl.style.color = color; }
+    if (valEl) {
+      valEl.textContent = mom != null ? (mom >= 0 ? '+' : '') + mom.toFixed(1) + '%' : '—';
+      valEl.style.color = valColor;
+    }
     const badgeEl = document.getElementById('mg-badge-' + s.id);
-    if (badgeEl) { badgeEl.textContent = blabel; badgeEl.className = 'mg-badge ' + badge; }
-    const rocEl = document.getElementById('mg-roc-' + s.id);
-    if (rocEl) rocEl.textContent = '4-week momentum';
+    if (badgeEl) { badgeEl.textContent = signal; badgeEl.className = 'mg-badge ' + badge; }
+    const footEl = document.getElementById('mg-roc-' + s.id);
+    if (footEl) footEl.textContent = '30D MoM';
   });
 }
 
@@ -2333,7 +2419,58 @@ function renderGauges() {
   ro.observe(row);
 })();
 
+/* ── KPI sparkline + 52W range renderer ── */
+function renderKpiSparks() {
+  const ms180 = 180 * 24 * 60 * 60 * 1000;
+  const all = [
+    ...iciSeries.map(s => ({ name:s.key, id:s.key.replace(/ /g,''), idx:s.idx, rows:ici, color:s.color })),
+    { name:'NEWC', id:'NEWC', idx:1, rows:newc, color:newcSeries[0].color }
+  ];
+
+  all.forEach(item => {
+    const wrap = document.getElementById('spark-' + item.id);
+    if (!wrap) return;
+
+    const last = lastValid(item.rows, item.idx);
+    if (!last) { wrap.innerHTML = ''; return; }
+
+    // ── 90-day sparkline ──
+    const cutoff90 = new Date(last.date.getTime() - ms180);
+    const spark = item.rows.filter(r => r.date >= cutoff90 && r.values[item.idx-1] != null && !isNaN(r.values[item.idx-1]));
+    let sparkHtml = '';
+    if (spark.length >= 2) {
+      const sv = spark.map(r => r.values[item.idx-1]);
+      const sMin = Math.min(...sv), sMax = Math.max(...sv);
+      const sRange = sMax - sMin || 1;
+      const W = 200, H = 32, pad = 2;
+      const xs = sv.map((_, i) => pad + (i / (sv.length - 1)) * (W - pad * 2));
+      const ys = sv.map(v => H - pad - ((v - sMin) / sRange) * (H - pad * 2));
+      const pts = sv.map((_, i) => xs[i].toFixed(1) + ',' + ys[i].toFixed(1)).join(' ');
+      const lx = xs[xs.length-1].toFixed(1);
+      const ly = ys[ys.length-1].toFixed(1);
+      const pathD = 'M ' + xs[0].toFixed(1) + ' ' + ys[0].toFixed(1) +
+        sv.slice(1).map((_, i) => ' L ' + xs[i+1].toFixed(1) + ' ' + ys[i+1].toFixed(1)).join('') +
+        ' L ' + lx + ' ' + H + ' L ' + pad + ' ' + H + ' Z';
+      const gid = 'sg' + item.id;
+      sparkHtml =
+        '<svg class="kpi-sparkline" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' +
+          '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1">' +
+            '<stop offset="0%" stop-color="' + item.color + '" stop-opacity="0.22"/>' +
+            '<stop offset="100%" stop-color="' + item.color + '" stop-opacity="0"/>' +
+          '</linearGradient></defs>' +
+          '<path d="' + pathD + '" fill="url(#' + gid + ')"/>' +
+          '<polyline points="' + pts + '" fill="none" stroke="' + item.color + '" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>' +
+          '<circle cx="' + lx + '" cy="' + ly + '" r="2.5" fill="' + item.color + '"/>' +
+        '</svg>';
+    }
+
+    wrap.innerHTML = sparkHtml;
+  });
+}
+
 function renderAll() {
+  renderKpis();
+  renderKpiSparks();
   renderGauges();
   renderSeasonality();
   drawIciChart();
@@ -2652,7 +2789,16 @@ function nearestIndexByX(points, x) {
 </script><script>
 (function(){
   function fmtMaybePct(v, digits=1){ return v == null || Number.isNaN(v) ? '—' : `${Number(v).toFixed(digits)}%`; }
-  function clsFromSignal(sig){ return sig === 'Bullish' ? 'bullish' : sig === 'Bearish' ? 'bearish' : 'neutral'; }
+  function clsFromSignal(sig) {
+    const s = (sig || '').toLowerCase();
+    if (s === 'extreme' || s === 'strong')   return 'bullish';
+    if (s === 'moderate')                    return 'moderate';
+    if (s === 'neutral')                     return 'neutral';
+    if (s === 'weak' || s === 'declining')   return 'bearish';
+    if (s === 'bullish')                     return 'bullish';
+    if (s === 'bearish')                     return 'bearish';
+    return 'neutral';
+  }
   function safeNum(v){ return v == null || Number.isNaN(v) ? null : Number(v); }
   function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
   function normTrend(v, scale){
@@ -2801,9 +2947,13 @@ function nearestIndexByX(points, x) {
     const newc1 = safeNum(typeof lookbackPct === 'function' ? lookbackPct(newc, 1, 1) : null);
     const newc3 = safeNum(typeof lookbackPct === 'function' ? lookbackPct(newc, 1, 3) : null);
 
+    // Sync chips with live gauge signals
+    const liveIci  = getLiveGaugeSignal(ici, activeStats.length ? activeStats[0].idx : 1);
+    const liveNewc = getLiveGaugeSignal(newc, 1);
+
     const html = [
-      noteHtml('ICI Structure', iciSignal, iciBody, iciWatch),
-      noteHtml('NEWC Context', 'Moderate Bullish', `Prices are improving with a gradual recovery from the prior low, now approaching recent highs.<br><br>The move is driven by steady upward momentum and higher lows since the bottom, with no sharp acceleration or breakout yet.<br><br><strong>Strength:</strong> Moderate`, [
+      noteHtml('ICI Structure', liveIci.signal, iciBody, iciWatch),
+      noteHtml('NEWC Context', liveNewc.signal, `Prices are improving with a gradual recovery from the prior low, now approaching recent highs.<br><br>The move is driven by steady upward momentum and higher lows since the bottom, with no sharp acceleration or breakout yet.<br><br><strong>Strength:</strong> ${liveNewc.signal}`, [
         ['NEWC', newcLast ? fmtNum(newcLast.value) : '—'],
         ['1M', fmtMaybePct(newc1)],
         ['3M', fmtMaybePct(newc3)]
@@ -2834,8 +2984,13 @@ function nearestIndexByX(points, x) {
     return 'Neutral';
   }
   function clsFromSignal(sig) {
-    if (sig === 'Bullish') return 'bullish';
-    if (sig === 'Bearish') return 'bearish';
+    const s = (sig || '').toLowerCase();
+    if (s === 'extreme' || s === 'strong')   return 'bullish';
+    if (s === 'moderate')                    return 'moderate';
+    if (s === 'neutral')                     return 'neutral';
+    if (s === 'weak' || s === 'declining')   return 'bearish';
+    if (s === 'bullish')                     return 'bullish';
+    if (s === 'bearish')                     return 'bearish';
     return 'neutral';
   }
   function noteCard(title, signal, body, watch) {
@@ -3168,7 +3323,16 @@ renderPF();
 (function(){
   function fmtMaybePct(v, digits=1){ return v == null || Number.isNaN(v) ? '—' : `${Number(v).toFixed(digits)}%`; }
   function signalFromValue(v, up=2.5, down=-2.5){ if (v == null || Number.isNaN(v)) return 'Neutral'; if (v > up) return 'Bullish'; if (v < down) return 'Bearish'; return 'Neutral'; }
-  function clsFromSignal(sig){ return sig === 'Bullish' ? 'bullish' : sig === 'Bearish' ? 'bearish' : 'neutral'; }
+  function clsFromSignal(sig) {
+    const s = (sig || '').toLowerCase();
+    if (s === 'extreme' || s === 'strong')   return 'bullish';
+    if (s === 'moderate')                    return 'moderate';
+    if (s === 'neutral')                     return 'neutral';
+    if (s === 'weak' || s === 'declining')   return 'bearish';
+    if (s === 'bullish')                     return 'bullish';
+    if (s === 'bearish')                     return 'bearish';
+    return 'neutral';
+  }
   function safeNum(v){ return v == null || Number.isNaN(v) ? null : Number(v); }
   function makeWatch(watch){
     return `<div class="watch-grid">${watch.map(w=>`<div class="watch-item"><span class="wl">${w[0]}</span><span class="wv">${w[1]}</span></div>`).join('')}</div>`;
@@ -3283,9 +3447,13 @@ renderPF();
     const newc1 = safeNum(typeof lookbackPct === 'function' ? lookbackPct(newc, 1, 1) : null);
     const newc3 = safeNum(typeof lookbackPct === 'function' ? lookbackPct(newc, 1, 3) : null);
 
+    // Sync chips with live gauge signals
+    const liveIci  = getLiveGaugeSignal(ici, activeStats.length ? activeStats[0].idx : 1);
+    const liveNewc = getLiveGaugeSignal(newc, 1);
+
     const html = [
-      noteHtml('ICI Structure', iciSignal, iciBody, iciWatch),
-      noteHtml('NEWC Context', 'Moderate Bullish', `Prices are improving with a gradual recovery from the prior low, now approaching recent highs.<br><br>The move is driven by steady upward momentum and higher lows since the bottom, with no sharp acceleration or breakout yet.<br><br><strong>Strength:</strong> Moderate`, [
+      noteHtml('ICI Structure', liveIci.signal, iciBody, iciWatch),
+      noteHtml('NEWC Context', liveNewc.signal, `Prices are improving with a gradual recovery from the prior low, now approaching recent highs.<br><br>The move is driven by steady upward momentum and higher lows since the bottom, with no sharp acceleration or breakout yet.<br><br><strong>Strength:</strong> ${liveNewc.signal}`, [
         ['NEWC', newcLast ? fmtNum(newcLast.value) : '—'],
         ['1M', fmtMaybePct(newc1)],
         ['3M', fmtMaybePct(newc3)]
@@ -3344,5 +3512,5 @@ function exportDashboard() {
 
 </script>
 
-</section></div><!-- /.wrap -->
+</div><!-- /.wrap -->
 </body></html>
