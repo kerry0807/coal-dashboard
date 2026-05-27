@@ -1229,7 +1229,7 @@ td {
 <input accept=".csv,text/csv" id="newcCsvInput" style="display:none" type="file">
 </div>
 </div>
-</div><section class="dashboard-section" id="section-summary-strip"><div class="status-ribbon" id="metaStamp"><span class="published-label">Published</span>: <strong>27 May 2026 17:07</strong></div><div class="strip" id="summaryStrip"><div class="pill"><div class="h">ICI Latest Stamp</div><div class="v">22 May 2026</div><div class="s">Selected: ICI 1, ICI 2</div></div><div class="pill"><div class="h">NEWC Latest Stamp</div><div class="v">22 May 2026</div><div class="s">Last price 138.64</div></div><div class="pill"><div class="h">3M Breadth</div><div class="v">5 / 5 positive</div><div class="s">Across all ICI grades</div></div><div class="pill"><div class="h">Selection Spread</div><div class="v">19.77</div><div class="s">ICI 1 - ICI 2</div></div></div></section><section class="dashboard-section" id="section-kpi"><div class="grid-kpi" id="kpiGrid"><div class="card kpi">
+</div><section class="dashboard-section" id="section-summary-strip"><div class="status-ribbon" id="metaStamp"><span class="published-label">Published</span>: <strong>27 May 2026 17:25</strong></div><div class="strip" id="summaryStrip"><div class="pill"><div class="h">ICI Latest Stamp</div><div class="v">22 May 2026</div><div class="s">Selected: ICI 1, ICI 2</div></div><div class="pill"><div class="h">NEWC Latest Stamp</div><div class="v">26 May 2026</div><div class="s">Last price 133.25</div></div><div class="pill"><div class="h">3M Breadth</div><div class="v">5 / 5 positive</div><div class="s">Across all ICI grades</div></div><div class="pill"><div class="h">Selection Spread</div><div class="v">19.77</div><div class="s">ICI 1 - ICI 2</div></div></div></section><section class="dashboard-section" id="section-kpi"><div class="grid-kpi" id="kpiGrid"><div class="card kpi">
       <div class="k-head" style="display:flex;align-items:center;gap:6px;">
         <div class="series" style="flex:1">ICI 1</div>
         <span class="kpi-arrow up" data-dir="up" title="Rising"><svg viewBox="0 0 14 20" xmlns="http://www.w3.org/2000/svg"><polyline class="arr-shape" points="4,9 7,5 10,9" fill="none" stroke="#39d98a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline class="arr-shape" points="4,15 7,11 10,15" fill="none" stroke="#39d98a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="animation-delay:-0.45s"></polyline></svg></span>
@@ -1624,7 +1624,7 @@ let newc = newcRaw.map(r => ({ date:new Date(r[0]+"T00:00:00"), values:[r[1]] })
 
 let currentRange = "1Y";
 let currentNewcRange = "1Y";
-window.__publishedAt = "27 May 2026 17:07";
+window.__publishedAt = "27 May 2026 17:25";
 let selectedIci = new Set(["ICI 1","ICI 2"]);
 let seasonalityMode = "single";
 let seasonalitySingleSeries = "ICI 1";
@@ -2343,7 +2343,8 @@ function renderDataQuality() {
 
 function updateMeta() {
   const iciLast = lastValid(ici,1)?.date;
-  const newcLast = lastValid(newc,1)?.date;
+  const newcLastObj = lastValid(newc,1);
+  const newcLast = newcLastObj?.date;
   const refreshTxt = window.__lastRefreshAt
     ? `Last refresh: <strong>${window.__lastRefreshAt}</strong><span class="sep">|</span>`
     : '';
@@ -2354,6 +2355,20 @@ function updateMeta() {
     ? `${window.__dataStatusText}<span class="sep">|</span>`
     : '';
   document.getElementById("metaStamp").innerHTML = `<span class="published-label">Published</span>: <strong>${window.__publishedAt || "–"}</strong>`;
+
+  // Dynamically update NEWC Latest Stamp pill from live data
+  const strip = document.getElementById('summaryStrip');
+  if (strip) {
+    const pills = strip.querySelectorAll('.pill');
+    // NEWC Latest Stamp is the second pill (index 1)
+    const newcPill = pills[1];
+    if (newcPill) {
+      const vEl = newcPill.querySelector('.v');
+      const sEl = newcPill.querySelector('.s');
+      if (vEl && newcLast) vEl.textContent = fmtDate(newcLast);
+      if (sEl && newcLastObj) sEl.textContent = 'Last price ' + fmtNum(newcLastObj.value);
+    }
+  }
 }
 function syncButtons() {
   document.querySelectorAll(".range-btn").forEach(b => b.classList.toggle("active", b.dataset.range === currentRange));
