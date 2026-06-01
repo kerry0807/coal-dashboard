@@ -1,2 +1,2 @@
 # coal-dashboard
-Prototype coal market dashboard for ICI &amp; NEWC analysis, featuring data-driven interpretation and visual analytics.
+ICI and NEWC Coal Dashboard with analysis and seasonality , featuring data-driven interpretation and visual analytics.
